@@ -6,7 +6,7 @@
 // ignore_for_file: lines_longer_than_80_chars, avoid_classes_with_only_static_members
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
-    show defaultTargetPlatform, kIsWeb, TargetPlatform;
+    show TargetPlatform, defaultTargetPlatform;
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -20,26 +20,11 @@ import 'package:flutter/foundation.dart'
 /// ```
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
-    if (kIsWeb) {
-      return web;
-    }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
         return ios;
-      case TargetPlatform.macOS:
-        return macos;
-      case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
-      case TargetPlatform.linux:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for linux - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
       default:
         throw UnsupportedError(
           'DefaultFirebaseOptions are not supported for this platform.',
@@ -47,55 +32,20 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyB7wZb2tO1-Fs6GbDADUSTs2Qs3w08Hovw',
-    appId: '1:406099696497:web:87e25e51afe982cd3574d0',
-    messagingSenderId: '406099696497',
-    projectId: 'flutterfire-e2e-tests',
-    authDomain: 'flutterfire-e2e-tests.firebaseapp.com',
-    databaseURL:
-        'https://flutterfire-e2e-tests-default-rtdb.europe-west1.firebasedatabase.app',
-    storageBucket: 'flutterfire-e2e-tests.appspot.com',
-    measurementId: 'G-JN95N1JV2E',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCdRjCVZlhrq72RuEklEyyxYlBRCYhI2Sw',
-    appId: '1:406099696497:android:3ef965ff044efc0b3574d0',
-    messagingSenderId: '406099696497',
-    projectId: 'flutterfire-e2e-tests',
-    databaseURL:
-        'https://flutterfire-e2e-tests-default-rtdb.europe-west1.firebasedatabase.app',
-    storageBucket: 'flutterfire-e2e-tests.appspot.com',
+    apiKey: 'AIzaSyChuhcMYmbQY-qV6r_9bKVGvdqZ9k-Wo_s',
+    appId: '1:692919346587:android:613dd55523d1465b956d3e',
+    messagingSenderId: '692919346587',
+    projectId: 'limit-spending',
+    storageBucket: 'limit-spending.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAY15ZVdKHEx01i4DC_wRPaPXl1JbFlyCw',
-    appId: '1:692919346587:ios:48c563011be05852956d3e',
+    appId: '1:692919346587:ios:fb166979b939a1c2956d3e',
     messagingSenderId: '692919346587',
-    projectId: 'com.tektonsoftware.limitSpending',
-    databaseURL:
-        'https://flutterfire-e2e-tests-default-rtdb.europe-west1.firebasedatabase.app',
+    projectId: 'limit-spending',
     storageBucket: 'limit-spending.appspot.com',
-    // androidClientId:
-    //     '406099696497-17qn06u8a0dc717u8ul7s49ampk13lul.apps.googleusercontent.com',
-    // iosClientId:
-    //     '406099696497-1ugbsqv8nkfn788ep0k233e750aupb7u.apps.googleusercontent.com',
-    // iosBundleId: 'io.flutter.plugins.firebaseDatabaseExample',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDooSUGSf63Ghq02_iIhtnmwMDs4HlWS6c',
-    appId: '1:406099696497:ios:e31ee2c5dc99d4743574d0',
-    messagingSenderId: '406099696497',
-    projectId: 'flutterfire-e2e-tests',
-    databaseURL:
-        'https://flutterfire-e2e-tests-default-rtdb.europe-west1.firebasedatabase.app',
-    storageBucket: 'flutterfire-e2e-tests.appspot.com',
-    androidClientId:
-        '406099696497-17qn06u8a0dc717u8ul7s49ampk13lul.apps.googleusercontent.com',
-    iosClientId:
-        '406099696497-1ugbsqv8nkfn788ep0k233e750aupb7u.apps.googleusercontent.com',
-    iosBundleId: 'io.flutter.plugins.firebaseDatabaseExample',
+    iosBundleId: 'com.tektonsoftware.limitspending.limitSpending',
   );
 }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "692919346587",
+    "project_id": "limit-spending",
+    "storage_bucket": "limit-spending.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:692919346587:android:613dd55523d1465b956d3e",
+        "android_client_info": {
+          "package_name": "com.tektonsoftware.limit_spending.limit_spending"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChuhcMYmbQY-qV6r_9bKVGvdqZ9k-Wo_s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
