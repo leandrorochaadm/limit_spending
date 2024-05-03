@@ -2,11 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
+import 'firebase_options.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-      // options: DefaultFirebaseOptions.currentPlatform,
-      );
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -33,9 +35,10 @@ class MyHomePage extends StatelessWidget {
           children: <Widget>[
             ElevatedButton(
               onPressed: () async {
-                FirebaseFirestore.instance
+                firestore
                     .collection('collection')
-                    .add(<String, String>{'date': dateNow});
+                    .doc('doc')
+                    .set(<String, String>{'date': dateNow});
 
                 debugPrint('test $dateNow');
               },
