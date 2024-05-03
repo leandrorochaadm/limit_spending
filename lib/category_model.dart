@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
-class CategoryModel extends Equatable {
-  const CategoryModel({
+class Category extends Equatable {
+  const Category({
     required this.id,
     required this.name,
     required this.created,
@@ -9,8 +9,8 @@ class CategoryModel extends Equatable {
     required this.consumed,
   });
 
-  factory CategoryModel.fromJson(Map<String, dynamic> json) {
-    return CategoryModel(
+  factory Category.fromJson(Map<String, dynamic> json) {
+    return Category(
       id: json['id'] as String? ?? '',
       name: json['name'] as String? ?? '',
       created: DateTime.tryParse(json['created'] as String? ?? ''),
@@ -25,14 +25,14 @@ class CategoryModel extends Equatable {
   final double limitMonthly;
   final double consumed;
 
-  CategoryModel copyWith({
+  Category copyWith({
     String? id,
     String? name,
     DateTime? created,
     double? limitMonthly,
     double? consumed,
   }) {
-    return CategoryModel(
+    return Category(
       id: id ?? this.id,
       name: name ?? this.name,
       created: created ?? this.created,

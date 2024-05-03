@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'category_model.dart';
+import 'controller.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -12,42 +13,63 @@ Future<void> main() async {
   );
 
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final Controller controller = Controller(firestore: firestore);
 
   runApp(
     MaterialApp(
       title: 'Flutter Database Example',
-      home: MyHomePage(firestore: firestore),
+      home: MyHomePage(controller: controller),
     ),
   );
 }
 
 class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key, required this.firestore});
+  const MyHomePage({super.key, required this.controller});
 
-  final FirebaseFirestore firestore;
+  final Controller controller;
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Column(
-          children: <Widget>[
-            ElevatedButton(
-              onPressed: () async {
-                firestore.collection('categories').doc('mercado').set(
-                      CategoryModel(
-                              name: 'mercado',
-                              created: DateTime.now(),
-                              limitMonthly: 400,
-                              id: '1',
-                              consumed: 84)
-                          .toJson(),
-                    );
-              },
-              child: const Text('create'),
+    return Scaffold(
+      appBar: AppBar(title: const Text('Category Manager')),
+      body: StreamBuilder<List<Category>>(
+        stream: controller.readCategories(),
+        builder:
+            (BuildContext context, AsyncSnapshot<List<Category>> snapshot) {
+          if (snapshot.hasError) {
+            return const Text('Something went wrong');
+          } else if (snapshot.hasData) {
+            final List<Category> categories = snapshot.data!;
+            return ListView(
+              children: categories
+                  .map((Category category) => ListTile(
+                        title: Text(category.name),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () =>
+                              controller.deleteCategory(category.id),
+                        ),
+                      ))
+                  .toList(),
+            );
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          controller.createCategory(
+            Category(
+              name: 'mercado',
+              created: DateTime.now(),
+              limitMonthly: 400,
+              id: '1',
+              consumed: 84,
             ),
-          ],
-        ),
+          );
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }
