@@ -8,23 +8,21 @@ import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final Controller controller = Controller(firestore: firestore);
 
   runApp(
     MaterialApp(
-      title: 'Flutter Database Example',
-      home: MyHomePage(controller: controller),
+      title: 'Limit Spending',
+      home: CategoryPage(controller: controller),
     ),
   );
 }
 
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key, required this.controller});
+class CategoryPage extends StatelessWidget {
+  const CategoryPage({super.key, required this.controller});
 
   final Controller controller;
 
