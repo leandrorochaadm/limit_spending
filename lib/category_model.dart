@@ -1,13 +1,14 @@
 import 'package:equatable/equatable.dart';
+import 'package:uuid/uuid.dart';
 
 class Category extends Equatable {
-  const Category({
-    required this.id,
+  Category({
+    String? id,
     required this.name,
     required this.created,
     required this.limitMonthly,
     required this.consumed,
-  });
+  }) : id = id ?? const Uuid().v4();
 
   factory Category.fromJson(Map<String, dynamic> json) {
     return Category(

@@ -19,7 +19,7 @@ class Controller {
   }
 
   void createCategory(Category category) {
-    firestore.collection('categories').add(category.toJson());
+    firestore.collection('categories').doc(category.id).set(category.toJson());
   }
 
   void updateCategory(Category category) {
