@@ -26,6 +26,10 @@ class Category extends Equatable {
   final double limitMonthly;
   final double consumed;
 
+  double get balance =>
+      ((DateTime.now().difference(created!).inDays / 30) * limitMonthly) -
+      consumed;
+
   Category copyWith({
     String? id,
     String? name,

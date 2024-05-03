@@ -43,6 +43,8 @@ class CategoryPage extends StatelessWidget {
               children: categories
                   .map((Category category) => ListTile(
                         title: Text(category.name),
+                        subtitle: Text(
+                            'Limite R\$ ${category.balance.toStringAsFixed(2)}'),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete),
                           onPressed: () =>
