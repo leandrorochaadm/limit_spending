@@ -12,7 +12,7 @@ class Controller {
       (QuerySnapshot<Map<String, dynamic>> snapshot) {
         return snapshot.docs
             .map((QueryDocumentSnapshot<Map<String, dynamic>> doc) =>
-                Category.fromJson(doc.data()))
+                Category.fromJson(doc.data()),)
             .toList();
       },
     );

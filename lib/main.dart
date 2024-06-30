@@ -41,16 +41,18 @@ class CategoryPage extends StatelessWidget {
             final List<Category> categories = snapshot.data!;
             return ListView(
               children: categories
-                  .map((Category category) => ListTile(
-                        title: Text(category.name),
-                        subtitle: Text(
-                            'Limite R\$ ${category.balance.toStringAsFixed(2)}'),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete),
-                          onPressed: () =>
-                              controller.deleteCategory(category.id),
-                        ),
-                      ))
+                  .map(
+                    (Category category) => ListTile(
+                      title: Text(category.name),
+                      subtitle: Text(
+                        'Limite R\$ ${category.balance.toStringAsFixed(2)}',
+                      ),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () => controller.deleteCategory(category.id),
+                      ),
+                    ),
+                  )
                   .toList(),
             );
           } else {
@@ -103,11 +105,13 @@ class CategoryPage extends StatelessWidget {
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 24),
+                        vertical: 12,
+                        horizontal: 24,
+                      ),
                       shape: const StadiumBorder(),
                       backgroundColor: Theme.of(context).colorScheme.primary,
                       foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                      textStyle: Theme.of(context).textTheme.button,
+                      textStyle: Theme.of(context).textTheme.bodyMedium,
                     ),
                     onPressed: () {
                       controller.createCategory(
