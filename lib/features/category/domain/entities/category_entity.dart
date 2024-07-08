@@ -18,9 +18,10 @@ class CategoryEntity extends Equatable {
   final double limitMonthly;
   final double consumed;
 
-  double get balance =>
-      ((DateTime.now().difference(created!).inDays / 30) * limitMonthly) -
-      consumed;
+  double get balance {
+    final timeMouth = (DateTime.now().difference(created!).inDays / 30) + 1;
+    return (timeMouth * limitMonthly) - consumed;
+  }
 
   @override
   String toString() => '$id, $name, $created, $limitMonthly, $consumed, ';

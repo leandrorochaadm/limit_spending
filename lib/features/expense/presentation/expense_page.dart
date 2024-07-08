@@ -70,9 +70,9 @@ class ExpensePage extends StatelessWidget {
                       subtitle: Text(
                         'Valor: ${(expense.value).toStringAsFixed(2)}',
                       ),
-                      trailing: const Icon(Icons.edit),
-                      onTap: () =>
-                          modalCreateExpense(context, expense: expense),
+                      // trailing: const Icon(Icons.edit),
+                      // onTap: () =>
+                      //     modalCreateExpense(context, expense: expense),
                     ),
                   );
                 },

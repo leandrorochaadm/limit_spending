@@ -5,4 +5,6 @@ abstract class CategoryRepository {
   Future<void> updateCategory(CategoryEntity category);
   Future<void> deleteCategory(String categoryId);
   Stream<List<CategoryEntity>> getCategories();
+
+  Future<void> addConsumedCategory(String categoryId, double consumed);
 }

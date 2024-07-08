@@ -42,4 +42,30 @@ class CategoryFirebaseRepository implements CategoryRepository {
         .doc(category.id)
         .update(category.toModel().toJson());
   }
+
+  Future<CategoryEntity> categoryById(String categoryId) async {
+    final doc =
+        await firestore.collection(collectionPath).doc(categoryId).get();
+    if (doc.exists) {
+      return CategoryModel.fromJson(doc.data()!).toEntity();
+    } else {
+      throw Exception('Categoria não encontrada');
+    }
+  }
+
+  Future<void> updateCategoryConsumed(
+      String categoryId, double consumed) async {
+    await firestore
+        .collection(collectionPath)
+        .doc(categoryId)
+        .update({'consumed': consumed});
+  }
+
+  @override
+  Future<void> addConsumedCategory(String categoryId, double consumed) async {
+    await firestore
+        .collection(collectionPath)
+        .doc(categoryId)
+        .update({'consumed': FieldValue.increment(consumed)});
+  }
 }
