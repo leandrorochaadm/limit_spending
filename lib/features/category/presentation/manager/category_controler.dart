@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import '../../domain/entities/category_entity.dart';
-import '../../domain/usecases/usecases.dart';
+import '../../domain/domain.dart';
 import 'category_state.dart';
 
 class CategoryController {

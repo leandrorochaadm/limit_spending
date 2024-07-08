@@ -6,6 +6,7 @@ import '../manager/category_controler.dart';
 import '../manager/category_state.dart';
 
 class CategoryPage extends StatelessWidget {
+  static const String routeName = '/category';
   const CategoryPage({super.key, required this.categoryController});
 
   final CategoryController categoryController;
@@ -24,7 +25,8 @@ class CategoryPage extends StatelessWidget {
               } else if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Center(child: Text('No categories found.'));
+                return const Center(
+                    child: Text('Nenhuma categoria encontrada'));
               }
 
               final categories = snapshot.data!;
@@ -56,6 +58,7 @@ class CategoryPage extends StatelessWidget {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
+                      backgroundColor: Theme.of(context).colorScheme.error,
                       content: Text(state.errorMessage ?? 'Erro desconhecido'),
                     ),
                   );
