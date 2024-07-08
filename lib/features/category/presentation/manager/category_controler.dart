@@ -17,23 +17,7 @@ class CategoryController {
     required this.createCategoryUseCase,
   });
 
-  void fetchCategories() {
-    state.value = state.value.copyWith(status: CategoryStatus.loading);
-    getCategoriesUseCase().listen(
-      (categories) {
-        state.value = state.value.copyWith(
-          status: CategoryStatus.success,
-          categories: categories,
-        );
-      },
-      onError: (error) {
-        state.value = state.value.copyWith(
-          status: CategoryStatus.error,
-          errorMessage: error.toString(),
-        );
-      },
-    );
-  }
+  Stream<List<CategoryEntity>> get categoriesStream => getCategoriesUseCase();
 
   void createCategory(CategoryEntity category) async {
     state.value = state.value.copyWith(status: CategoryStatus.loading);

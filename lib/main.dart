@@ -33,6 +33,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      themeMode: ThemeMode.system,
+      theme: ThemeData(
+        colorSchemeSeed: Colors.blue,
+        brightness: Brightness.light,
+        useMaterial3: true,
+        fontFamily: 'Poppins',
+      ),
+      darkTheme: ThemeData(
+        colorSchemeSeed: Colors.blue,
+        brightness: Brightness.dark,
+        useMaterial3: true,
+        fontFamily: 'Poppins',
+      ),
       home: CategoryPage(categoryController: categoryController),
     );
   }

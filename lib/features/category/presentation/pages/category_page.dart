@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../../text_field_custom_widget.dart';
 import '../../domain/entities/category_entity.dart';
 import '../manager/category_controler.dart';
-import '../manager/category_state.dart';
 
 class CategoryPage extends StatelessWidget {
   const CategoryPage({super.key, required this.categoryController});
@@ -13,37 +12,42 @@ class CategoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Categories')),
-      body: ValueListenableBuilder<CategoryState>(
-        valueListenable: categoryController.state,
-        builder: (context, state, child) {
-          if (state.status == CategoryStatus.loading) {
+      appBar: AppBar(title: const Text('Categorias')),
+      body: StreamBuilder<List<CategoryEntity>>(
+        stream: categoryController.categoriesStream,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
-          } else if (state.status == CategoryStatus.error) {
-            return Center(child: Text('Error: ${state.errorMessage}'));
-          } else if (state.status == CategoryStatus.success) {
-            return ListView.builder(
-              itemCount: state.categories.length,
-              itemBuilder: (context, index) {
-                final category = state.categories[index];
-                return ListTile(
-                  title: Text(category.name),
-                );
-              },
-            );
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No categories found.'));
           }
-          return Center(
-            child: ElevatedButton(
-              onPressed: categoryController.fetchCategories,
-              child: Text('Press the button to fetch categories.'),
-            ),
+
+          final categories = snapshot.data!;
+
+          return ListView.separated(
+            itemCount: categories.length,
+            separatorBuilder: (context, index) => const Divider(),
+            itemBuilder: (context, index) {
+              final category = categories[index];
+              return ListTile(
+                title: Text(
+                  '${category.name} (limite: ${category.limitMonthly.toStringAsFixed(2)})',
+                ),
+                subtitle: Text(
+                  'Disponível: ${(category.balance).toStringAsFixed(2)}',
+                ),
+                trailing: Icon(Icons.edit),
+              );
+            },
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => modalCreateCategory(context),
         // onPressed: categoryController.fetchCategories,
-        child: const Icon(Icons.refresh),
+        child: const Icon(Icons.add),
       ),
     );
   }
