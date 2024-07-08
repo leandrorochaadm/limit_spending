@@ -12,7 +12,10 @@ class CategoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Categorias')),
+      appBar: AppBar(
+        title: const Text('Categorias'),
+        elevation: 7,
+      ),
       body: StreamBuilder<List<CategoryEntity>>(
         stream: categoryController.categoriesStream,
         builder: (context, snapshot) {

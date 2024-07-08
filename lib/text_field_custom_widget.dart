@@ -68,6 +68,7 @@ class TextFieldCustomWidget extends StatelessWidget {
           maxLines: maxLines,
           minLines: maxLines,
           inputFormatters: inputFormatters,
+          textCapitalization: TextCapitalization.sentences,
           decoration: InputDecoration(
             floatingLabelBehavior: FloatingLabelBehavior.always,
             filled: true,
