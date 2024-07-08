@@ -5,25 +5,26 @@ import '../../domain/repositories/category_repository.dart';
 import '../models/category_model.dart';
 
 class CategoryFirebaseRepository implements CategoryRepository {
+  static const collectionPath = 'categories';
   final FirebaseFirestore firestore;
   CategoryFirebaseRepository(this.firestore);
 
   @override
   Future<void> createCategory(CategoryEntity category) async {
     await firestore
-        .collection('categories')
+        .collection(collectionPath)
         .doc(category.id)
         .set(category.toModel().toJson());
   }
 
   @override
   Future<void> deleteCategory(String categoryId) async {
-    await firestore.collection('categories').doc(categoryId).delete();
+    await firestore.collection(collectionPath).doc(categoryId).delete();
   }
 
   @override
   Stream<List<CategoryEntity>> getCategories() {
-    return firestore.collection('categories').snapshots().map(
+    return firestore.collection(collectionPath).snapshots().map(
       (QuerySnapshot<Map<String, dynamic>> snapshot) {
         return snapshot.docs.map(
           (QueryDocumentSnapshot<Map<String, dynamic>> doc) {
@@ -37,7 +38,7 @@ class CategoryFirebaseRepository implements CategoryRepository {
   @override
   Future<void> updateCategory(CategoryEntity category) async {
     await firestore
-        .collection('categories')
+        .collection(collectionPath)
         .doc(category.id)
         .update(category.toModel().toJson());
   }

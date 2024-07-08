@@ -3,8 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'features/category/data/repositories/category_firebase_repository.dart';
-import 'features/category/domain/usecases/category_create_usecase.dart';
-import 'features/category/domain/usecases/get_categories_usecase.dart';
+import 'features/category/domain/usecases/usecases.dart';
 import 'features/category/presentation/manager/category_controler.dart';
 import 'features/category/presentation/pages/category_page.dart';
 import 'firebase_options.dart';
@@ -17,9 +16,11 @@ Future<void> main() async {
   final categoryRepository = CategoryFirebaseRepository(firestore);
   final getCategoriesUseCase = GetCategoriesUseCase(categoryRepository);
   final createCategoryUseCase = CreateCategoryUseCase(categoryRepository);
+  final updateCategoryUseCase = UpdateCategoryUseCase(categoryRepository);
   final categoryController = CategoryController(
     getCategoriesUseCase: getCategoriesUseCase,
     createCategoryUseCase: createCategoryUseCase,
+    updateCategoryUseCase: updateCategoryUseCase,
   );
 
   runApp(MyApp(categoryController: categoryController));

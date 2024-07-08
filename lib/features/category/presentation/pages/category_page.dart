@@ -38,7 +38,8 @@ class CategoryPage extends StatelessWidget {
                 subtitle: Text(
                   'Disponível: ${(category.balance).toStringAsFixed(2)}',
                 ),
-                trailing: Icon(Icons.edit),
+                trailing: const Icon(Icons.edit),
+                onTap: () => modalCreateCategory(context, category: category),
               );
             },
           );
@@ -52,11 +53,17 @@ class CategoryPage extends StatelessWidget {
     );
   }
 
-  Future<dynamic> modalCreateCategory(BuildContext context) {
-    final TextEditingController nameEC = TextEditingController();
+  Future<dynamic> modalCreateCategory(
+    BuildContext context, {
+    CategoryEntity? category,
+  }) {
+    final bool isEdit = category != null;
+    final TextEditingController nameEC =
+        TextEditingController(text: category?.name);
     final FocusNode nameFN = FocusNode();
 
-    final TextEditingController limitEC = TextEditingController();
+    final TextEditingController limitEC =
+        TextEditingController(text: category?.limitMonthly.toStringAsFixed(2));
     final FocusNode limitFN = FocusNode();
 
     return showModalBottomSheet(
@@ -95,18 +102,31 @@ class CategoryPage extends StatelessWidget {
                   textStyle: Theme.of(context).textTheme.bodyMedium,
                 ),
                 onPressed: () {
-                  categoryController.createCategory(
-                    CategoryEntity(
-                      name: nameEC.text,
-                      created: DateTime.now(),
-                      limitMonthly:
-                          limitEC.text.isEmpty ? 0 : double.parse(limitEC.text),
-                      consumed: 0,
-                    ),
-                  );
+                  if (isEdit) {
+                    CategoryEntity categoryUpdate = category.toModel().copyWith(
+                          name: nameEC.text,
+                          limitMonthly: limitEC.text.isEmpty
+                              ? 0
+                              : double.parse(limitEC.text),
+                        );
+                    categoryController.updateCategory(categoryUpdate);
+                  } else {
+                    categoryController.createCategory(
+                      CategoryEntity(
+                        name: nameEC.text,
+                        created: DateTime.now(),
+                        limitMonthly: limitEC.text.isEmpty
+                            ? 0
+                            : double.parse(limitEC.text),
+                        consumed: 0,
+                      ),
+                    );
+                  }
                   Navigator.of(contextModal).pop();
                 },
-                child: const Text('Criar categoria'),
+                child: isEdit
+                    ? const Text('Editar categoria')
+                    : const Text('Criar categoria'),
               ),
             ],
           ),
