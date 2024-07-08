@@ -1,16 +1,19 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 import '../../features/category/category.dart';
+import 'firestoreFactory.dart';
 
-CategoryController categoryControllerFactory(FirebaseFirestore firestore) {
-  final categoryRepository = CategoryFirebaseRepository(firestore);
-  final getCategoriesUseCase = GetCategoriesUseCase(categoryRepository);
-  final createCategoryUseCase = CreateCategoryUseCase(categoryRepository);
-  final updateCategoryUseCase = UpdateCategoryUseCase(categoryRepository);
+CategoryFirebaseRepository makeCategoryRepository() =>
+    CategoryFirebaseRepository(makeFirestore());
+GetCategoriesUseCase makeGetCategoriesUseCase() =>
+    GetCategoriesUseCase(makeCategoryRepository());
+CreateCategoryUseCase makeCreateCategoryUseCase() =>
+    CreateCategoryUseCase(makeCategoryRepository());
+UpdateCategoryUseCase makeUpdateCategoryUseCase() =>
+    UpdateCategoryUseCase(makeCategoryRepository());
+CategoryController categoryControllerFactory() {
   final categoryController = CategoryController(
-    getCategoriesUseCase: getCategoriesUseCase,
-    createCategoryUseCase: createCategoryUseCase,
-    updateCategoryUseCase: updateCategoryUseCase,
+    getCategoriesUseCase: makeGetCategoriesUseCase(),
+    createCategoryUseCase: makeCreateCategoryUseCase(),
+    updateCategoryUseCase: makeUpdateCategoryUseCase(),
   );
   return categoryController;
 }

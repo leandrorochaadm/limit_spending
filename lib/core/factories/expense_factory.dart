@@ -1,9 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 import '../../features/expense/expense.dart';
+import 'category_factory.dart';
+import 'firestoreFactory.dart';
 
-ExpenseController expenseControllerFactory(FirebaseFirestore firestore) {
-  final expenseRepository = ExpenseFirebaseRepository(firestore: firestore);
+ExpenseController expenseControllerFactory() {
+  final expenseRepository =
+      ExpenseFirebaseRepository(firestore: makeFirestore());
   final getExpensesUseCase = GetExpensesUseCase(expenseRepository);
   final createExpenseUseCase = CreateExpenseUseCase(expenseRepository);
   final updateExpenseUseCase = UpdateExpenseUseCase(expenseRepository);
@@ -13,6 +14,7 @@ ExpenseController expenseControllerFactory(FirebaseFirestore firestore) {
     createExpenseUseCase: createExpenseUseCase,
     updateExpenseUseCase: updateExpenseUseCase,
     deleteExpenseUseCase: deleteExpenseUseCase,
+    getCategoriesUseCase: makeGetCategoriesUseCase(),
   );
   return expenseController;
 }
