@@ -18,3 +18,4 @@ linter:
     - one_member_abstracts
     - only_throw_errors
     - require_trailing_commas
+    - prefer_relative_imports
