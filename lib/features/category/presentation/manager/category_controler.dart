@@ -17,7 +17,18 @@ class CategoryController {
     required this.updateCategoryUseCase,
   });
 
-  Stream<List<CategoryEntity>> get categoriesStream => getCategoriesUseCase();
+  Stream<List<CategoryEntity>> get categoriesStream {
+    state.value = state.value.copyWith(status: CategoryStatus.success);
+    try {
+      return getCategoriesUseCase();
+    } catch (e) {
+      state.value = state.value.copyWith(
+        status: CategoryStatus.error,
+        errorMessage: 'Erro ao obter categorias',
+      );
+    }
+    return Stream.value([]);
+  }
 
   void createCategory(CategoryEntity category) async {
     state.value = state.value.copyWith(status: CategoryStatus.loading);

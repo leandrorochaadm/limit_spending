@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../text_field_custom_widget.dart';
+import '../../category/presentation/pages/category_page.dart';
 import '../domain/domain.dart';
 import 'expense_controller.dart';
 import 'expense_state.dart';
@@ -14,7 +15,17 @@ class ExpensePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Despesas'), elevation: 7),
+      appBar: AppBar(
+        title: const Text('Despesas'),
+        elevation: 7,
+        actions: [
+          IconButton.outlined(
+            onPressed: () =>
+                Navigator.pushNamed(context, CategoryPage.routeName),
+            icon: const Icon(Icons.category),
+          ),
+        ],
+      ),
       body: Stack(
         children: [
           StreamBuilder<List<ExpenseEntity>>(
@@ -35,15 +46,34 @@ class ExpensePage extends StatelessWidget {
                 separatorBuilder: (_, __) => const Divider(),
                 itemBuilder: (context, index) {
                   final expense = expenses[index];
-                  return ListTile(
-                    title: Text(
-                      '${expense.description} (${DateFormat('dd/MM HH:mm').format(expense.created)})',
+                  return Dismissible(
+                    key: Key(expense.id),
+                    direction: DismissDirection.endToStart,
+                    onDismissed: (direction) {
+                      expenseController.deleteExpense(expense);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('${expense.description} foi removido'),
+                        ),
+                      );
+                    },
+                    background: Container(
+                      color: Theme.of(context).colorScheme.error,
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: const Icon(Icons.delete, color: Colors.white),
                     ),
-                    subtitle: Text(
-                      'Valor: ${(expense.value).toStringAsFixed(2)}',
+                    child: ListTile(
+                      title: Text(
+                        '${expense.description} (${DateFormat('dd/MM HH:mm').format(expense.created)})',
+                      ),
+                      subtitle: Text(
+                        'Valor: ${(expense.value).toStringAsFixed(2)}',
+                      ),
+                      trailing: const Icon(Icons.edit),
+                      onTap: () =>
+                          modalCreateExpense(context, expense: expense),
                     ),
-                    trailing: const Icon(Icons.edit),
-                    onTap: () => modalCreateExpense(context, expense: expense),
                   );
                 },
               );
