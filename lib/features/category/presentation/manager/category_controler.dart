@@ -27,7 +27,10 @@ class CategoryController {
       await createCategoryUseCase(category);
       state.value = state.value.copyWith(status: CategoryStatus.success);
     } catch (e) {
-      state.value = state.value.copyWith(status: CategoryStatus.error);
+      state.value = state.value.copyWith(
+        status: CategoryStatus.error,
+        errorMessage: 'Erro ao criar categoria',
+      );
     }
   }
 
@@ -37,7 +40,10 @@ class CategoryController {
       await updateCategoryUseCase(category);
       state.value = state.value.copyWith(status: CategoryStatus.success);
     } catch (e) {
-      state.value = state.value.copyWith(status: CategoryStatus.error);
+      state.value = state.value.copyWith(
+        status: CategoryStatus.error,
+        errorMessage: 'Erro ao atualizar categoria',
+      );
     }
   }
 }

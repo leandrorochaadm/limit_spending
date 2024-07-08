@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../text_field_custom_widget.dart';
 import '../../domain/entities/category_entity.dart';
 import '../manager/category_controler.dart';
+import '../manager/category_state.dart';
 
 class CategoryPage extends StatelessWidget {
   const CategoryPage({super.key, required this.categoryController});
@@ -12,45 +13,64 @@ class CategoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Categorias'),
-        elevation: 7,
-      ),
-      body: StreamBuilder<List<CategoryEntity>>(
-        stream: categoryController.categoriesStream,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No categories found.'));
-          }
+      appBar: AppBar(title: const Text('Categorias'), elevation: 7),
+      body: Stack(
+        children: [
+          StreamBuilder<List<CategoryEntity>>(
+            stream: categoryController.categoriesStream,
+            builder: (_, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return const Center(child: Text('No categories found.'));
+              }
 
-          final categories = snapshot.data!;
+              final categories = snapshot.data!;
 
-          return ListView.separated(
-            itemCount: categories.length,
-            separatorBuilder: (context, index) => const Divider(),
-            itemBuilder: (context, index) {
-              final category = categories[index];
-              return ListTile(
-                title: Text(
-                  '${category.name} (limite: ${category.limitMonthly.toStringAsFixed(2)})',
-                ),
-                subtitle: Text(
-                  'Disponível: ${(category.balance).toStringAsFixed(2)}',
-                ),
-                trailing: const Icon(Icons.edit),
-                onTap: () => modalCreateCategory(context, category: category),
+              return ListView.separated(
+                itemCount: categories.length,
+                separatorBuilder: (_, __) => const Divider(),
+                itemBuilder: (context, index) {
+                  final category = categories[index];
+                  return ListTile(
+                    title: Text(
+                      '${category.name} (limite: ${category.limitMonthly.toStringAsFixed(2)})',
+                    ),
+                    subtitle: Text(
+                      'Disponível: ${(category.balance).toStringAsFixed(2)}',
+                    ),
+                    trailing: const Icon(Icons.edit),
+                    onTap: () =>
+                        modalCreateCategory(context, category: category),
+                  );
+                },
               );
             },
-          );
-        },
+          ),
+          ValueListenableBuilder<CategoryState>(
+            valueListenable: categoryController.state,
+            builder: (context, state, __) {
+              if (state.status == CategoryStatus.error) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.errorMessage ?? 'Erro desconhecido'),
+                    ),
+                  );
+                });
+              }
+              if (state.status == CategoryStatus.loading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => modalCreateCategory(context),
-        // onPressed: categoryController.fetchCategories,
         child: const Icon(Icons.add),
       ),
     );
