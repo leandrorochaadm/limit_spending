@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../category/domain/entities/category_entity.dart';
-import '../../category/domain/usecases/get_categories_usecase.dart';
 import '../domain/domain.dart';
 import 'expense_state.dart';
 
@@ -10,7 +8,6 @@ class ExpenseController {
   final CreateExpenseUseCase createExpenseUseCase;
   final UpdateExpenseUseCase updateExpenseUseCase;
   final DeleteExpenseUseCase deleteExpenseUseCase;
-  final GetCategoriesUseCase getCategoriesUseCase;
 
   ValueNotifier<ExpenseState> state = ValueNotifier<ExpenseState>(
     ExpenseState(status: ExpenseStatus.initial),
@@ -21,7 +18,6 @@ class ExpenseController {
     required this.createExpenseUseCase,
     required this.updateExpenseUseCase,
     required this.deleteExpenseUseCase,
-    required this.getCategoriesUseCase,
   });
 
   Stream<List<ExpenseEntity>> get expensesStream {
@@ -74,17 +70,5 @@ class ExpenseController {
         errorMessage: 'Erro ao atualizar despesa',
       );
     }
-  }
-
-  Stream<List<CategoryEntity>> categoriesStream() {
-    try {
-      return getCategoriesUseCase();
-    } catch (e) {
-      state.value = state.value.copyWith(
-        status: ExpenseStatus.error,
-        errorMessage: 'Erro ao obter categorias',
-      );
-    }
-    return Stream.value([]);
   }
 }

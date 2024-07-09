@@ -10,7 +10,10 @@ import 'expense_state.dart';
 class ExpensePage extends StatelessWidget {
   static const String routeName = '/expense';
   final ExpenseController expenseController;
-  const ExpensePage({super.key, required this.expenseController});
+  const ExpensePage({
+    super.key,
+    required this.expenseController,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +113,6 @@ class ExpensePage extends StatelessWidget {
   Future<dynamic> modalCreateExpense(
     BuildContext context, {
     ExpenseEntity? expense,
-    List<CategoryEntity>? categories,
   }) {
     final bool isEdit = expense != null;
     final TextEditingController descriptionEC =
@@ -120,8 +122,6 @@ class ExpensePage extends StatelessWidget {
     final TextEditingController valueEC =
         TextEditingController(text: expense?.value.toStringAsFixed(2));
     final FocusNode valueFN = FocusNode();
-
-    CategoryEntity? selectedCategory;
 
     return showModalBottomSheet(
       context: context,
@@ -147,82 +147,6 @@ class ExpensePage extends StatelessWidget {
                 keyboardType: TextInputType.number,
               ),
               const SizedBox(height: 24),
-              StreamBuilder<List<CategoryEntity>>(
-                stream: expenseController.categoriesStream(),
-                builder: (_, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(
-                        child: Text('Nenhuma categoria encontrada'));
-                  }
-
-                  final categories = snapshot.data!;
-                  return Autocomplete<CategoryEntity>(
-                    optionsBuilder: (TextEditingValue textEditingValue) {
-                      if (textEditingValue.text.isEmpty) {
-                        return const Iterable<CategoryEntity>.empty();
-                      }
-                      return categories.where((CategoryEntity category) {
-                        return category.name
-                            .toLowerCase()
-                            .contains(textEditingValue.text.toLowerCase());
-                      });
-                    },
-                    displayStringForOption: (CategoryEntity option) =>
-                        option.name,
-                    onSelected: (CategoryEntity selection) {
-                      selectedCategory = selection;
-                      print('Selected: ${selection.name}');
-                    },
-                    fieldViewBuilder: (
-                      BuildContext context,
-                      TextEditingController textEditingController,
-                      FocusNode focusNode,
-                      VoidCallback onFieldSubmitted,
-                    ) {
-                      return TextFieldCustomWidget(
-                        focusNode: focusNode,
-                        controller: textEditingController,
-                        hintText: 'Digite para buscar categorias',
-                      );
-                    },
-                    optionsViewBuilder: (
-                      BuildContext context,
-                      AutocompleteOnSelected<CategoryEntity> onSelected,
-                      Iterable<CategoryEntity> options,
-                    ) {
-                      return Align(
-                        alignment: Alignment.topLeft,
-                        child: Material(
-                          child: SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.8,
-                            child: ListView.builder(
-                              padding: const EdgeInsets.all(8.0),
-                              itemCount: options.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                final CategoryEntity option =
-                                    options.elementAt(index);
-                                return GestureDetector(
-                                  onTap: () {
-                                    onSelected(option);
-                                  },
-                                  child: ListTile(
-                                    title: Text(option.name),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-              const SizedBox(height: 24),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
@@ -235,12 +159,16 @@ class ExpensePage extends StatelessWidget {
                   textStyle: Theme.of(context).textTheme.bodyMedium,
                 ),
                 onPressed: () {
+                  final args = ModalRoute.of(context)!.settings.arguments
+                      as Map<String, dynamic>;
+                  final categoryId = args['categoryId'] as String;
+
                   if (isEdit) {
                     ExpenseEntity expenseUpdate = expense.copyWith(
                       description: descriptionEC.text,
                       value:
                           valueEC.text.isEmpty ? 0 : double.parse(valueEC.text),
-                      categoryId: selectedCategory?.id ?? expense.categoryId,
+                      categoryId: categoryId,
                     );
                     expenseController.updateExpense(expenseUpdate);
                   } else {
@@ -251,7 +179,7 @@ class ExpensePage extends StatelessWidget {
                         value: valueEC.text.isEmpty
                             ? 0
                             : double.parse(valueEC.text),
-                        categoryId: selectedCategory?.id ?? '',
+                        categoryId: categoryId,
                       ),
                     );
                   }

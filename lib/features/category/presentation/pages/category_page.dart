@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../text_field_custom_widget.dart';
+import '../../../expense/expense.dart';
 import '../../domain/entities/category_entity.dart';
 import '../manager/category_controler.dart';
 import '../manager/category_state.dart';
@@ -44,8 +45,14 @@ class CategoryPage extends StatelessWidget {
                       'Disponível: ${(category.balance).toStringAsFixed(2)}',
                     ),
                     trailing: const Icon(Icons.edit),
-                    onTap: () =>
-                        modalCreateCategory(context, category: category),
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        ExpensePage.routeName,
+                        arguments: {'categoryId': category.id},
+                      );
+                    },
+                    // modalCreateCategory(context, category: category),
                   );
                 },
               );

@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         fontFamily: 'Poppins',
       ),
-      initialRoute: ExpensePage.routeName,
+      initialRoute: CategoryPage.routeName,
       routes: {
         ExpensePage.routeName: (context) =>
             ExpensePage(expenseController: expenseController),

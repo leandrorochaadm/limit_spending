@@ -16,7 +16,6 @@ ExpenseController expenseControllerFactory() {
     createExpenseUseCase: createExpenseUseCase,
     updateExpenseUseCase: updateExpenseUseCase,
     deleteExpenseUseCase: deleteExpenseUseCase,
-    getCategoriesUseCase: makeGetCategoriesUseCase(),
   );
   return expenseController;
 }
