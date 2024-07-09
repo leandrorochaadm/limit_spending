@@ -73,7 +73,10 @@ class CategoryPage extends StatelessWidget {
                         Navigator.pushNamed(
                           context,
                           ExpensePage.routeName,
-                          arguments: {'categoryId': category.id},
+                          arguments: {
+                            'categoryId': category.id,
+                            'categoryName': category.name,
+                          },
                         );
                       },
                     ),
@@ -184,9 +187,7 @@ class CategoryPage extends StatelessWidget {
                   }
                   Navigator.of(contextModal).pop();
                 },
-                child: isEdit
-                    ? const Text('Editar categoria')
-                    : const Text('Criar categoria'),
+                child: const Text('Salvar categoria'),
               ),
             ],
           ),

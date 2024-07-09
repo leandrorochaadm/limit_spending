@@ -38,8 +38,12 @@ class ExpenseFirebaseRepository implements ExpenseRepository {
   }
 
   @override
-  Stream<List<ExpenseEntity>> getExpenses() {
-    return firestore.collection(collectionPath).snapshots().map(
+  Stream<List<ExpenseEntity>> getExpenses({required String categoryId}) {
+    return firestore
+        .collection(collectionPath)
+        .where('categoryId', isEqualTo: categoryId)
+        .snapshots()
+        .map(
       (QuerySnapshot<Map<String, dynamic>> snapshot) {
         return snapshot.docs.map(
           (QueryDocumentSnapshot<Map<String, dynamic>> doc) {

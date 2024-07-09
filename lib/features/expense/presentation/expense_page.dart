@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../text_field_custom_widget.dart';
-import '../../category/category.dart';
 import '../domain/domain.dart';
 import 'expense_controller.dart';
 import 'expense_state.dart';
@@ -17,22 +16,20 @@ class ExpensePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final categoryId = args['categoryId'] as String;
+    final categoryName = args['categoryName'] as String;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Despesas'),
+        title: Text('Despesas: $categoryName'),
         elevation: 7,
-        actions: [
-          IconButton.outlined(
-            onPressed: () =>
-                Navigator.pushNamed(context, CategoryPage.routeName),
-            icon: const Icon(Icons.category),
-          ),
-        ],
       ),
       body: Stack(
         children: [
           StreamBuilder<List<ExpenseEntity>>(
-            stream: expenseController.expensesStream,
+            stream: expenseController.expensesStream(categoryId),
             builder: (_, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -110,7 +107,7 @@ class ExpensePage extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => modalCreateExpense(context),
+        onPressed: () => modalCreateExpense(context, categoryId: categoryId),
         child: const Icon(Icons.add),
       ),
     );
@@ -119,6 +116,7 @@ class ExpensePage extends StatelessWidget {
   Future<dynamic> modalCreateExpense(
     BuildContext context, {
     ExpenseEntity? expense,
+    String categoryId = '',
   }) {
     final bool isEdit = expense != null;
     final TextEditingController descriptionEC =
@@ -165,10 +163,6 @@ class ExpensePage extends StatelessWidget {
                   textStyle: Theme.of(context).textTheme.bodyMedium,
                 ),
                 onPressed: () {
-                  final args = ModalRoute.of(context)!.settings.arguments
-                      as Map<String, dynamic>;
-                  final categoryId = args['categoryId'] as String;
-
                   if (isEdit) {
                     ExpenseEntity expenseUpdate = expense.copyWith(
                       description: descriptionEC.text,
@@ -191,9 +185,7 @@ class ExpensePage extends StatelessWidget {
                   }
                   Navigator.of(contextModal).pop();
                 },
-                child: isEdit
-                    ? const Text('Editar despesa')
-                    : const Text('Criar despesa'),
+                child: const Text('Salvar despesa'),
               ),
             ],
           ),

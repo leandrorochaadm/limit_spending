@@ -20,10 +20,10 @@ class ExpenseController {
     required this.deleteExpenseUseCase,
   });
 
-  Stream<List<ExpenseEntity>> get expensesStream {
+  Stream<List<ExpenseEntity>> expensesStream(String categoryId) {
     state.value = state.value.copyWith(status: ExpenseStatus.success);
     try {
-      return getExpensesUseCase();
+      return getExpensesUseCase(categoryId);
     } catch (e) {
       state.value = state.value.copyWith(
         status: ExpenseStatus.error,
