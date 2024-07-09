@@ -54,11 +54,14 @@ class ExpensePage extends StatelessWidget {
                     direction: DismissDirection.endToStart,
                     onDismissed: (direction) {
                       expenseController.deleteExpense(expense);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('${expense.description} foi removido'),
-                        ),
-                      );
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content:
+                                Text('${expense.description} foi removido'),
+                          ),
+                        );
+                      }
                     },
                     background: Container(
                       color: Theme.of(context).colorScheme.error,
@@ -87,12 +90,15 @@ class ExpensePage extends StatelessWidget {
             builder: (context, state, __) {
               if (state.status == ExpenseStatus.error) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: Theme.of(context).colorScheme.error,
-                      content: Text(state.errorMessage ?? 'Erro desconhecido'),
-                    ),
-                  );
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: Theme.of(context).colorScheme.error,
+                        content:
+                            Text(state.errorMessage ?? 'Erro desconhecido'),
+                      ),
+                    );
+                  }
                 });
               }
               if (state.status == ExpenseStatus.loading) {

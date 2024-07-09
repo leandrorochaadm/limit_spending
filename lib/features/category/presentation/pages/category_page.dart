@@ -8,9 +8,10 @@ import '../manager/category_state.dart';
 
 class CategoryPage extends StatelessWidget {
   static const String routeName = '/category';
-  const CategoryPage({super.key, required this.categoryController});
+  CategoryPage({super.key, required this.categoryController});
 
   final CategoryController categoryController;
+  bool actionExecuted = false; // Flag para controlar a execução
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,8 @@ class CategoryPage extends StatelessWidget {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return const Center(
-                    child: Text('Nenhuma categoria encontrada'));
+                  child: Text('Nenhuma categoria encontrada'),
+                );
               }
 
               final categories = snapshot.data!;
@@ -37,22 +39,44 @@ class CategoryPage extends StatelessWidget {
                 separatorBuilder: (_, __) => const Divider(),
                 itemBuilder: (context, index) {
                   final category = categories[index];
-                  return ListTile(
-                    title: Text(
-                      '${category.name} (limite: ${category.limitMonthly.toStringAsFixed(2)})',
-                    ),
-                    subtitle: Text(
-                      'Disponível: ${(category.balance).toStringAsFixed(2)}',
-                    ),
-                    trailing: const Icon(Icons.edit),
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        ExpensePage.routeName,
-                        arguments: {'categoryId': category.id},
-                      );
+
+                  return Dismissible(
+                    key: Key(category.id),
+                    direction: DismissDirection.startToEnd,
+                    onUpdate: (details) {
+                      if (!actionExecuted && details.progress > 0.5) {
+                        actionExecuted = true; // Marca a ação como executada
+                        modalCreateCategory(context, category: category);
+                      }
                     },
-                    // modalCreateCategory(context, category: category),
+                    confirmDismiss: (direction) async {
+                      return false; // Retorne false para não descartar o item
+                    },
+                    background: Container(
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                      alignment: Alignment.centerLeft,
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: Icon(
+                        Icons.edit,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                    child: ListTile(
+                      title: Text(
+                        '${category.name} (limite: ${category.limitMonthly.toStringAsFixed(2)})',
+                      ),
+                      subtitle: Text(
+                        'Disponível: ${(category.balance).toStringAsFixed(2)}',
+                      ),
+                      trailing: const Icon(Icons.arrow_forward_ios),
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          ExpensePage.routeName,
+                          arguments: {'categoryId': category.id},
+                        );
+                      },
+                    ),
                   );
                 },
               );
@@ -63,12 +87,15 @@ class CategoryPage extends StatelessWidget {
             builder: (context, state, __) {
               if (state.status == CategoryStatus.error) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: Theme.of(context).colorScheme.error,
-                      content: Text(state.errorMessage ?? 'Erro desconhecido'),
-                    ),
-                  );
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: Theme.of(context).colorScheme.error,
+                        content:
+                            Text(state.errorMessage ?? 'Erro desconhecido'),
+                      ),
+                    );
+                  }
                 });
               }
               if (state.status == CategoryStatus.loading) {
@@ -164,6 +191,10 @@ class CategoryPage extends StatelessWidget {
             ],
           ),
         );
+      },
+    ).whenComplete(
+      () {
+        actionExecuted = false;
       },
     );
   }
