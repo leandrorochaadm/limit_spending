@@ -61,7 +61,7 @@ class TextFieldCustomWidget extends StatelessWidget {
           readOnly: readOnly,
           focusNode: focusNode,
           autocorrect: false,
-          enableSuggestions: false,
+          enableSuggestions: true,
           textInputAction: TextInputAction.done,
           // style: AppTextStyles.primaryDark16w500,
           keyboardType: keyboardType,
