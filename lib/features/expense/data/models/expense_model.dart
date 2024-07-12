@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../domain/entities/expense_entity.dart';
@@ -15,7 +16,7 @@ class ExpenseModel extends ExpenseEntity with EquatableMixin {
     return ExpenseModel(
       id: json['id'] as String,
       value: double.parse(json['value'].toString()),
-      created: DateTime.parse(json['created'].toString()),
+      created: (json['created'] as Timestamp).toDate(),
       categoryId: json['categoryId'] as String,
       description: json['description'] as String,
     );
@@ -25,7 +26,7 @@ class ExpenseModel extends ExpenseEntity with EquatableMixin {
     return {
       'id': id,
       'value': value,
-      'created': created.toIso8601String(),
+      'created': Timestamp.fromDate(created),
       'categoryId': categoryId,
       'description': description,
     };

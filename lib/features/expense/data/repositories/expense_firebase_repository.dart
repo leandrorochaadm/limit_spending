@@ -57,19 +57,27 @@ class ExpenseFirebaseRepository implements ExpenseRepository {
   }
 
   @override
+  Stream<List<ExpenseEntity>> getExpensesByPeriodCreated({
+    required String categoryId,
+    DateTime? startDate,
+    required DateTime endDate,
+  }) {
+    return getExpenses(categoryId: categoryId)
+        .map((List<ExpenseEntity> expenses) {
+      return expenses.where((expense) {
+        final bool isAfterStartDate =
+            startDate == null || expense.created.isAfter(startDate);
+        final bool isBeforeEndDate = expense.created.isBefore(endDate);
+        return isAfterStartDate && isBeforeEndDate;
+      }).toList();
+    });
+  }
+
+  @override
   Future<void> updateExpense(ExpenseModel expense) async {
     await firestore
         .collection(collectionPath)
         .doc(expense.id)
         .update(expense.toJson());
-
-    // if (expense.categoryId.isNotEmpty) {
-    //   // final category = await categoryRepository.categoryById(expense.categoryId!);
-    //   // categoryRepository.updateCategoryConsumed(category.id, category.consumed - expense.value);
-    //   await categoryRepository.addConsumedCategory(
-    //     expense.categoryId,
-    //     expense.value,
-    //   );
-    // }
   }
 }

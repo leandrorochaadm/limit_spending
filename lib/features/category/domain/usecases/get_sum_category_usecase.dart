@@ -9,9 +9,10 @@ class GetSumCategoryUseCase {
     required this.getExpensesByCreatedUseCase,
     required this.getCategoryByIdUseCase,
   });
-  Future<Stream<CategorySumEntity>> call(String categoryId) async {
-    final double limit = await getCategoryByIdUseCase(categoryId)
-        .then((category) => category.limitMonthly);
+  Stream<CategorySumEntity> call({
+    required String categoryId,
+    required double limit,
+  }) {
     return getExpensesByCreatedUseCase(
       categoryId: categoryId,
       endDate: DateTime.now().add(const Duration(days: 30)),

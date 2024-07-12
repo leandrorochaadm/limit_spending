@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../category/category.dart';
+import '../../category/domain/domain.dart';
 import '../domain/domain.dart';
 import 'expense_state.dart';
 
@@ -10,6 +10,7 @@ class ExpenseController {
   final UpdateExpenseUseCase updateExpenseUseCase;
   final DeleteExpenseUseCase deleteExpenseUseCase;
   final GetSumCategoryUseCase getSumCategoryUseCase;
+  final GetExpensesByCreatedUseCase getExpensesByCreatedUseCase;
 
   ValueNotifier<ExpenseState> state = ValueNotifier<ExpenseState>(
     ExpenseState(status: ExpenseStatus.initial),
@@ -21,12 +22,16 @@ class ExpenseController {
     required this.updateExpenseUseCase,
     required this.deleteExpenseUseCase,
     required this.getSumCategoryUseCase,
+    required this.getExpensesByCreatedUseCase,
   });
 
   Stream<List<ExpenseEntity>> expensesStream(String categoryId) {
     state.value = state.value.copyWith(status: ExpenseStatus.success);
     try {
-      return getExpensesUseCase(categoryId);
+      return getExpensesByCreatedUseCase(
+        categoryId: categoryId,
+        endDate: DateTime.now().add(const Duration(days: 30)),
+      );
     } catch (e) {
       state.value = state.value.copyWith(
         status: ExpenseStatus.error,
@@ -75,6 +80,12 @@ class ExpenseController {
     }
   }
 
-  Stream<CategorySumEntity> getSumByCategory(String categoryId) =>
-      getSumCategoryUseCase(categoryId);
+  Stream<CategorySumEntity> getSumByCategory({
+    required String categoryId,
+    required double categoryLimit,
+  }) =>
+      getSumCategoryUseCase(
+        categoryId: categoryId,
+        limit: categoryLimit,
+      );
 }

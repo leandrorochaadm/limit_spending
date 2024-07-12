@@ -6,4 +6,9 @@ abstract class ExpenseRepository {
   Future<void> createExpense(ExpenseModel expense);
   Future<void> updateExpense(ExpenseModel expense);
   Future<void> deleteExpense(ExpenseModel expense);
+  Stream<List<ExpenseEntity>> getExpensesByPeriodCreated({
+    required String categoryId,
+    DateTime? startDate,
+    required DateTime endDate,
+  });
 }

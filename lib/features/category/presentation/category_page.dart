@@ -37,7 +37,7 @@ class CategoryPage extends StatelessWidget {
                   final sumEntity = categorySum.data!;
 
                   return Text(
-                    'Limite mensal: R\$ ${sumEntity.limit.toStringAsFixed(2)}\nConsumido: R\$ ${sumEntity.consumed.toStringAsFixed(2)}\nSaldo: R\$ ${sumEntity.balance.toStringAsFixed(2)}',
+                    'Limite mensal: R\$ ${sumEntity.limit.toStringAsFixed(2)}\nDisponível: R\$ ${sumEntity.balance.toStringAsFixed(2)}',
                     textAlign: TextAlign.center,
                   );
                 }
@@ -106,6 +106,7 @@ class CategoryPage extends StatelessWidget {
                           arguments: {
                             'categoryId': category.id,
                             'categoryName': category.name,
+                            'categoryLimit': category.limitMonthly,
                           },
                         );
                       },

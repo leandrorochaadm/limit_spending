@@ -21,6 +21,7 @@ class ExpensePage extends StatelessWidget {
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final categoryId = args['categoryId'] as String;
     final categoryName = args['categoryName'] as String;
+    final categoryLimit = args['categoryLimit'] as double;
 
     return Scaffold(
       appBar: AppBar(title: Text('Despesas: $categoryName'), elevation: 7),
@@ -34,19 +35,23 @@ class ExpensePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             StreamBuilder<CategorySumEntity>(
-              stream: expenseController.getSumByCategory(categoryId),
+              stream: expenseController.getSumByCategory(
+                categoryId: categoryId,
+                categoryLimit: categoryLimit,
+              ),
               builder: (context, categorySum) {
                 if (categorySum.connectionState == ConnectionState.waiting) {
                   return const CircularProgressIndicator();
                 }
                 if (categorySum.hasError) {
+                  debugPrint(categorySum.error.toString());
                   return Text('Error: ${categorySum.error}');
                 }
                 if (categorySum.hasData) {
                   final sumEntity = categorySum.data!;
 
                   return Text(
-                    'Limite mensal: R\$ ${sumEntity.limit.toStringAsFixed(2)}\nConsumido: R\$ ${sumEntity.consumed.toStringAsFixed(2)}\nSaldo: R\$ ${sumEntity.balance.toStringAsFixed(2)}',
+                    'Limite mensal: R\$ ${sumEntity.limit.toStringAsFixed(2)}\nConsumido nos ultimos 30 dias: R\$ ${sumEntity.consumed.toStringAsFixed(2)}\nDisponível: R\$ ${sumEntity.balance.toStringAsFixed(2)}',
                     textAlign: TextAlign.center,
                   );
                 }

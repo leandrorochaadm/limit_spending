@@ -1,4 +1,4 @@
-import '../../features/category/domain/usecases/get_sum_category_usecase.dart';
+import '../../features/category/domain/domain.dart';
 import '../../features/expense/expense.dart';
 import 'category_factory.dart';
 import 'firestore_factory.dart';
@@ -8,11 +8,26 @@ ExpenseController expenseControllerFactory() {
     firestore: makeFirestore(),
     categoryRepository: makeCategoryRepository(),
   );
+
   final getExpensesUseCase = GetExpensesUseCase(expenseRepository);
+
   final createExpenseUseCase = CreateExpenseUseCase(expenseRepository);
+
   final updateExpenseUseCase = UpdateExpenseUseCase(expenseRepository);
+
   final deleteExpenseUseCase = DeleteExpenseUseCase(expenseRepository);
-  final getSumCategoryUseCase = GetSumCategoryUseCase(makeCategoryRepository());
+
+  final getExpensesByCreatedUseCase =
+      GetExpensesByCreatedUseCase(expenseRepository);
+
+  final CategoryRepository categoryRepository = makeCategoryRepository();
+
+  final getCategoryByIdUseCase = GetCategoryByIdUseCase(categoryRepository);
+
+  final getSumCategoryUseCase = GetSumCategoryUseCase(
+    getExpensesByCreatedUseCase: getExpensesByCreatedUseCase,
+    getCategoryByIdUseCase: getCategoryByIdUseCase,
+  );
 
   final expenseController = ExpenseController(
     getExpensesUseCase: getExpensesUseCase,
@@ -20,6 +35,7 @@ ExpenseController expenseControllerFactory() {
     updateExpenseUseCase: updateExpenseUseCase,
     deleteExpenseUseCase: deleteExpenseUseCase,
     getSumCategoryUseCase: getSumCategoryUseCase,
+    getExpensesByCreatedUseCase: getExpensesByCreatedUseCase,
   );
   return expenseController;
 }
