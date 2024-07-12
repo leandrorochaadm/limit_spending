@@ -1,10 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-import 'core/factories/category_factory.dart';
-import 'core/factories/expense_factory.dart';
-import 'features/category/presentation/manager/category_controler.dart';
-import 'features/category/presentation/pages/category_page.dart';
+import 'core/factories/factories.dart';
+import 'features/category/presentation/presentation.dart';
 import 'features/expense/expense.dart';
 import 'firebase_options.dart';
 
@@ -16,10 +14,12 @@ Future<void> main() async {
   final categoryController = categoryControllerFactory();
   final expenseController = expenseControllerFactory();
 
-  runApp(MyApp(
-    categoryController: categoryController,
-    expenseController: expenseController,
-  ));
+  runApp(
+    MyApp(
+      categoryController: categoryController,
+      expenseController: expenseController,
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

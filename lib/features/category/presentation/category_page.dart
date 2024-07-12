@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/core.dart';
-import '../../../expense/expense.dart';
-import '../../domain/entities/category_entity.dart';
-import '../manager/category_controler.dart';
-import '../manager/category_state.dart';
+import '../../../core/core.dart';
+import '../../expense/expense.dart';
+import '../domain/entities/category_entity.dart';
+import 'presentation.dart';
 
 class CategoryPage extends StatelessWidget {
   static const String routeName = '/category';
@@ -20,7 +19,7 @@ class CategoryPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Categorias'), elevation: 7),
       bottomSheet: Padding(
-        padding: EdgeInsets.symmetric(vertical: 24.0),
+        padding: const EdgeInsets.symmetric(vertical: 24.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

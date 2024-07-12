@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import '../../domain/domain.dart';
-import 'category_state.dart';
+import '../category.dart';
 
 class CategoryController {
   final GetCategoriesUseCase getCategoriesUseCase;

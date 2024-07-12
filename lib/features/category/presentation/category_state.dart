@@ -1,4 +1,4 @@
-import '../../domain/entities/category_entity.dart';
+import '../domain/entities/entities.dart';
 
 enum CategoryStatus {
   initial,

@@ -8,8 +8,10 @@ class ExpenseFirebaseRepository implements ExpenseRepository {
   static const collectionPath = 'expenses';
   final FirebaseFirestore firestore;
   final CategoryRepository categoryRepository;
-  ExpenseFirebaseRepository(
-      {required this.categoryRepository, required this.firestore});
+  ExpenseFirebaseRepository({
+    required this.categoryRepository,
+    required this.firestore,
+  });
 
   @override
   Future<void> createExpense(ExpenseModel expense) async {

@@ -54,7 +54,9 @@ class CategoryFirebaseRepository implements CategoryRepository {
   }
 
   Future<void> updateCategoryConsumed(
-      String categoryId, double consumed) async {
+    String categoryId,
+    double consumed,
+  ) async {
     await firestore
         .collection(collectionPath)
         .doc(categoryId)
