@@ -10,6 +10,7 @@ class GetSumCategoryUseCase {
         return CategorySumEntity(
           consumed: category.consumed,
           limit: category.limitMonthly,
+          balance: category.balance,
         );
       },
     );

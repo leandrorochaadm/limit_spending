@@ -15,12 +15,9 @@ class CategoryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Categorias'), elevation: 7),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 42.0),
-        child: FloatingActionButton(
-          onPressed: () => modalCreateCategory(context),
-          child: const Icon(Icons.add),
-        ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => modalCreateCategory(context),
+        child: const Icon(Icons.add),
       ),
       bottomSheet: Padding(
         padding: const EdgeInsets.only(bottom: 36.0, top: 24),
@@ -40,7 +37,7 @@ class CategoryPage extends StatelessWidget {
                   final sumEntity = categorySum.data!;
 
                   return Text(
-                    'Limite: R\$ ${sumEntity.limit.toStringAsFixed(2)} | Consumido: R\$ ${sumEntity.consumed.toStringAsFixed(2)}',
+                    'Limite mensal: R\$ ${sumEntity.limit.toStringAsFixed(2)}\nConsumido: R\$ ${sumEntity.consumed.toStringAsFixed(2)}\nSaldo: R\$ ${sumEntity.balance.toStringAsFixed(2)}',
                     textAlign: TextAlign.center,
                   );
                 }

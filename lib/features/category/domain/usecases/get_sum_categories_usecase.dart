@@ -16,9 +16,15 @@ class GetSumCategoriesUseCase {
         (previousValue, category) => previousValue + category.limitMonthly,
       );
 
+      final totalBalance = categoryList.fold<double>(
+        0,
+        (previousValue, category) => previousValue + category.balance,
+      );
+
       return CategorySumEntity(
         consumed: totalConsumed,
         limit: totalLimit,
+        balance: totalBalance,
       );
     });
   }
