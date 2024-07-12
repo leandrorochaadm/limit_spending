@@ -64,53 +64,78 @@ class CategoryPage extends StatelessWidget {
 
               final categories = snapshot.data!;
 
-              return ListView.separated(
-                itemCount: categories.length,
-                separatorBuilder: (_, __) => const Divider(),
-                itemBuilder: (context, index) {
-                  final category = categories[index];
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 72.0),
+                child: ListView.separated(
+                  itemCount: categories.length,
+                  separatorBuilder: (_, __) => const Divider(),
+                  itemBuilder: (context, index) {
+                    final category = categories[index];
 
-                  return Dismissible(
-                    key: Key(category.id),
-                    direction: DismissDirection.startToEnd,
-                    onUpdate: (details) {
-                      if (!actionExecuted && details.progress > 0.5) {
-                        actionExecuted = true; // Marca a ação como executada
-                        modalCreateCategory(context, category: category);
-                      }
-                    },
-                    confirmDismiss: (direction) async {
-                      return false; // Retorne false para não descartar o item
-                    },
-                    background: Container(
-                      color: Theme.of(context).colorScheme.inversePrimary,
-                      alignment: Alignment.centerLeft,
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Icon(
-                        Icons.edit,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                    child: ListTile(
-                      title: Text(category.name),
-                      subtitle: Text(
-                        'Disponível: ${(category.balance).toStringAsFixed(2)} | limite mensal: ${category.limitMonthly.toStringAsFixed(2)}',
-                      ),
-                      trailing: const Icon(Icons.arrow_forward_ios),
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          ExpensePage.routeName,
-                          arguments: {
-                            'categoryId': category.id,
-                            'categoryName': category.name,
-                            'categoryLimit': category.limitMonthly,
-                          },
-                        );
+                    return Dismissible(
+                      key: Key(category.id),
+                      direction: DismissDirection.startToEnd,
+                      onUpdate: (details) {
+                        if (!actionExecuted && details.progress > 0.5) {
+                          actionExecuted = true; // Marca a ação como executada
+                          modalCreateCategory(context, category: category);
+                        }
                       },
-                    ),
-                  );
-                },
+                      confirmDismiss: (direction) async {
+                        return false; // Retorne false para não descartar o item
+                      },
+                      background: Container(
+                        color: Theme.of(context).colorScheme.inversePrimary,
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: Icon(
+                          Icons.edit,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                      child: StreamBuilder<CategorySumEntity>(
+                        stream: categoryController.getSumByCategory(
+                          categoryId: category.id,
+                          categoryLimit: category.limitMonthly,
+                        ),
+                        builder: (context, categorySnapshot) {
+                          if (categorySnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          }
+
+                          if (categorySnapshot.hasError) {
+                            return Text('Error: ${categorySnapshot.error}');
+                          }
+
+                          if (categorySnapshot.hasData) {
+                            final categorySum = categorySnapshot.data!;
+
+                            return ListTile(
+                              title: Text(category.name),
+                              subtitle: Text(
+                                'Disponível: ${(categorySum.balance).toStringAsFixed(2)} \nConsumo:${categorySum.consumed.toStringAsFixed(2)} \nlimite mensal: ${categorySum.limit.toStringAsFixed(2)}',
+                              ),
+                              trailing: const Icon(Icons.arrow_forward_ios),
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  ExpensePage.routeName,
+                                  arguments: {
+                                    'categoryId': category.id,
+                                    'categoryName': category.name,
+                                    'categoryLimit': category.limitMonthly,
+                                  },
+                                );
+                              },
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                    );
+                  },
+                ),
               );
             },
           ),

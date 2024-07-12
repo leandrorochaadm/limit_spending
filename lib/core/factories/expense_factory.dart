@@ -3,26 +3,24 @@ import '../../features/expense/expense.dart';
 import 'category_factory.dart';
 import 'firestore_factory.dart';
 
+ExpenseFirebaseRepository expenseRepositoryFactory() =>
+    ExpenseFirebaseRepository(
+      firestore: firestoreFactory(),
+      categoryRepository: categoryRepositoryFactory(),
+    );
+GetExpensesByCreatedUseCase getExpensesByCreatedUseCaseFactory() =>
+    GetExpensesByCreatedUseCase(expenseRepositoryFactory());
+
+GetCategoryByIdUseCase getCategoryByIdUseCaseFactory() =>
+    GetCategoryByIdUseCase(categoryRepositoryFactory());
 ExpenseController expenseControllerFactory() {
-  final expenseRepository = ExpenseFirebaseRepository(
-    firestore: makeFirestore(),
-    categoryRepository: makeCategoryRepository(),
-  );
+  final getExpensesUseCase = GetExpensesUseCase(expenseRepositoryFactory());
 
-  final getExpensesUseCase = GetExpensesUseCase(expenseRepository);
+  final createExpenseUseCase = CreateExpenseUseCase(expenseRepositoryFactory());
 
-  final createExpenseUseCase = CreateExpenseUseCase(expenseRepository);
+  final updateExpenseUseCase = UpdateExpenseUseCase(expenseRepositoryFactory());
 
-  final updateExpenseUseCase = UpdateExpenseUseCase(expenseRepository);
-
-  final deleteExpenseUseCase = DeleteExpenseUseCase(expenseRepository);
-
-  final getExpensesByCreatedUseCase =
-      GetExpensesByCreatedUseCase(expenseRepository);
-
-  final CategoryRepository categoryRepository = makeCategoryRepository();
-
-  final getCategoryByIdUseCase = GetCategoryByIdUseCase(categoryRepository);
+  final deleteExpenseUseCase = DeleteExpenseUseCase(expenseRepositoryFactory());
 
   final getSumCategoryUseCase = GetSumCategoryUseCase(
     getExpensesByCreatedUseCase: getExpensesByCreatedUseCase,

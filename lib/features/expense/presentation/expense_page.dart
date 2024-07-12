@@ -76,44 +76,44 @@ class ExpensePage extends StatelessWidget {
 
               final expenses = snapshot.data!;
 
-              return ListView.separated(
-                itemCount: expenses.length,
-                separatorBuilder: (_, __) => const Divider(),
-                itemBuilder: (context, index) {
-                  final expense = expenses[index];
-                  return Dismissible(
-                    key: Key(expense.id),
-                    direction: DismissDirection.endToStart,
-                    onDismissed: (direction) {
-                      expenseController.deleteExpense(expense);
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content:
-                                Text('${expense.description} foi removido'),
-                          ),
-                        );
-                      }
-                    },
-                    background: Container(
-                      color: Theme.of(context).colorScheme.error,
-                      alignment: Alignment.centerRight,
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: const Icon(Icons.delete, color: Colors.white),
-                    ),
-                    child: ListTile(
-                      title: Text(
-                        '${expense.description} (${DateFormat('dd/MM HH:mm').format(expense.created)})',
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 100.0),
+                child: ListView.separated(
+                  itemCount: expenses.length,
+                  separatorBuilder: (_, __) => const Divider(),
+                  itemBuilder: (context, index) {
+                    final expense = expenses[index];
+                    return Dismissible(
+                      key: Key(expense.id),
+                      direction: DismissDirection.endToStart,
+                      onDismissed: (direction) {
+                        expenseController.deleteExpense(expense);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  '${expense.description} ${expense.value.toStringAsFixed(2)} foi removido'),
+                            ),
+                          );
+                        }
+                      },
+                      background: Container(
+                        color: Theme.of(context).colorScheme.error,
+                        alignment: Alignment.centerRight,
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: const Icon(Icons.delete, color: Colors.white),
                       ),
-                      subtitle: Text(
-                        'Valor: ${(expense.value).toStringAsFixed(2)}',
+                      child: ListTile(
+                        title: Text(
+                          '${expense.description} (${DateFormat('dd/MM HH:mm').format(expense.created)})',
+                        ),
+                        subtitle: Text(
+                          'Valor: ${(expense.value).toStringAsFixed(2)}',
+                        ),
                       ),
-                      // trailing: const Icon(Icons.edit),
-                      // onTap: () =>
-                      //     modalCreateExpense(context, expense: expense),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               );
             },
           ),
