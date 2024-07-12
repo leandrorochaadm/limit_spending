@@ -1,6 +1,6 @@
 import '../../features/expense/expense.dart';
 import 'category_factory.dart';
-import 'firestoreFactory.dart';
+import 'firestore_factory.dart';
 
 ExpenseController expenseControllerFactory() {
   final expenseRepository = ExpenseFirebaseRepository(

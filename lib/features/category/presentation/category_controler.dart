@@ -6,6 +6,7 @@ class CategoryController {
   final GetCategoriesUseCase getCategoriesUseCase;
   final CreateCategoryUseCase createCategoryUseCase;
   final UpdateCategoryUseCase updateCategoryUseCase;
+  final GetSumCategoriesUseCase getSumCategoriesUseCase;
   ValueNotifier<CategoryState> state = ValueNotifier<CategoryState>(
     CategoryState(status: CategoryStatus.initial),
   );
@@ -14,6 +15,7 @@ class CategoryController {
     required this.getCategoriesUseCase,
     required this.createCategoryUseCase,
     required this.updateCategoryUseCase,
+    required this.getSumCategoriesUseCase,
   });
 
   Stream<List<CategoryEntity>> get categoriesStream {
@@ -55,4 +57,6 @@ class CategoryController {
       );
     }
   }
+
+  Stream<CategorySumEntity> get sumCategories => getSumCategoriesUseCase();
 }

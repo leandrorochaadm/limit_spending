@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/core.dart';
 import '../../expense/expense.dart';
-import '../domain/entities/category_entity.dart';
-import 'presentation.dart';
+import '../category.dart';
 
 class CategoryPage extends StatelessWidget {
   static const String routeName = '/category';
@@ -12,20 +11,41 @@ class CategoryPage extends StatelessWidget {
   final CategoryController categoryController;
   bool actionExecuted = false; // Flag para controlar a execução
 
-  double sumLimit = 0.0;
-  double sumBalance = 0.0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Categorias'), elevation: 7),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 42.0),
+        child: FloatingActionButton(
+          onPressed: () => modalCreateCategory(context),
+          child: const Icon(Icons.add),
+        ),
+      ),
       bottomSheet: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 24.0),
+        padding: const EdgeInsets.only(bottom: 36.0, top: 24),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              'Limite: R\$ ${sumLimit.toStringAsFixed(2)} | Consumido: R\$ ${sumBalance.toStringAsFixed(2)}',
-              textAlign: TextAlign.center,
+            StreamBuilder<CategorySumEntity>(
+              stream: categoryController.getSumCategoriesUseCase(),
+              builder: (context, categorySum) {
+                if (categorySum.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                }
+                if (categorySum.hasError) {
+                  return Text('Error: ${categorySum.error}');
+                }
+                if (categorySum.hasData) {
+                  final sumEntity = categorySum.data!;
+
+                  return Text(
+                    'Limite: R\$ ${sumEntity.limit.toStringAsFixed(2)} | Consumido: R\$ ${sumEntity.consumed.toStringAsFixed(2)}',
+                    textAlign: TextAlign.center,
+                  );
+                }
+                return const SizedBox.shrink();
+              },
             ),
           ],
         ),
@@ -46,14 +66,6 @@ class CategoryPage extends StatelessWidget {
               }
 
               final categories = snapshot.data!;
-
-              for (final category in categories) {
-                print('Category: ${category.name}');
-                print('Category: ${category.limitMonthly}');
-                sumLimit += category.limitMonthly;
-                print(sumLimit);
-                sumBalance += category.consumed;
-              }
 
               return ListView.separated(
                 itemCount: categories.length,
@@ -84,10 +96,10 @@ class CategoryPage extends StatelessWidget {
                     ),
                     child: ListTile(
                       title: Text(
-                        '${category.name} (limite: ${category.limitMonthly.toStringAsFixed(2)})',
+                        '${category.name} (limite mensal: ${category.limitMonthly.toStringAsFixed(2)})',
                       ),
                       subtitle: Text(
-                        'Disponível: ${(category.balance).toStringAsFixed(2)}',
+                        'Disponível: ${(category.balance).toStringAsFixed(2)} | Consumido: ${(category.consumed).toStringAsFixed(2)}',
                       ),
                       trailing: const Icon(Icons.arrow_forward_ios),
                       onTap: () {
@@ -129,10 +141,6 @@ class CategoryPage extends StatelessWidget {
             },
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => modalCreateCategory(context),
-        child: const Icon(Icons.add),
       ),
     );
   }
