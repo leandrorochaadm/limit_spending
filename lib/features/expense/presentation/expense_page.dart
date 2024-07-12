@@ -92,7 +92,8 @@ class ExpensePage extends StatelessWidget {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                  '${expense.description} ${expense.value.toStringAsFixed(2)} foi removido'),
+                                '${expense.description} ${expense.value.toStringAsFixed(2)} foi removido',
+                              ),
                             ),
                           );
                         }

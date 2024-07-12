@@ -14,12 +14,12 @@ class CategoryEntity extends Equatable {
 
   final String id;
   final String name;
-  final DateTime? created;
+  final DateTime created;
   final double limitMonthly;
   final double consumed;
 
   double get balance {
-    final timeMouth = (DateTime.now().difference(created!).inDays / 30) + 1;
+    final timeMouth = (DateTime.now().difference(created).inDays / 30) + 1;
     return (timeMouth * limitMonthly) - consumed;
   }
 

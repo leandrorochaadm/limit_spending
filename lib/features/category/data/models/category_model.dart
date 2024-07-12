@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../domain/entities/entities.dart';
 
 class CategoryModel extends CategoryEntity {
@@ -13,7 +15,7 @@ class CategoryModel extends CategoryEntity {
     return CategoryModel(
       id: json['id'] as String?,
       name: json['name'] as String,
-      created: DateTime.parse(json['created'] as String),
+      created: (json['created'] as Timestamp).toDate(),
       limitMonthly: (json['limit_monthly'] as num).toDouble(),
       consumed: (json['consumed'] as num).toDouble(),
     );
@@ -22,7 +24,7 @@ class CategoryModel extends CategoryEntity {
   Map<String, dynamic> toJson() => <String, dynamic>{
         'id': id,
         'name': name,
-        'created': created?.toIso8601String(),
+        'created': Timestamp.fromDate(created),
         'limit_monthly': limitMonthly,
         'consumed': consumed,
       };
