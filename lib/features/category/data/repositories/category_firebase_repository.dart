@@ -43,6 +43,7 @@ class CategoryFirebaseRepository implements CategoryRepository {
         .update(category.toModel().toJson());
   }
 
+  @override
   Future<CategoryEntity> categoryById(String categoryId) async {
     final doc =
         await firestore.collection(collectionPath).doc(categoryId).get();
