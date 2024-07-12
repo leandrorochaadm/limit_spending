@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/core.dart';
+import '../../category/domain/entities/entities.dart';
 import '../domain/domain.dart';
 import 'expense_controller.dart';
 import 'expense_state.dart';
@@ -22,9 +23,41 @@ class ExpensePage extends StatelessWidget {
     final categoryName = args['categoryName'] as String;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Despesas: $categoryName'),
-        elevation: 7,
+      appBar: AppBar(title: Text('Despesas: $categoryName'), elevation: 7),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 42.0),
+        child: FloatingActionButton(
+          onPressed: () => modalCreateExpense(context, categoryId: categoryId),
+          child: const Icon(Icons.add),
+        ),
+      ),
+      bottomSheet: Padding(
+        padding: const EdgeInsets.only(bottom: 36.0, top: 24),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            StreamBuilder<CategorySumEntity>(
+              stream: expenseController.getSumByCategory(categoryId),
+              builder: (context, categorySum) {
+                if (categorySum.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                }
+                if (categorySum.hasError) {
+                  return Text('Error: ${categorySum.error}');
+                }
+                if (categorySum.hasData) {
+                  final sumEntity = categorySum.data!;
+
+                  return Text(
+                    'Limite: R\$ ${sumEntity.limit.toStringAsFixed(2)} | Consumido: R\$ ${sumEntity.consumed.toStringAsFixed(2)}',
+                    textAlign: TextAlign.center,
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+          ],
+        ),
       ),
       body: Stack(
         children: [
@@ -105,10 +138,6 @@ class ExpensePage extends StatelessWidget {
             },
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => modalCreateExpense(context, categoryId: categoryId),
-        child: const Icon(Icons.add),
       ),
     );
   }

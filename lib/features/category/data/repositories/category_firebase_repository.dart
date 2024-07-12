@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../domain/entities/category_entity.dart';
+import '../../domain/entities/entities.dart';
 import '../../domain/repositories/category_repository.dart';
 import '../models/category_model.dart';
 
@@ -69,5 +69,19 @@ class CategoryFirebaseRepository implements CategoryRepository {
         .collection(collectionPath)
         .doc(categoryId)
         .update({'consumed': FieldValue.increment(consumed)});
+  }
+
+  @override
+  Stream<CategoryEntity> getCategoryStream(String categoryId) {
+    return firestore.collection(collectionPath).doc(categoryId).snapshots().map(
+      (DocumentSnapshot<Map<String, dynamic>> snapshot) {
+        if (snapshot.exists) {
+          final data = snapshot.data();
+          return CategoryModel.fromJson(data!).toEntity();
+        } else {
+          throw Exception('Categoria não encontrada');
+        }
+      },
+    );
   }
 }
