@@ -13,10 +13,24 @@ class CategoryPage extends StatelessWidget {
   final CategoryController categoryController;
   bool actionExecuted = false; // Flag para controlar a execução
 
+  double sumLimit = 0.0;
+  double sumBalance = 0.0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Categorias'), elevation: 7),
+      bottomSheet: Padding(
+        padding: EdgeInsets.symmetric(vertical: 24.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Limite: R\$ ${sumLimit.toStringAsFixed(2)} | Consumido: R\$ ${sumBalance.toStringAsFixed(2)}',
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
       body: Stack(
         children: [
           StreamBuilder<List<CategoryEntity>>(
@@ -33,6 +47,14 @@ class CategoryPage extends StatelessWidget {
               }
 
               final categories = snapshot.data!;
+
+              for (final category in categories) {
+                print('Category: ${category.name}');
+                print('Category: ${category.limitMonthly}');
+                sumLimit += category.limitMonthly;
+                print(sumLimit);
+                sumBalance += category.consumed;
+              }
 
               return ListView.separated(
                 itemCount: categories.length,
