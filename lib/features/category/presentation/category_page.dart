@@ -92,11 +92,9 @@ class CategoryPage extends StatelessWidget {
                       ),
                     ),
                     child: ListTile(
-                      title: Text(
-                        '${category.name} (limite mensal: ${category.limitMonthly.toStringAsFixed(2)})',
-                      ),
+                      title: Text(category.name),
                       subtitle: Text(
-                        'Disponível: ${(category.balance).toStringAsFixed(2)} | Consumido: ${(category.consumed).toStringAsFixed(2)}',
+                        'Disponível: ${(category.balance).toStringAsFixed(2)} | limite mensal: ${category.limitMonthly.toStringAsFixed(2)}',
                       ),
                       trailing: const Icon(Icons.arrow_forward_ios),
                       onTap: () {

@@ -13,10 +13,7 @@ class GetSumCategoryUseCase {
     required String categoryId,
     required double limit,
   }) {
-    return getExpensesByCreatedUseCase(
-      categoryId: categoryId,
-      endDate: DateTime.now().add(const Duration(days: 30)),
-    ).map((expenses) {
+    return getExpensesByCreatedUseCase(categoryId: categoryId).map((expenses) {
       double totalConsumed =
           expenses.fold(0, (sum, expense) => sum + expense.value);
       double balance = limit - totalConsumed;

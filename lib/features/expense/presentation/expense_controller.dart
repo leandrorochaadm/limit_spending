@@ -28,10 +28,7 @@ class ExpenseController {
   Stream<List<ExpenseEntity>> expensesStream(String categoryId) {
     state.value = state.value.copyWith(status: ExpenseStatus.success);
     try {
-      return getExpensesByCreatedUseCase(
-        categoryId: categoryId,
-        endDate: DateTime.now().add(const Duration(days: 30)),
-      );
+      return getExpensesByCreatedUseCase(categoryId: categoryId);
     } catch (e) {
       state.value = state.value.copyWith(
         status: ExpenseStatus.error,
