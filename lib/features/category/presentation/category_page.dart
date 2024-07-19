@@ -134,7 +134,7 @@ class CategoryPage extends StatelessWidget {
                             return ListTile(
                               title: Text(category.name),
                               subtitle: Text(
-                                'Disponível: ${(categorySum.balance).toStringAsFixed(2)} \nConsumo:${categorySum.consumed.toStringAsFixed(2)} \nlimite mensal: ${categorySum.limit.toStringAsFixed(2)}',
+                                'Disponível: ${categorySum.balance.toCurrency()} \nConsumo:${categorySum.consumed.toCurrency()} \nlimite mensal: ${categorySum.limit.toCurrency()}',
                               ),
                               trailing: const Icon(Icons.arrow_forward_ios),
                               onTap: () {
@@ -240,7 +240,7 @@ class CategoryPage extends StatelessWidget {
                           name: nameEC.text,
                           limitMonthly: limitEC.text.isEmpty
                               ? 0
-                              : double.parse(limitEC.text),
+                              : double.parse(limitEC.text.toPointFormat()),
                         );
                     categoryController.updateCategory(categoryUpdate);
                   } else {
