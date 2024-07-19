@@ -15,9 +15,29 @@ class CategoryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Categorias'), elevation: 7),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => modalCreateCategory(context),
-        child: const Icon(Icons.add),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(left: 32),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            FloatingActionButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return makeDebtPage();
+                    },
+                  ),
+                );
+              },
+              child: const Icon(Icons.attach_money),
+            ),
+            FloatingActionButton(
+              onPressed: () => modalCreateCategory(context),
+              child: const Icon(Icons.add),
+            ),
+          ],
+        ),
       ),
       bottomSheet: Padding(
         padding: const EdgeInsets.only(bottom: 36.0, top: 24),

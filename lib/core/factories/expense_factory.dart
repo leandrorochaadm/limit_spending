@@ -5,7 +5,7 @@ import 'firestore_factory.dart';
 
 ExpenseFirebaseRepository expenseRepositoryFactory() =>
     ExpenseFirebaseRepository(
-      firestore: firestoreFactory(),
+      firestore: makeFirestoreFactory(),
       categoryRepository: categoryRepositoryFactory(),
     );
 GetExpensesByCreatedUseCase getExpensesByCreatedUseCaseFactory() =>

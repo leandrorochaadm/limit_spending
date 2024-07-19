@@ -4,7 +4,7 @@ import '../core.dart';
 import 'firestore_factory.dart';
 
 CategoryFirebaseRepository categoryRepositoryFactory() =>
-    CategoryFirebaseRepository(firestoreFactory());
+    CategoryFirebaseRepository(makeFirestoreFactory());
 GetCategoriesUseCase makeGetCategoriesUseCase() =>
     GetCategoriesUseCase(categoryRepositoryFactory());
 CreateCategoryUseCase makeCreateCategoryUseCase() =>
