@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../category/domain/domain.dart';
+import '../../debt/debit.dart';
 import '../domain/domain.dart';
 import 'expense_state.dart';
 
@@ -11,6 +12,7 @@ class ExpenseController {
   final DeleteExpenseUseCase deleteExpenseUseCase;
   final GetSumCategoryUseCase getSumCategoryUseCase;
   final GetExpensesByCreatedUseCase getExpensesByCreatedUseCase;
+  final GetDebtsUseCase getDebtsUseCase;
 
   ValueNotifier<ExpenseState> state = ValueNotifier<ExpenseState>(
     ExpenseState(status: ExpenseStatus.initial),
@@ -23,6 +25,7 @@ class ExpenseController {
     required this.deleteExpenseUseCase,
     required this.getSumCategoryUseCase,
     required this.getExpensesByCreatedUseCase,
+    required this.getDebtsUseCase,
   });
 
   Stream<List<ExpenseEntity>> expensesStream(String categoryId) {
@@ -85,4 +88,6 @@ class ExpenseController {
         categoryId: categoryId,
         limit: categoryLimit,
       );
+
+  Future<List<DebtEntity>> getDebts() => getDebtsUseCase().first;
 }

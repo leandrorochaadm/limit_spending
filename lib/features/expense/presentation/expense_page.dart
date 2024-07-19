@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 import '../../../core/core.dart';
 import '../../category/domain/entities/entities.dart';
+import '../../debt/domain/entity.dart';
 import '../domain/domain.dart';
 import 'expense_controller.dart';
 import 'expense_state.dart';
@@ -25,9 +26,29 @@ class ExpensePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text('Despesas: $categoryName'), elevation: 7),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => modalCreateExpense(context, categoryId: categoryId),
-        child: const Icon(Icons.add),
+      floatingActionButton: FutureBuilder<List<DebtEntity>>(
+        future: expenseController.getDebts(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          }
+          if (snapshot.hasError) {
+            debugPrint(snapshot.error.toString());
+            return Text('Error: ${snapshot.error}');
+          }
+          if (snapshot.hasData) {
+            return FloatingActionButton(
+              onPressed: () => modalCreateExpense(
+                context,
+                categoryId: categoryId,
+                debts: snapshot.data!,
+              ),
+              child: const Icon(Icons.add),
+            );
+          }
+
+          return const SizedBox.shrink();
+        },
       ),
       bottomSheet: Padding(
         padding: const EdgeInsets.only(bottom: 36.0, top: 24),
@@ -149,7 +170,9 @@ class ExpensePage extends StatelessWidget {
     BuildContext context, {
     ExpenseEntity? expense,
     String categoryId = '',
+    required List<DebtEntity> debts,
   }) {
+    String debtId = '';
     final bool isEdit = expense != null;
     final TextEditingController descriptionEC =
         TextEditingController(text: expense?.description);
@@ -158,6 +181,12 @@ class ExpensePage extends StatelessWidget {
     final TextEditingController valueEC =
         TextEditingController(text: expense?.value.toStringAsFixed(2));
     final FocusNode valueFN = FocusNode();
+
+    bool isValid() {
+      return descriptionEC.text.isNotEmpty &&
+          valueEC.text.isNotEmpty &&
+          debtId.isNotEmpty;
+    }
 
     return showModalBottomSheet(
       context: context,
@@ -168,58 +197,81 @@ class ExpensePage extends StatelessWidget {
       builder: (BuildContext contextModal) {
         return Padding(
           padding: const EdgeInsets.all(24.0),
-          child: Column(
-            children: <Widget>[
-              TextFieldCustomWidget(
-                controller: descriptionEC,
-                focusNode: descriptionFN,
-                hintText: 'Descrição da despesa',
-              ),
-              const SizedBox(height: 24),
-              TextFieldCustomWidget(
-                controller: valueEC,
-                focusNode: valueFN,
-                hintText: 'Valor da despesa',
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 12,
-                    horizontal: 24,
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                children: <Widget>[
+                  ...debts.map((debt) {
+                    return RadioListTile<String>(
+                      title: Text(debt.name),
+                      subtitle: Text('Divida: ${debt.value.toCurrency()}'),
+                      value: debt.id,
+                      groupValue: debtId,
+                      onChanged: (String? value) {
+                        setState(() {
+                          print(value);
+                          debtId = value ?? '';
+                        });
+                      },
+                    );
+                  }),
+                  const SizedBox(height: 24),
+                  TextFieldCustomWidget(
+                    controller: descriptionEC,
+                    focusNode: descriptionFN,
+                    hintText: 'Descrição da despesa',
                   ),
-                  shape: const StadiumBorder(),
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                  textStyle: Theme.of(context).textTheme.bodyMedium,
-                ),
-                onPressed: () {
-                  if (isEdit) {
-                    ExpenseEntity expenseUpdate = expense.copyWith(
-                      description: descriptionEC.text,
-                      value:
-                          valueEC.text.isEmpty ? 0 : double.parse(valueEC.text),
-                      categoryId: categoryId,
-                    );
-                    expenseController.updateExpense(expenseUpdate);
-                  } else {
-                    expenseController.createExpense(
-                      ExpenseEntity(
-                        description: descriptionEC.text,
-                        created: DateTime.now(),
-                        value: valueEC.text.isEmpty
-                            ? 0
-                            : double.parse(valueEC.text),
-                        categoryId: categoryId,
+                  const SizedBox(height: 24),
+                  TextFieldCustomWidget(
+                    controller: valueEC,
+                    focusNode: valueFN,
+                    hintText: 'Valor da despesa',
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 24,
                       ),
-                    );
-                  }
-                  Navigator.of(contextModal).pop();
-                },
-                child: const Text('Salvar despesa'),
-              ),
-            ],
+                      shape: const StadiumBorder(),
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                      textStyle: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    onPressed: isValid()
+                        ? () {
+                            if (isEdit) {
+                              ExpenseEntity expenseUpdate = expense.copyWith(
+                                description: descriptionEC.text,
+                                value: valueEC.text.isEmpty
+                                    ? 0
+                                    : double.parse(valueEC.text),
+                                categoryId: categoryId,
+                              );
+                              expenseController.updateExpense(expenseUpdate);
+                            } else {
+                              expenseController.createExpense(
+                                ExpenseEntity(
+                                  description: descriptionEC.text,
+                                  created: DateTime.now(),
+                                  value: valueEC.text.isEmpty
+                                      ? 0
+                                      : double.parse(valueEC.text),
+                                  categoryId: categoryId,
+                                ),
+                              );
+                            }
+                            Navigator.of(contextModal).pop();
+                          }
+                        : null,
+                    child: const Text('Salvar despesa'),
+                  ),
+                ],
+              );
+            },
           ),
         );
       },

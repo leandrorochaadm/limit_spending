@@ -1,6 +1,8 @@
 import '../../features/category/domain/domain.dart';
+import '../../features/debt/domain/usecases/usecases.dart';
 import '../../features/expense/expense.dart';
 import 'category_factory.dart';
+import 'debt_factory.dart';
 import 'firestore_factory.dart';
 
 ExpenseFirebaseRepository expenseRepositoryFactory() =>
@@ -27,6 +29,8 @@ ExpenseController expenseControllerFactory() {
     getCategoryByIdUseCase: getCategoryByIdUseCase,
   );
 
+  final GetDebtsUseCase getDebtsUseCase = makeGetDebtsUseCase();
+
   final expenseController = ExpenseController(
     getExpensesUseCase: getExpensesUseCase,
     createExpenseUseCase: createExpenseUseCase,
@@ -34,6 +38,7 @@ ExpenseController expenseControllerFactory() {
     deleteExpenseUseCase: deleteExpenseUseCase,
     getSumCategoryUseCase: getSumCategoryUseCase,
     getExpensesByCreatedUseCase: getExpensesByCreatedUseCase,
+    getDebtsUseCase: getDebtsUseCase,
   );
   return expenseController;
 }
