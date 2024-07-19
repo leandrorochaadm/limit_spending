@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
-import '../../../core/widgets/widgets.dart';
+import '../../../core/core.dart';
 import '../debit.dart';
 
 class DebtPage extends StatelessWidget {
@@ -17,6 +16,35 @@ class DebtPage extends StatelessWidget {
           modalCreateDebt(context);
         },
         child: const Icon(Icons.add),
+      ),
+      bottomSheet: Padding(
+        padding: const EdgeInsets.only(bottom: 36.0, top: 24),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            StreamBuilder<double>(
+              stream: debtController.getSumDebtsUseCase(),
+              builder: (context, debtsSum) {
+                if (debtsSum.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                }
+                if (debtsSum.hasError) {
+                  return Text('Error: ${debtsSum.error}');
+                }
+                if (debtsSum.hasData) {
+                  final sumEntity = debtsSum.data!;
+
+                  return Text(
+                    'Total: ${sumEntity.toCurrency()}',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+          ],
+        ),
       ),
       body: StreamBuilder<List<DebtEntity>>(
         stream: debtController.getDebts(),
@@ -40,16 +68,13 @@ class DebtPage extends StatelessWidget {
               separatorBuilder: (_, __) => const Divider(),
               itemBuilder: (context, index) {
                 final debt = debtData[index];
-                final valueFormat = NumberFormat.simpleCurrency(
-                  decimalDigits: 2,
-                  locale: 'pt_BR',
-                ).format(debt.value);
+
                 return Visibility(
                   visible: debt.value >= 0.0,
                   child: ListTile(
                     title: Text(debt.name),
                     subtitle: Text(
-                      valueFormat,
+                      debt.value.toCurrency(),
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                   ),
@@ -115,7 +140,7 @@ class DebtPage extends StatelessWidget {
                       ),
                     ),
                   );
-                  Navigator.of(context).pop();
+                  Navigator.of(contextModal).pop();
                 },
                 child: const Text('Salvar divida'),
               ),
