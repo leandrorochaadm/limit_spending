@@ -168,18 +168,14 @@ class ExpensePage extends StatelessWidget {
 
   Future<dynamic> modalCreateExpense(
     BuildContext context, {
-    ExpenseEntity? expense,
     String categoryId = '',
     required List<DebtEntity> debts,
   }) {
     String debtId = '';
-    final bool isEdit = expense != null;
-    final TextEditingController descriptionEC =
-        TextEditingController(text: expense?.description);
+    final TextEditingController descriptionEC = TextEditingController();
     final FocusNode descriptionFN = FocusNode();
 
-    final TextEditingController valueEC =
-        TextEditingController(text: expense?.value.toStringAsFixed(2));
+    final TextEditingController valueEC = TextEditingController();
     final FocusNode valueFN = FocusNode();
 
     bool isValid() {
@@ -243,27 +239,18 @@ class ExpensePage extends StatelessWidget {
                     ),
                     onPressed: isValid()
                         ? () {
-                            if (isEdit) {
-                              ExpenseEntity expenseUpdate = expense.copyWith(
+                            expenseController.createExpense(
+                              ExpenseEntity(
                                 description: descriptionEC.text,
+                                created: DateTime.now(),
                                 value: valueEC.text.isEmpty
                                     ? 0
-                                    : double.parse(valueEC.text),
+                                    : double.parse(
+                                        valueEC.text.toPointFormat(),
+                                      ),
                                 categoryId: categoryId,
-                              );
-                              expenseController.updateExpense(expenseUpdate);
-                            } else {
-                              expenseController.createExpense(
-                                ExpenseEntity(
-                                  description: descriptionEC.text,
-                                  created: DateTime.now(),
-                                  value: valueEC.text.isEmpty
-                                      ? 0
-                                      : double.parse(valueEC.text),
-                                  categoryId: categoryId,
-                                ),
-                              );
-                            }
+                              ),
+                            );
                             Navigator.of(contextModal).pop();
                           }
                         : null,

@@ -131,7 +131,7 @@ class DebtPage extends StatelessWidget {
                   textStyle: Theme.of(context).textTheme.bodyMedium,
                 ),
                 onPressed: () async {
-                  var valueStr = valueEC.text.trim().replaceAll(',', '.');
+                  var valueStr = valueEC.text.toPointFormat();
                   await debtController.createDebt(
                     DebtEntity(
                       name: nameEC.text,
