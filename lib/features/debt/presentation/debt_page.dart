@@ -94,6 +94,8 @@ class DebtPage extends StatelessWidget {
     final TextEditingController valueEC = TextEditingController();
     final FocusNode valueFN = FocusNode();
 
+    bool isPayment = false;
+
     return showModalBottomSheet(
       context: context,
       useSafeArea: true,
@@ -103,48 +105,72 @@ class DebtPage extends StatelessWidget {
       builder: (BuildContext contextModal) {
         return Padding(
           padding: const EdgeInsets.all(24.0),
-          child: Column(
-            children: <Widget>[
-              TextFieldCustomWidget(
-                controller: nameEC,
-                focusNode: nameFN,
-                hintText: 'Nome da divida',
-              ),
-              const SizedBox(height: 24),
-              TextFieldCustomWidget(
-                controller: valueEC,
-                focusNode: valueFN,
-                hintText: 'Valor da divida',
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 12,
-                    horizontal: 24,
+          child: StatefulBuilder(
+            builder: (context, setState) {
+              void onChangedPayment(bool? newValue) {
+                setState(() {
+                  isPayment = newValue ?? false;
+                });
+              }
+
+              return Column(
+                children: <Widget>[
+                  TextFieldCustomWidget(
+                    controller: nameEC,
+                    focusNode: nameFN,
+                    hintText: 'Nome da divida',
                   ),
-                  shape: const StadiumBorder(),
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                  textStyle: Theme.of(context).textTheme.bodyMedium,
-                ),
-                onPressed: () async {
-                  var valueStr = valueEC.text.toPointFormat();
-                  await debtController.createDebt(
-                    DebtEntity(
-                      name: nameEC.text,
-                      value: double.parse(
-                        valueStr,
-                      ),
+                  const SizedBox(height: 24),
+                  TextFieldCustomWidget(
+                    controller: valueEC,
+                    focusNode: valueFN,
+                    hintText: 'Valor da divida',
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                  const SizedBox(height: 24),
+                  GestureDetector(
+                    onTap: () {
+                      onChangedPayment(!isPayment);
+                    },
+                    child: Row(
+                      children: [
+                        const Text('É forma de pagamento?'),
+                        Checkbox(
+                          value: isPayment,
+                          onChanged: onChangedPayment,
+                        ),
+                      ],
                     ),
-                  );
-                  Navigator.of(contextModal).pop();
-                },
-                child: const Text('Salvar divida'),
-              ),
-            ],
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 24,
+                      ),
+                      shape: const StadiumBorder(),
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                      textStyle: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    onPressed: () async {
+                      var valueStr = valueEC.text.toPointFormat();
+                      await debtController.createDebt(
+                        DebtEntity(
+                          name: nameEC.text,
+                          value: double.parse(valueStr),
+                          isPayment: isPayment,
+                        ),
+                      );
+                      Navigator.of(contextModal).pop();
+                    },
+                    child: const Text('Salvar divida'),
+                  ),
+                ],
+              );
+            },
           ),
         );
       },
