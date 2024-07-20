@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/core.dart';
-import '../../expense/expense.dart';
 import '../category.dart';
 
 class CategoryPage extends StatelessWidget {
   static const String routeName = '/category';
-  CategoryPage({super.key, required this.categoryController});
+  CategoryPage({
+    super.key,
+    required this.categoryController,
+    required this.debtId,
+  });
+
+  final String debtId;
 
   final CategoryController categoryController;
   bool actionExecuted = false; // Flag para controlar a execução
@@ -17,26 +22,9 @@ class CategoryPage extends StatelessWidget {
       appBar: AppBar(title: const Text('Categorias'), elevation: 7),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(left: 32),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            FloatingActionButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return makeDebtPage();
-                    },
-                  ),
-                );
-              },
-              child: const Icon(Icons.attach_money),
-            ),
-            FloatingActionButton(
-              onPressed: () => modalCreateCategory(context),
-              child: const Icon(Icons.add),
-            ),
-          ],
+        child: FloatingActionButton(
+          onPressed: () => modalCreateCategory(context),
+          child: const Icon(Icons.add),
         ),
       ),
       bottomSheet: Padding(
@@ -138,15 +126,11 @@ class CategoryPage extends StatelessWidget {
                               ),
                               trailing: const Icon(Icons.arrow_forward_ios),
                               onTap: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  ExpensePage.routeName,
-                                  arguments: {
-                                    'categoryId': category.id,
-                                    'categoryName': category.name,
-                                    'categoryLimit': category.limitMonthly,
+                                Navigator.push(context, MaterialPageRoute(
+                                  builder: (context) {
+                                    return makeExpensePage(category);
                                   },
-                                );
+                                ));
                               },
                             );
                           }

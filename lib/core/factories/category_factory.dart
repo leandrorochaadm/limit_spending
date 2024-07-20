@@ -32,3 +32,8 @@ CategoryController categoryControllerFactory() {
   );
   return categoryController;
 }
+
+CategoryPage makeCategoryPage(String debtId) => CategoryPage(
+      categoryController: categoryControllerFactory(),
+      debtId: debtId,
+    );

@@ -10,22 +10,18 @@ import 'expense_state.dart';
 
 class ExpensePage extends StatelessWidget {
   static const String routeName = '/expense';
-  final ExpenseController expenseController;
   const ExpensePage({
     super.key,
     required this.expenseController,
+    required this.category,
   });
+  final ExpenseController expenseController;
+  final CategoryEntity category;
 
   @override
   Widget build(BuildContext context) {
-    final args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    final categoryId = args['categoryId'] as String;
-    final categoryName = args['categoryName'] as String;
-    final categoryLimit = args['categoryLimit'] as double;
-
     return Scaffold(
-      appBar: AppBar(title: Text('Despesas: $categoryName'), elevation: 7),
+      appBar: AppBar(title: Text('Despesas: ${category.name}'), elevation: 7),
       floatingActionButton: FutureBuilder<List<DebtEntity>>(
         future: expenseController.getDebts(),
         builder: (context, snapshot) {
@@ -40,7 +36,7 @@ class ExpensePage extends StatelessWidget {
             return FloatingActionButton(
               onPressed: () => modalCreateExpense(
                 context,
-                categoryId: categoryId,
+                categoryId: category.id,
                 debts: snapshot.data!,
               ),
               child: const Icon(Icons.add),
@@ -57,8 +53,8 @@ class ExpensePage extends StatelessWidget {
           children: [
             StreamBuilder<CategorySumEntity>(
               stream: expenseController.getSumByCategory(
-                categoryId: categoryId,
-                categoryLimit: categoryLimit,
+                categoryId: category.id,
+                categoryLimit: category.limitMonthly,
               ),
               builder: (context, categorySum) {
                 if (categorySum.connectionState == ConnectionState.waiting) {
@@ -85,7 +81,7 @@ class ExpensePage extends StatelessWidget {
       body: Stack(
         children: [
           StreamBuilder<List<ExpenseEntity>>(
-            stream: expenseController.expensesStream(categoryId),
+            stream: expenseController.expensesStream(category.id),
             builder: (_, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());

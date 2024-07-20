@@ -82,6 +82,16 @@ class DebtPage extends StatelessWidget {
                     color: debt.isAllowsToBuy() ? Colors.green : Colors.red,
                   ),
                   trailing: const Icon(Icons.arrow_forward_ios),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return makeCategoryPage(debt.id);
+                        },
+                      ),
+                    );
+                  },
                 );
               },
             ),

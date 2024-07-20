@@ -49,13 +49,14 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         fontFamily: 'Poppins',
       ),
-      initialRoute: CategoryPage.routeName,
-      routes: {
-        ExpensePage.routeName: (context) =>
-            ExpensePage(expenseController: expenseController),
-        CategoryPage.routeName: (context) =>
-            CategoryPage(categoryController: categoryController),
-      },
+      home: makeDebtPage(),
+      // initialRoute: CategoryPage.routeName,
+      // routes: {
+      //   ExpensePage.routeName: (context) =>
+      //       ExpensePage(expenseController: expenseController),
+      //   CategoryPage.routeName: (context) =>
+      //       CategoryPage(categoryController: categoryController),
+      // },
     );
   }
 }

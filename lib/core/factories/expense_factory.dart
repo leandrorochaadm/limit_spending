@@ -42,3 +42,8 @@ ExpenseController expenseControllerFactory() {
 
   return expenseController;
 }
+
+ExpensePage makeExpensePage(CategoryEntity category) => ExpensePage(
+      expenseController: expenseControllerFactory(),
+      category: category,
+    );
