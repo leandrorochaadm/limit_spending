@@ -106,7 +106,10 @@ class ExpensePage extends StatelessWidget {
                       key: Key(expense.id),
                       direction: DismissDirection.endToStart,
                       onDismissed: (direction) {
-                        expenseController.deleteExpense(expense);
+                        expenseController.deleteExpense(
+                          expense: expense,
+                          debtId: debtId,
+                        );
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(

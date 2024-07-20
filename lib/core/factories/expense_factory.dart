@@ -32,7 +32,6 @@ ExpenseController expenseControllerFactory() {
 
   final ExpenseController expenseController = ExpenseController(
     createExpenseUseCase: createExpenseUseCase,
-    updateExpenseUseCase: updateExpenseUseCase,
     deleteExpenseUseCase: deleteExpenseUseCase,
     getSumCategoryUseCase: getSumCategoryUseCase,
     getExpensesByCreatedUseCase: getExpensesByCreatedUseCase,

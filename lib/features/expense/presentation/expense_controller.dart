@@ -7,7 +7,6 @@ import 'expense_state.dart';
 
 class ExpenseController {
   final CreateExpenseUseCase _createExpenseUseCase;
-  final UpdateExpenseUseCase _updateExpenseUseCase;
   final DeleteExpenseUseCase _deleteExpenseUseCase;
   final GetSumCategoryUseCase _getSumCategoryUseCase;
   final GetExpensesByCreatedUseCase _getExpensesByCreatedUseCase;
@@ -20,14 +19,12 @@ class ExpenseController {
 
   ExpenseController({
     required CreateExpenseUseCase createExpenseUseCase,
-    required UpdateExpenseUseCase updateExpenseUseCase,
     required DeleteExpenseUseCase deleteExpenseUseCase,
     required GetSumCategoryUseCase getSumCategoryUseCase,
     required GetExpensesByCreatedUseCase getExpensesByCreatedUseCase,
     required GetDebtsUseCase getDebtsUseCase,
     required AddDebtValueUseCase addDebtValueUseCase,
   })  : _createExpenseUseCase = createExpenseUseCase,
-        _updateExpenseUseCase = updateExpenseUseCase,
         _deleteExpenseUseCase = deleteExpenseUseCase,
         _getSumCategoryUseCase = getSumCategoryUseCase,
         _getExpensesByCreatedUseCase = getExpensesByCreatedUseCase,
@@ -60,28 +57,17 @@ class ExpenseController {
     }
   }
 
-  void deleteExpense(ExpenseEntity expense) {
+  void deleteExpense({required ExpenseEntity expense, required String debtId}) {
     state.value = state.value.copyWith(status: ExpenseStatus.loading);
     try {
       _deleteExpenseUseCase(expense);
+
+      _addDebtValueUseCase(debtId, -expense.value);
       state.value = state.value.copyWith(status: ExpenseStatus.success);
     } catch (e) {
       state.value = state.value.copyWith(
         status: ExpenseStatus.error,
         errorMessage: 'Erro ao deletar despesa',
-      );
-    }
-  }
-
-  void updateExpense(ExpenseEntity expense) {
-    state.value = state.value.copyWith(status: ExpenseStatus.loading);
-    try {
-      _updateExpenseUseCase(expense);
-      state.value = state.value.copyWith(status: ExpenseStatus.success);
-    } catch (e) {
-      state.value = state.value.copyWith(
-        status: ExpenseStatus.error,
-        errorMessage: 'Erro ao atualizar despesa',
       );
     }
   }
