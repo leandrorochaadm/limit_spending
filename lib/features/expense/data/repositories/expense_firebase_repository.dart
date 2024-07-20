@@ -62,15 +62,15 @@ class ExpenseFirebaseRepository implements ExpenseRepository {
     DateTime? startDate,
     required DateTime endDate,
   }) {
-    return getExpenses(categoryId: categoryId)
-        .map((List<ExpenseEntity> expenses) {
-      return expenses.where((expense) {
-        final bool isAfterStartDate =
-            startDate == null || expense.created.isAfter(startDate);
-        final bool isBeforeEndDate = expense.created.isBefore(endDate);
-        return isAfterStartDate && isBeforeEndDate;
-      }).toList();
-    });
+    return getExpenses(categoryId: categoryId);
+    //     .map((List<ExpenseEntity> expenses) {
+    //   return expenses.where((expense) {
+    //     final bool isAfterStartDate =
+    //         startDate == null || expense.created.isAfter(startDate);
+    //     final bool isBeforeEndDate = expense.created.isBefore(endDate);
+    //     return isAfterStartDate && isBeforeEndDate;
+    //   }).toList();
+    // });
   }
 
   @override
