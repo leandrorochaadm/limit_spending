@@ -14,9 +14,11 @@ class ExpensePage extends StatelessWidget {
     super.key,
     required this.expenseController,
     required this.category,
+    required this.debtId,
   });
   final ExpenseController expenseController;
   final CategoryEntity category;
+  final String debtId;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +39,7 @@ class ExpensePage extends StatelessWidget {
               onPressed: () => modalCreateExpense(
                 context,
                 categoryId: category.id,
-                debts: snapshot.data!,
+                debtId: debtId,
               ),
               child: const Icon(Icons.add),
             );
@@ -165,10 +167,9 @@ class ExpensePage extends StatelessWidget {
   Future<dynamic> modalCreateExpense(
     BuildContext context, {
     String categoryId = '',
-    required List<DebtEntity> debts,
+    String debtId = '',
   }) {
     // Defina um valor inicial
-    String debtId = 'select_option';
 
     final TextEditingController descriptionEC = TextEditingController();
     final FocusNode descriptionFN = FocusNode();
@@ -176,11 +177,7 @@ class ExpensePage extends StatelessWidget {
     final TextEditingController valueEC = TextEditingController();
     final FocusNode valueFN = FocusNode();
 
-    bool isValid() {
-      return descriptionEC.text.isNotEmpty &&
-          valueEC.text.isNotEmpty &&
-          debtId != 'select_option';
-    }
+    bool isValid() => descriptionEC.text.isNotEmpty && valueEC.text.isNotEmpty;
 
     return showModalBottomSheet(
       context: context,
@@ -214,31 +211,6 @@ class ExpensePage extends StatelessWidget {
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
                     onChanged: (_) => setState(() {}),
-                  ),
-                  const SizedBox(height: 24),
-                  DropdownButtonFormField<String>(
-                    decoration: const InputDecoration(
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      filled: true,
-                    ),
-                    value: debtId,
-                    items: [
-                      const DropdownMenuItem<String>(
-                        value: 'select_option',
-                        child: Text('Selecione a forma de pagamento'),
-                      ),
-                      ...debts.map((debt) {
-                        return DropdownMenuItem<String>(
-                          value: debt.id,
-                          child: Text(debt.name),
-                        );
-                      }),
-                    ],
-                    onChanged: (String? value) {
-                      setState(() {
-                        debtId = value ?? 'select_option';
-                      });
-                    },
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton(

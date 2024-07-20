@@ -43,7 +43,12 @@ ExpenseController expenseControllerFactory() {
   return expenseController;
 }
 
-ExpensePage makeExpensePage(CategoryEntity category) => ExpensePage(
+ExpensePage makeExpensePage({
+  required CategoryEntity category,
+  required String debtId,
+}) =>
+    ExpensePage(
       expenseController: expenseControllerFactory(),
       category: category,
+      debtId: debtId,
     );
