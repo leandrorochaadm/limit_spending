@@ -94,6 +94,9 @@ class DebtPage extends StatelessWidget {
     final TextEditingController valueEC = TextEditingController();
     final FocusNode valueFN = FocusNode();
 
+    final TextEditingController dayCloseEC = TextEditingController();
+    final FocusNode dayCloseFN = FocusNode();
+
     bool isPayment = false;
 
     return showModalBottomSheet(
@@ -129,6 +132,13 @@ class DebtPage extends StatelessWidget {
                         const TextInputType.numberWithOptions(decimal: true),
                   ),
                   const SizedBox(height: 24),
+                  TextFieldCustomWidget(
+                    controller: dayCloseEC,
+                    focusNode: dayCloseFN,
+                    hintText: 'Dia fechamento da fatura',
+                    keyboardType: TextInputType.number,
+                  ),
+                  const SizedBox(height: 24),
                   GestureDetector(
                     onTap: () {
                       onChangedPayment(!isPayment);
@@ -162,6 +172,7 @@ class DebtPage extends StatelessWidget {
                           name: nameEC.text,
                           value: double.parse(valueStr),
                           isPayment: isPayment,
+                          dayClose: int.parse(dayCloseEC.text),
                         ),
                       );
                       Navigator.of(contextModal).pop();
