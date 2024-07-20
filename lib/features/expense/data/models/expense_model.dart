@@ -10,6 +10,7 @@ class ExpenseModel extends ExpenseEntity with EquatableMixin {
     required super.created,
     required super.categoryId,
     required super.description,
+    required super.debtId,
   });
 
   factory ExpenseModel.fromJson(Map<String, dynamic> json) {
@@ -19,6 +20,7 @@ class ExpenseModel extends ExpenseEntity with EquatableMixin {
       created: (json['created'] as Timestamp).toDate(),
       categoryId: json['categoryId'] as String,
       description: json['description'] as String,
+      debtId: (json['debtId'] ?? '') as String,
     );
   }
 
@@ -29,6 +31,7 @@ class ExpenseModel extends ExpenseEntity with EquatableMixin {
       'created': Timestamp.fromDate(created),
       'categoryId': categoryId,
       'description': description,
+      'debtId': debtId,
     };
   }
 
@@ -39,6 +42,7 @@ class ExpenseModel extends ExpenseEntity with EquatableMixin {
       created: created,
       categoryId: categoryId,
       description: description,
+      debtId: debtId,
     );
   }
 }

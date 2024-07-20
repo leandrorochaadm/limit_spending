@@ -106,10 +106,7 @@ class ExpensePage extends StatelessWidget {
                       key: Key(expense.id),
                       direction: DismissDirection.endToStart,
                       onDismissed: (direction) {
-                        expenseController.deleteExpense(
-                          expense: expense,
-                          debtId: debtId,
-                        );
+                        expenseController.deleteExpense(expense);
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -236,11 +233,10 @@ class ExpensePage extends StatelessWidget {
                               created: DateTime.now(),
                               value: valueEC.text.isEmpty ? 0 : valueDouble,
                               categoryId: categoryId,
+                              debtId: debtId,
                             );
-                            expenseController.createExpense(
-                              expenseEntity,
-                            );
-                            expenseController.addDebtValue(debtId, valueDouble);
+                            expenseController.createExpense(expenseEntity);
+
                             Navigator.of(contextModal).pop();
                           }
                         : null,

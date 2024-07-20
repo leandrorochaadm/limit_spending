@@ -48,6 +48,7 @@ class ExpenseController {
     state.value = state.value.copyWith(status: ExpenseStatus.loading);
     try {
       _createExpenseUseCase(expense);
+      _addDebtValueUseCase(expense.debtId, expense.value);
       state.value = state.value.copyWith(status: ExpenseStatus.success);
     } catch (e) {
       state.value = state.value.copyWith(
@@ -57,12 +58,11 @@ class ExpenseController {
     }
   }
 
-  void deleteExpense({required ExpenseEntity expense, required String debtId}) {
+  void deleteExpense(ExpenseEntity expense) {
     state.value = state.value.copyWith(status: ExpenseStatus.loading);
     try {
       _deleteExpenseUseCase(expense);
-
-      _addDebtValueUseCase(debtId, -expense.value);
+      _addDebtValueUseCase(expense.debtId, -expense.value);
       state.value = state.value.copyWith(status: ExpenseStatus.success);
     } catch (e) {
       state.value = state.value.copyWith(

@@ -77,8 +77,6 @@ class CategoryPage extends StatelessWidget {
               separatorBuilder: (_, __) => const Divider(),
               itemBuilder: (context, index) {
                 final category = categories[index];
-                print('Category: $category');
-
                 return Dismissible(
                   key: Key(category.id),
                   direction: DismissDirection.startToEnd,
