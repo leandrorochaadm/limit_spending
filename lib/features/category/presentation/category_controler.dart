@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 import '../category.dart';
 
 class CategoryController {
@@ -8,9 +6,6 @@ class CategoryController {
   final UpdateCategoryUseCase updateCategoryUseCase;
   final GetSumCategoriesUseCase getSumCategoriesUseCase;
   final GetSumCategoryUseCase getSumCategoryUseCase;
-  ValueNotifier<CategoryState> state = ValueNotifier<CategoryState>(
-    CategoryState(status: CategoryStatus.initial),
-  );
 
   CategoryController({
     required this.getCategoriesUseCase,
@@ -21,43 +16,15 @@ class CategoryController {
   });
 
   Stream<List<CategoryEntity>> get categoriesStream {
-    state.value = state.value.copyWith(status: CategoryStatus.success);
-    try {
-      return getCategoriesUseCase();
-    } catch (e) {
-      state.value = state.value.copyWith(
-        status: CategoryStatus.error,
-        errorMessage: 'Erro ao obter categorias',
-      );
-    }
-    return Stream.value([]);
+    return getCategoriesUseCase();
   }
 
   void createCategory(CategoryEntity category) async {
-    state.value = state.value.copyWith(status: CategoryStatus.loading);
-
-    try {
-      await createCategoryUseCase(category);
-      state.value = state.value.copyWith(status: CategoryStatus.success);
-    } catch (e) {
-      state.value = state.value.copyWith(
-        status: CategoryStatus.error,
-        errorMessage: 'Erro ao criar categoria',
-      );
-    }
+    await createCategoryUseCase(category);
   }
 
   void updateCategory(CategoryEntity category) async {
-    state.value = state.value.copyWith(status: CategoryStatus.loading);
-    try {
-      await updateCategoryUseCase(category);
-      state.value = state.value.copyWith(status: CategoryStatus.success);
-    } catch (e) {
-      state.value = state.value.copyWith(
-        status: CategoryStatus.error,
-        errorMessage: 'Erro ao atualizar categoria',
-      );
-    }
+    await updateCategoryUseCase(category);
   }
 
   Stream<CategorySumEntity> get sumCategories => getSumCategoriesUseCase();

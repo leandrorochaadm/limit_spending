@@ -18,8 +18,6 @@ GetCategoryByIdUseCase getCategoryByIdUseCaseFactory() =>
 ExpenseController expenseControllerFactory() {
   final createExpenseUseCase = CreateExpenseUseCase(expenseRepositoryFactory());
 
-  final updateExpenseUseCase = UpdateExpenseUseCase(expenseRepositoryFactory());
-
   final deleteExpenseUseCase = DeleteExpenseUseCase(expenseRepositoryFactory());
 
   final getSumCategoryUseCase = GetSumCategoryUseCase(
