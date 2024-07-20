@@ -32,6 +32,7 @@ class TextFieldCustomWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final InkWell buttonClear = InkWell(
       onTap: () {
+        onChanged?.call('');
         controller.clear();
         focusNode.requestFocus();
       },

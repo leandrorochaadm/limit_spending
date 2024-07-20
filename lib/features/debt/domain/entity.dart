@@ -26,4 +26,9 @@ class DebtEntity implements Equatable {
 
   @override
   bool? get stringify => true;
+
+  @override
+  String toString() {
+    return 'DebtEntity{id: $id, name: $name, value: $value}\n';
+  }
 }

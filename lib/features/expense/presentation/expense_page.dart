@@ -36,7 +36,7 @@ class ExpensePage extends StatelessWidget {
             debugPrint(snapshot.error.toString());
             return Text('Error: ${snapshot.error}');
           }
-          if (snapshot.hasData) {
+          if (snapshot.hasData && snapshot.data!.isNotEmpty) {
             return FloatingActionButton(
               onPressed: () => modalCreateExpense(
                 context,
@@ -171,7 +171,9 @@ class ExpensePage extends StatelessWidget {
     String categoryId = '',
     required List<DebtEntity> debts,
   }) {
-    String debtId = '';
+    // Defina um valor inicial
+    String debtId = 'select_option';
+
     final TextEditingController descriptionEC = TextEditingController();
     final FocusNode descriptionFN = FocusNode();
 
@@ -181,7 +183,7 @@ class ExpensePage extends StatelessWidget {
     bool isValid() {
       return descriptionEC.text.isNotEmpty &&
           valueEC.text.isNotEmpty &&
-          debtId.isNotEmpty;
+          debtId != 'select_option';
     }
 
     return showModalBottomSheet(
@@ -195,27 +197,18 @@ class ExpensePage extends StatelessWidget {
           padding: const EdgeInsets.all(24.0),
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
-              return Column(
+              return ListView(
+                shrinkWrap: true,
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                ),
                 children: <Widget>[
-                  ...debts.map((debt) {
-                    return RadioListTile<String>(
-                      title: Text(debt.name),
-                      subtitle: Text('Divida: ${debt.value.toCurrency()}'),
-                      value: debt.id,
-                      groupValue: debtId,
-                      onChanged: (String? value) {
-                        setState(() {
-                          print(value);
-                          debtId = value ?? '';
-                        });
-                      },
-                    );
-                  }),
                   const SizedBox(height: 24),
                   TextFieldCustomWidget(
                     controller: descriptionEC,
                     focusNode: descriptionFN,
                     hintText: 'Descrição da despesa',
+                    onChanged: (_) => setState(() {}),
                   ),
                   const SizedBox(height: 24),
                   TextFieldCustomWidget(
@@ -224,6 +217,32 @@ class ExpensePage extends StatelessWidget {
                     hintText: 'Valor da despesa',
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
+                    onChanged: (_) => setState(() {}),
+                  ),
+                  const SizedBox(height: 24),
+                  DropdownButtonFormField<String>(
+                    decoration: const InputDecoration(
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      filled: true,
+                    ),
+                    value: debtId,
+                    items: [
+                      const DropdownMenuItem<String>(
+                        value: 'select_option',
+                        child: Text('Selecione a forma de pagamento'),
+                      ),
+                      ...debts.map((debt) {
+                        return DropdownMenuItem<String>(
+                          value: debt.id,
+                          child: Text(debt.name),
+                        );
+                      }),
+                    ],
+                    onChanged: (String? value) {
+                      setState(() {
+                        debtId = value ?? 'select_option';
+                      });
+                    },
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton(
