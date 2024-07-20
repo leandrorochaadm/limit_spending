@@ -9,6 +9,7 @@ class DebtEntity implements Equatable {
   final double value;
   final bool isPayment;
   final int dayClose;
+  final bool isCardCredit;
 
   DebtEntity({
     String? id,
@@ -16,7 +17,18 @@ class DebtEntity implements Equatable {
     required this.value,
     required this.dayClose,
     this.isPayment = false,
+    this.isCardCredit = false,
   }) : id = id ?? const Uuid().v4();
+
+  bool isAllowsToBuy() {
+    if (isCardCredit) {
+      return dayClose < DateTime.now().day;
+    }
+    if (isPayment) {
+      return value > 0;
+    }
+    return false;
+  }
 
   DebtModel toModel() {
     return DebtModel(
@@ -25,17 +37,25 @@ class DebtEntity implements Equatable {
       value: value,
       isPayment: isPayment,
       dayClose: dayClose,
+      isCardCredit: isCardCredit,
     );
   }
 
   @override
-  List<Object?> get props => [id, name, value, isPayment, dayClose];
+  List<Object?> get props => [
+        id,
+        name,
+        value,
+        isPayment,
+        dayClose,
+        isCardCredit,
+      ];
 
   @override
   bool? get stringify => true;
 
   @override
   String toString() {
-    return 'DebtEntity{id: $id, name: $name, value: $value, isPayment: $isPayment, dayClose: $dayClose}\n';
+    return 'DebtEntity{id: $id, name: $name, value: $value, isPayment: $isPayment, dayClose: $dayClose, isCardCredit: $isCardCredit}\n';
   }
 }

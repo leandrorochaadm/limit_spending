@@ -69,15 +69,19 @@ class DebtPage extends StatelessWidget {
               itemBuilder: (context, index) {
                 final debt = debtData[index];
 
-                return Visibility(
-                  visible: debt.value >= 0.0,
-                  child: ListTile(
-                    title: Text(debt.name),
-                    subtitle: Text(
-                      debt.value.toCurrency(),
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
+                return ListTile(
+                  title: Text('${debt.name}\n${debt.value.toCurrency()}'),
+                  subtitle: debt.isCardCredit
+                      ? Text(
+                          'Dia de fechamento: ${debt.dayClose}',
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        )
+                      : null,
+                  leading: Icon(
+                    Icons.circle,
+                    color: debt.isAllowsToBuy() ? Colors.green : Colors.red,
                   ),
+                  trailing: const Icon(Icons.arrow_forward_ios),
                 );
               },
             ),
@@ -98,6 +102,7 @@ class DebtPage extends StatelessWidget {
     final FocusNode dayCloseFN = FocusNode();
 
     bool isPayment = false;
+    bool isCardCredit = false;
 
     return showModalBottomSheet(
       context: context,
@@ -113,6 +118,17 @@ class DebtPage extends StatelessWidget {
               void onChangedPayment(bool? newValue) {
                 setState(() {
                   isPayment = newValue ?? false;
+
+                  if (!isPayment) {
+                    isCardCredit = false;
+                  }
+                });
+              }
+
+              void onChangedCardCredit(bool? newValue) {
+                if (!isPayment) return;
+                setState(() {
+                  isCardCredit = newValue ?? false;
                 });
               }
 
@@ -153,6 +169,20 @@ class DebtPage extends StatelessWidget {
                       ],
                     ),
                   ),
+                  GestureDetector(
+                    onTap: () {
+                      onChangedCardCredit(!isCardCredit);
+                    },
+                    child: Row(
+                      children: [
+                        const Text('É cartão de crédito?'),
+                        Checkbox(
+                          value: isCardCredit,
+                          onChanged: isPayment ? onChangedCardCredit : null,
+                        ),
+                      ],
+                    ),
+                  ),
                   const SizedBox(height: 24),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -172,7 +202,8 @@ class DebtPage extends StatelessWidget {
                           name: nameEC.text,
                           value: double.parse(valueStr),
                           isPayment: isPayment,
-                          dayClose: int.parse(dayCloseEC.text),
+                          dayClose: int.tryParse(dayCloseEC.text) ?? 0,
+                          isCardCredit: isCardCredit,
                         ),
                       );
                       Navigator.of(contextModal).pop();

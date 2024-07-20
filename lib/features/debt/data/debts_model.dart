@@ -7,6 +7,7 @@ class DebtModel extends DebtEntity {
     required super.value,
     required super.isPayment,
     required super.dayClose,
+    required super.isCardCredit,
   });
 
   factory DebtModel.fromJson(Map<String, dynamic> json) {
@@ -15,6 +16,7 @@ class DebtModel extends DebtEntity {
       name: json['name'] as String,
       value: (json['value'] as num).toDouble(),
       isPayment: json['isPayment'] as bool,
+      isCardCredit: json['isCardCredit'] as bool,
       dayClose: json['dayClosing'] as int,
     );
   }
@@ -26,6 +28,7 @@ class DebtModel extends DebtEntity {
       value: entity.value,
       isPayment: entity.isPayment,
       dayClose: entity.dayClose,
+      isCardCredit: entity.isCardCredit,
     );
   }
 
@@ -36,6 +39,7 @@ class DebtModel extends DebtEntity {
       value: value,
       isPayment: isPayment,
       dayClose: dayClose,
+      isCardCredit: isCardCredit,
     );
   }
 
@@ -46,6 +50,7 @@ class DebtModel extends DebtEntity {
       'value': value,
       'isPayment': isPayment,
       'dayClosing': dayClose,
+      'isCardCredit': isCardCredit,
     };
   }
 }
