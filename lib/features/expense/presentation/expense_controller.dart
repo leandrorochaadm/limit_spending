@@ -6,32 +6,38 @@ import '../domain/domain.dart';
 import 'expense_state.dart';
 
 class ExpenseController {
-  final GetExpensesUseCase getExpensesUseCase;
-  final CreateExpenseUseCase createExpenseUseCase;
-  final UpdateExpenseUseCase updateExpenseUseCase;
-  final DeleteExpenseUseCase deleteExpenseUseCase;
-  final GetSumCategoryUseCase getSumCategoryUseCase;
-  final GetExpensesByCreatedUseCase getExpensesByCreatedUseCase;
-  final GetDebtsUseCase getDebtsUseCase;
+  final CreateExpenseUseCase _createExpenseUseCase;
+  final UpdateExpenseUseCase _updateExpenseUseCase;
+  final DeleteExpenseUseCase _deleteExpenseUseCase;
+  final GetSumCategoryUseCase _getSumCategoryUseCase;
+  final GetExpensesByCreatedUseCase _getExpensesByCreatedUseCase;
+  final GetDebtsUseCase _getDebtsUseCase;
+  final AddDebtValueUseCase _addDebtValueUseCase;
 
   ValueNotifier<ExpenseState> state = ValueNotifier<ExpenseState>(
     ExpenseState(status: ExpenseStatus.initial),
   );
 
   ExpenseController({
-    required this.getExpensesUseCase,
-    required this.createExpenseUseCase,
-    required this.updateExpenseUseCase,
-    required this.deleteExpenseUseCase,
-    required this.getSumCategoryUseCase,
-    required this.getExpensesByCreatedUseCase,
-    required this.getDebtsUseCase,
-  });
+    required CreateExpenseUseCase createExpenseUseCase,
+    required UpdateExpenseUseCase updateExpenseUseCase,
+    required DeleteExpenseUseCase deleteExpenseUseCase,
+    required GetSumCategoryUseCase getSumCategoryUseCase,
+    required GetExpensesByCreatedUseCase getExpensesByCreatedUseCase,
+    required GetDebtsUseCase getDebtsUseCase,
+    required AddDebtValueUseCase addDebtValueUseCase,
+  })  : _createExpenseUseCase = createExpenseUseCase,
+        _updateExpenseUseCase = updateExpenseUseCase,
+        _deleteExpenseUseCase = deleteExpenseUseCase,
+        _getSumCategoryUseCase = getSumCategoryUseCase,
+        _getExpensesByCreatedUseCase = getExpensesByCreatedUseCase,
+        _getDebtsUseCase = getDebtsUseCase,
+        _addDebtValueUseCase = addDebtValueUseCase;
 
   Stream<List<ExpenseEntity>> expensesStream(String categoryId) {
     state.value = state.value.copyWith(status: ExpenseStatus.success);
     try {
-      return getExpensesByCreatedUseCase(categoryId: categoryId);
+      return _getExpensesByCreatedUseCase(categoryId: categoryId);
     } catch (e) {
       state.value = state.value.copyWith(
         status: ExpenseStatus.error,
@@ -44,7 +50,7 @@ class ExpenseController {
   void createExpense(ExpenseEntity expense) {
     state.value = state.value.copyWith(status: ExpenseStatus.loading);
     try {
-      createExpenseUseCase(expense);
+      _createExpenseUseCase(expense);
       state.value = state.value.copyWith(status: ExpenseStatus.success);
     } catch (e) {
       state.value = state.value.copyWith(
@@ -57,7 +63,7 @@ class ExpenseController {
   void deleteExpense(ExpenseEntity expense) {
     state.value = state.value.copyWith(status: ExpenseStatus.loading);
     try {
-      deleteExpenseUseCase(expense);
+      _deleteExpenseUseCase(expense);
       state.value = state.value.copyWith(status: ExpenseStatus.success);
     } catch (e) {
       state.value = state.value.copyWith(
@@ -70,7 +76,7 @@ class ExpenseController {
   void updateExpense(ExpenseEntity expense) {
     state.value = state.value.copyWith(status: ExpenseStatus.loading);
     try {
-      updateExpenseUseCase(expense);
+      _updateExpenseUseCase(expense);
       state.value = state.value.copyWith(status: ExpenseStatus.success);
     } catch (e) {
       state.value = state.value.copyWith(
@@ -84,10 +90,13 @@ class ExpenseController {
     required String categoryId,
     required double categoryLimit,
   }) =>
-      getSumCategoryUseCase(
+      _getSumCategoryUseCase(
         categoryId: categoryId,
         limit: categoryLimit,
       );
 
-  Future<List<DebtEntity>> getDebts() => getDebtsUseCase().first;
+  Future<List<DebtEntity>> getDebts() => _getDebtsUseCase().first;
+
+  Future<void> addDebtValue(String debtId, double debtValue) =>
+      _addDebtValueUseCase(debtId, debtValue);
 }

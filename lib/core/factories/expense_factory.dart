@@ -16,8 +16,6 @@ GetExpensesByCreatedUseCase getExpensesByCreatedUseCaseFactory() =>
 GetCategoryByIdUseCase getCategoryByIdUseCaseFactory() =>
     GetCategoryByIdUseCase(categoryRepositoryFactory());
 ExpenseController expenseControllerFactory() {
-  final getExpensesUseCase = GetExpensesUseCase(expenseRepositoryFactory());
-
   final createExpenseUseCase = CreateExpenseUseCase(expenseRepositoryFactory());
 
   final updateExpenseUseCase = UpdateExpenseUseCase(expenseRepositoryFactory());
@@ -30,15 +28,17 @@ ExpenseController expenseControllerFactory() {
   );
 
   final GetDebtsUseCase getDebtsUseCase = makeGetDebtsUseCase();
+  final AddDebtValueUseCase addDebtValueUseCase = makeAddDebtValueUseCase();
 
-  final expenseController = ExpenseController(
-    getExpensesUseCase: getExpensesUseCase,
+  final ExpenseController expenseController = ExpenseController(
     createExpenseUseCase: createExpenseUseCase,
     updateExpenseUseCase: updateExpenseUseCase,
     deleteExpenseUseCase: deleteExpenseUseCase,
     getSumCategoryUseCase: getSumCategoryUseCase,
     getExpensesByCreatedUseCase: getExpensesByCreatedUseCase,
     getDebtsUseCase: getDebtsUseCase,
+    addDebtValueUseCase: addDebtValueUseCase,
   );
+
   return expenseController;
 }

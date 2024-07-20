@@ -258,18 +258,18 @@ class ExpensePage extends StatelessWidget {
                     ),
                     onPressed: isValid()
                         ? () {
-                            expenseController.createExpense(
-                              ExpenseEntity(
-                                description: descriptionEC.text,
-                                created: DateTime.now(),
-                                value: valueEC.text.isEmpty
-                                    ? 0
-                                    : double.parse(
-                                        valueEC.text.toPointFormat(),
-                                      ),
-                                categoryId: categoryId,
-                              ),
+                            final valueDouble =
+                                double.parse(valueEC.text.toPointFormat());
+                            var expenseEntity = ExpenseEntity(
+                              description: descriptionEC.text,
+                              created: DateTime.now(),
+                              value: valueEC.text.isEmpty ? 0 : valueDouble,
+                              categoryId: categoryId,
                             );
+                            expenseController.createExpense(
+                              expenseEntity,
+                            );
+                            expenseController.addDebtValue(debtId, valueDouble);
                             Navigator.of(contextModal).pop();
                           }
                         : null,

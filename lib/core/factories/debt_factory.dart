@@ -21,11 +21,17 @@ GetSumDebtsUseCase makeGetSumDebtsUseCase() {
   return getSumDebtsUseCase;
 }
 
+AddDebtValueUseCase makeAddDebtValueUseCase() {
+  DebtRepository debtRepository = makeDebtRepository();
+  AddDebtValueUseCase addDebtValueUseCase = AddDebtValueUseCase(debtRepository);
+  return addDebtValueUseCase;
+}
+
 DebtPage makeDebtPage() {
   DebtRepository debtRepository = makeDebtRepository();
 
   CreateDebtUseCase createDebtUseCase = CreateDebtUseCase(debtRepository);
-  AddDebtValueUseCase addDebtValueUseCase = AddDebtValueUseCase(debtRepository);
+  AddDebtValueUseCase addDebtValueUseCase = makeAddDebtValueUseCase();
   GetSumDebtsUseCase getSumDebtsUseCase = makeGetSumDebtsUseCase();
   GetDebtsUseCase getDebtsUseCase = makeGetDebtsUseCase();
 
