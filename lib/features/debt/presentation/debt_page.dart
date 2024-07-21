@@ -143,6 +143,28 @@ class DebtPage extends StatelessWidget {
                     ),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {
+                      if (!debt.isPayment) {
+                        showDialog<void>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text(debt.name),
+                              content: const Text(
+                                'Não pode ser usada como uma forma de pagamento',
+                              ),
+                              actions: [
+                                TextButton(
+                                  child: const Text('Fechar'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                        return;
+                      }
                       Navigator.push(
                         context,
                         MaterialPageRoute(
