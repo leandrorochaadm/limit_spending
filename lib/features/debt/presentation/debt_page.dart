@@ -5,7 +5,7 @@ import '../debit.dart';
 
 class DebtPage extends StatelessWidget {
   final DebtController debtController;
-  const DebtPage(this.debtController, {super.key});
+  DebtPage(this.debtController, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -69,29 +69,90 @@ class DebtPage extends StatelessWidget {
               itemBuilder: (context, index) {
                 final debt = debtData[index];
 
-                return ListTile(
-                  title: Text('${debt.name}\n${debt.value.toCurrency()}'),
-                  subtitle: debt.isCardCredit
-                      ? Text(
-                          'Dia de fechamento: ${debt.dayClose}',
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        )
-                      : null,
-                  leading: Icon(
-                    Icons.circle,
-                    color: debt.isAllowsToBuy() ? Colors.green : Colors.red,
-                  ),
-                  trailing: const Icon(Icons.arrow_forward_ios),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
+                return Dismissible(
+                  key: Key(debt.id),
+                  direction: DismissDirection.horizontal,
+                  confirmDismiss: (direction) async {
+                    if (direction == DismissDirection.endToStart) {
+                      final bool? result = await showModalBottomSheet<bool>(
+                        context: context,
                         builder: (context) {
-                          return makeCategoryPage(debt.id);
+                          return AlertDialog(
+                            title: const Text('Excluir divida'),
+                            content: const Text(
+                              'Deseja realmente excluir esta divida?',
+                            ),
+                            actions: [
+                              TextButton(
+                                child: const Text('Cancelar'),
+                                onPressed: () {
+                                  Navigator.of(context).pop(false);
+                                },
+                              ),
+                              TextButton(
+                                child: const Text('Excluir'),
+                                onPressed: () {
+                                  Navigator.of(context).pop(true);
+                                },
+                              ),
+                            ],
+                          );
                         },
-                      ),
-                    );
+                      );
+                      return result ?? false;
+                    } else if (direction == DismissDirection.startToEnd) {
+                      modalCreateDebt(context, debt: debt);
+                      return false;
+                    }
+                    return false;
                   },
+                  onDismissed: (direction) {
+                    if (direction == DismissDirection.endToStart) {
+                      debtController.deleteDebt(debt.id);
+                    }
+                  },
+                  background: Container(
+                    color: Theme.of(context).colorScheme.inversePrimary,
+                    alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Icon(
+                      Icons.edit,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  secondaryBackground: Container(
+                    color: Theme.of(context).colorScheme.error,
+                    alignment: Alignment.centerRight,
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Icon(
+                      Icons.delete,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  child: ListTile(
+                    title: Text('${debt.name}\n${debt.value.toCurrency()}'),
+                    subtitle: debt.isCardCredit
+                        ? Text(
+                            'Dia de fechamento: ${debt.dayClose}',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          )
+                        : null,
+                    leading: Icon(
+                      Icons.circle,
+                      color: debt.isAllowsToBuy() ? Colors.green : Colors.red,
+                    ),
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return makeCategoryPage(debt.id);
+                          },
+                        ),
+                      );
+                    },
+                  ),
                 );
               },
             ),
@@ -101,18 +162,22 @@ class DebtPage extends StatelessWidget {
     );
   }
 
-  Future<dynamic> modalCreateDebt(BuildContext context) {
-    final TextEditingController nameEC = TextEditingController();
+  Future<dynamic> modalCreateDebt(BuildContext context, {DebtEntity? debt}) {
+    final bool isEdit = debt != null;
+    final TextEditingController nameEC =
+        TextEditingController(text: debt?.name);
     final FocusNode nameFN = FocusNode();
 
-    final TextEditingController valueEC = TextEditingController();
+    final TextEditingController valueEC =
+        TextEditingController(text: debt?.value.toStringAsFixed(2));
     final FocusNode valueFN = FocusNode();
 
-    final TextEditingController dayCloseEC = TextEditingController();
+    final TextEditingController dayCloseEC =
+        TextEditingController(text: debt?.dayClose.toString());
     final FocusNode dayCloseFN = FocusNode();
 
-    bool isPayment = false;
-    bool isCardCredit = false;
+    bool isPayment = debt?.isPayment ?? false;
+    bool isCardCredit = debt?.isCardCredit ?? false;
 
     return showModalBottomSheet(
       context: context,
@@ -206,16 +271,29 @@ class DebtPage extends StatelessWidget {
                       textStyle: Theme.of(context).textTheme.bodyMedium,
                     ),
                     onPressed: () async {
-                      var valueStr = valueEC.text.toPointFormat();
-                      await debtController.createDebt(
-                        DebtEntity(
-                          name: nameEC.text,
-                          value: double.parse(valueStr),
-                          isPayment: isPayment,
-                          dayClose: int.tryParse(dayCloseEC.text) ?? 0,
-                          isCardCredit: isCardCredit,
-                        ),
-                      );
+                      final valueDouble =
+                          double.parse(valueEC.text.toPointFormat());
+                      if (isEdit) {
+                        await debtController.updateDebt(
+                          debt.copyWith(
+                            name: nameEC.text,
+                            value: valueDouble,
+                            isPayment: isPayment,
+                            dayClose: int.tryParse(dayCloseEC.text) ?? 0,
+                            isCardCredit: isCardCredit,
+                          ),
+                        );
+                      } else {
+                        await debtController.createDebt(
+                          DebtEntity(
+                            name: nameEC.text,
+                            value: valueDouble,
+                            isPayment: isPayment,
+                            dayClose: int.tryParse(dayCloseEC.text) ?? 0,
+                            isCardCredit: isCardCredit,
+                          ),
+                        );
+                      }
                       Navigator.of(contextModal).pop();
                     },
                     child: const Text('Salvar divida'),

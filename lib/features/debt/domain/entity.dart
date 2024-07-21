@@ -41,6 +41,24 @@ class DebtEntity implements Equatable {
     );
   }
 
+  DebtEntity copyWith({
+    String? id,
+    String? name,
+    double? value,
+    bool? isPayment,
+    int? dayClose,
+    bool? isCardCredit,
+  }) {
+    return DebtEntity(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      value: value ?? this.value,
+      isPayment: isPayment ?? this.isPayment,
+      dayClose: dayClose ?? this.dayClose,
+      isCardCredit: isCardCredit ?? this.isCardCredit,
+    );
+  }
+
   @override
   List<Object?> get props => [
         id,

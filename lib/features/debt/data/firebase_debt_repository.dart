@@ -51,4 +51,17 @@ class FirebaseDebtRepository implements DebtRepository {
         .doc(debt.id)
         .set(debt.toModel().toJson());
   }
+
+  @override
+  Future<void> deleteDebt(String debtId) {
+    return firestore.collection(collectionPath).doc(debtId).delete();
+  }
+
+  @override
+  Future<void> updateDebt(DebtEntity debt) {
+    return firestore
+        .collection(collectionPath)
+        .doc(debt.id)
+        .update(debt.toModel().toJson());
+  }
 }
