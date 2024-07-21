@@ -139,7 +139,9 @@ class DebtPage extends StatelessWidget {
                         : null,
                     leading: Icon(
                       Icons.circle,
-                      color: debt.isAllowsToBuy() ? Colors.green : Colors.red,
+                      color: debt.isPayment
+                          ? (debt.isAllowsToBuy() ? Colors.green : Colors.red)
+                          : Colors.transparent,
                     ),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {
