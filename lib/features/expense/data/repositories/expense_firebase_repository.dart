@@ -62,15 +62,29 @@ class ExpenseFirebaseRepository implements ExpenseRepository {
     DateTime? startDate,
     required DateTime endDate,
   }) {
-    return getExpenses(categoryId: categoryId);
-    //     .map((List<ExpenseEntity> expenses) {
-    //   return expenses.where((expense) {
-    //     final bool isAfterStartDate =
-    //         startDate == null || expense.created.isAfter(startDate);
-    //     final bool isBeforeEndDate = expense.created.isBefore(endDate);
-    //     return isAfterStartDate && isBeforeEndDate;
-    //   }).toList();
-    // });
+    // Cria uma referência inicial para a coleção
+    var query = firestore
+        .collection(collectionPath)
+        .where('categoryId', isEqualTo: categoryId);
+
+    // Adiciona o filtro de startDate se ele não for nulo
+    if (startDate != null) {
+      query = query.where('createdDate', isGreaterThanOrEqualTo: startDate);
+    }
+
+    // Adiciona o filtro de endDate
+    query = query.where('createdDate', isLessThanOrEqualTo: endDate);
+
+    // Converte os documentos para a entidade de despesa
+    return query.snapshots().map(
+      (QuerySnapshot<Map<String, dynamic>> snapshot) {
+        return snapshot.docs.map(
+          (QueryDocumentSnapshot<Map<String, dynamic>> doc) {
+            return ExpenseModel.fromJson(doc.data()).toEntity();
+          },
+        ).toList();
+      },
+    );
   }
 
   @override

@@ -76,10 +76,7 @@ class ExpenseController {
     required String categoryId,
     required double categoryLimit,
   }) =>
-      _getSumCategoryUseCase(
-        categoryId: categoryId,
-        limit: categoryLimit,
-      );
+      _getSumCategoryUseCase(categoryId: categoryId, limit: categoryLimit);
 
   Future<List<DebtEntity>> getDebts() => _getDebtsUseCase().first;
 
