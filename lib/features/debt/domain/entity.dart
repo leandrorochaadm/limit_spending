@@ -3,6 +3,8 @@ import 'package:uuid/uuid.dart';
 
 import '../data/debts_model.dart';
 
+const int _kDaySalaryReceipt = 5;
+
 class DebtEntity implements Equatable {
   final String id;
   final String name;
@@ -22,12 +24,31 @@ class DebtEntity implements Equatable {
 
   bool isAllowsToBuy() {
     if (isCardCredit) {
-      return dayClose < DateTime.now().day;
+      final dateSalaryReceipt = _getDateByDay(_kDaySalaryReceipt);
+      return getDueDate().isAfter(dateSalaryReceipt);
     }
     if (isPayment) {
       return value > 0;
     }
     return false;
+  }
+
+  DateTime getDueDate() => _getDateByDay(dayClose);
+
+  DateTime _getDateByDay(int day) {
+    final DateTime now = DateTime.now();
+    DateTime date;
+
+    // Verifica se o número é menor que o dia de hoje
+    if (day < now.day) {
+      // Cria uma data com o número como dia no próximo mês
+      date = DateTime(now.year, now.month + 1, day);
+    } else {
+      // Cria uma data com o número como dia no período
+      date = DateTime(now.year, now.month, day);
+    }
+
+    return date;
   }
 
   DebtModel toModel() {

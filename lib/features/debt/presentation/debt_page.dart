@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/core.dart';
 import '../debit.dart';
@@ -133,7 +134,7 @@ class DebtPage extends StatelessWidget {
                     title: Text('${debt.name}\n${debt.value.toCurrency()}'),
                     subtitle: debt.isCardCredit
                         ? Text(
-                            'Dia de fechamento: ${debt.dayClose}',
+                            'Vence em: ${DateFormat('dd/MM').format(debt.getDueDate())}',
                             style: Theme.of(context).textTheme.bodyLarge,
                           )
                         : null,
