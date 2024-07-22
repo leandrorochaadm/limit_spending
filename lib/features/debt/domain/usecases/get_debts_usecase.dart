@@ -6,6 +6,9 @@ class GetDebtsUseCase {
 
   GetDebtsUseCase(this.debtRepository);
   Stream<List<DebtEntity>> call() {
-    return debtRepository.getDebts();
+    return debtRepository.getDebts().map((debts) {
+      debts.sort((a, b) => a.name.compareTo(b.name));
+      return debts;
+    });
   }
 }
