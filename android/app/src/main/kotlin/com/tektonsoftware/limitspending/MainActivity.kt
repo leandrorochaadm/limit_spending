@@ -1,4 +1,4 @@
-package com.tektonsoftware.limit_spending.limit_spending
+package com.tektonsoftware.limitspending
 
 import io.flutter.embedding.android.FlutterActivity
 

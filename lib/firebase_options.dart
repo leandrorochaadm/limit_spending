@@ -34,18 +34,19 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyChuhcMYmbQY-qV6r_9bKVGvdqZ9k-Wo_s',
-    appId: '1:692919346587:android:613dd55523d1465b956d3e',
+    appId: '1:692919346587:android:b01271a8ed906260956d3e',
     messagingSenderId: '692919346587',
     projectId: 'limit-spending',
-    storageBucket: 'limit-spending.appspot.com',
+    storageBucket: 'limit-spending.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAY15ZVdKHEx01i4DC_wRPaPXl1JbFlyCw',
-    appId: '1:692919346587:ios:fb166979b939a1c2956d3e',
+    appId: '1:692919346587:ios:fd79e075e75c7e65956d3e',
     messagingSenderId: '692919346587',
     projectId: 'limit-spending',
-    storageBucket: 'limit-spending.appspot.com',
-    iosBundleId: 'com.tektonsoftware.limitspending.limitSpending',
+    storageBucket: 'limit-spending.firebasestorage.app',
+    iosBundleId: 'com.tektonsoftware.limitspending',
   );
+
 }
