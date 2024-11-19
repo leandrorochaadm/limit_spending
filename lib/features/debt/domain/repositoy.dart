@@ -1,4 +1,4 @@
-import 'entity.dart';
+import 'entities/debt_entity.dart';
 
 abstract class DebtRepository {
   Stream<List<DebtEntity>> getDebts();

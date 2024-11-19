@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 
 import '../../../core/core.dart';
 import '../../category/domain/entities/entities.dart';
-import '../../debt/domain/entity.dart';
+import '../../debt/domain/entities/debts_entity.dart';
 import '../domain/domain.dart';
 import 'expense_controller.dart';
 import 'expense_state.dart';
@@ -24,7 +24,7 @@ class ExpensePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Despesas: ${category.name}'), elevation: 7),
-      floatingActionButton: FutureBuilder<List<DebtEntity>>(
+      floatingActionButton: FutureBuilder<DebtsEntity>(
         future: expenseController.getDebts(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -34,7 +34,7 @@ class ExpensePage extends StatelessWidget {
             debugPrint(snapshot.error.toString());
             return Text('Error: ${snapshot.error}');
           }
-          if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+          if (snapshot.hasData && snapshot.data!.debts.isNotEmpty) {
             return FloatingActionButton(
               onPressed: () => modalCreateExpense(
                 context,

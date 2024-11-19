@@ -1,4 +1,4 @@
-import '../domain/entity.dart';
+import '../domain/entities/debt_entity.dart';
 
 class DebtModel extends DebtEntity {
   DebtModel({

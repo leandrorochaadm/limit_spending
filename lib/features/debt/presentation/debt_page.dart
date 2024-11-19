@@ -3,66 +3,51 @@ import 'package:intl/intl.dart';
 
 import '../../../core/core.dart';
 import '../debit.dart';
+import '../domain/entities/debts_entity.dart';
 
 class DebtPage extends StatelessWidget {
   final DebtController debtController;
-  DebtPage(this.debtController, {super.key});
+  const DebtPage(this.debtController, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Dividas'), elevation: 7),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          modalCreateDebt(context);
-        },
-        child: const Icon(Icons.add),
-      ),
-      bottomSheet: Padding(
-        padding: const EdgeInsets.only(bottom: 36.0, top: 24),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            StreamBuilder<double>(
-              stream: debtController.getSumDebtsUseCase(),
-              builder: (context, debtsSum) {
-                if (debtsSum.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                }
-                if (debtsSum.hasError) {
-                  return Text('Error: ${debtsSum.error}');
-                }
-                if (debtsSum.hasData) {
-                  final sumEntity = debtsSum.data!;
+    return StreamBuilder<DebtsEntity>(
+      stream: debtController.getDebts(),
+      builder: (_, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.debts.isEmpty) {
+          return const Center(
+            child: Text('Parabens! Nenhuma divida encontrada'),
+          );
+        }
 
-                  return Text(
-                    'Total: ${sumEntity.toCurrency()}',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  );
-                }
-                return const SizedBox.shrink();
-              },
+        final debtData = snapshot.data!.debts;
+
+        return Scaffold(
+          appBar: AppBar(title: const Text('Dividas'), elevation: 7),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              modalCreateDebt(context);
+            },
+            child: const Icon(Icons.add),
+          ),
+          bottomSheet: Padding(
+            padding: const EdgeInsets.only(bottom: 36.0, top: 24),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Total: ${snapshot.data!.sumDebts.toCurrency()}',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-      body: StreamBuilder<List<DebtEntity>>(
-        stream: debtController.getDebts(),
-        builder: (_, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(
-              child: Text('Parabens! Nenhuma divida encontrada'),
-            );
-          }
-
-          final debtData = snapshot.data!;
-
-          return Padding(
+          ),
+          body: Padding(
             padding: const EdgeInsets.only(bottom: 72.0),
             child: ListView.separated(
               itemCount: debtData.length,
@@ -181,9 +166,9 @@ class DebtPage extends StatelessWidget {
                 );
               },
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 

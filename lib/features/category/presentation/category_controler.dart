@@ -1,5 +1,4 @@
 import '../category.dart';
-import '../domain/entities/categories_entity.dart';
 
 class CategoryController {
   final GetCategoriesUseCase getCategoriesUseCase;

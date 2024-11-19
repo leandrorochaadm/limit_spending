@@ -1,4 +1,4 @@
-import '../entity.dart';
+import '../entities/debt_entity.dart';
 import '../repositoy.dart';
 
 class UpdateDebitUseCase {

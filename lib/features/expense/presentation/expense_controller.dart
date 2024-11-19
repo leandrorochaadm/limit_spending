@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../category/domain/domain.dart';
 import '../../debt/debit.dart';
+import '../../debt/domain/entities/debts_entity.dart';
 import '../domain/domain.dart';
 import 'expense_state.dart';
 
@@ -78,7 +79,7 @@ class ExpenseController {
   }) =>
       _getSumCategoryUseCase(categoryId: categoryId, limit: categoryLimit);
 
-  Future<List<DebtEntity>> getDebts() => _getDebtsUseCase().first;
+  Future<DebtsEntity> getDebts() => _getDebtsUseCase().first;
 
   Future<void> addDebtValue(String debtId, double debtValue) =>
       _addDebtValueUseCase(debtId, debtValue);

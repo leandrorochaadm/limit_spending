@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../domain/entity.dart';
+import '../domain/entities/debt_entity.dart';
 import '../domain/repositoy.dart';
 import 'debts_model.dart';
 

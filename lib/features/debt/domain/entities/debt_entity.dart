@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:uuid/uuid.dart';
 
-import '../data/debts_model.dart';
+import '../../data/debts_model.dart';
 
 const int _kDaySalaryReceipt = 5;
 

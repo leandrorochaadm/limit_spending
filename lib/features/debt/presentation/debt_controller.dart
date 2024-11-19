@@ -1,4 +1,5 @@
 import '../debit.dart';
+import '../domain/entities/debts_entity.dart';
 
 class DebtController {
   final AddDebtValueUseCase addDebtValueUseCase;
@@ -17,7 +18,7 @@ class DebtController {
   });
 
   Stream<double> getSumDebts() => getSumDebtsUseCase();
-  Stream<List<DebtEntity>> getDebts() => getDebtsUseCase();
+  Stream<DebtsEntity> getDebts() => getDebtsUseCase();
   Future<void> addDebtValue(String debtId, double debtValue) =>
       addDebtValueUseCase(debtId, debtValue);
   Future<void> createDebt(DebtEntity debt) => createDebtUseCase(debt);
