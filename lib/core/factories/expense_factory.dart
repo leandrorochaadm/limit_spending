@@ -15,7 +15,11 @@ GetExpensesByCreatedUseCase getExpensesByCreatedUseCaseFactory() =>
 
 GetCategoryByIdUseCase getCategoryByIdUseCaseFactory() =>
     GetCategoryByIdUseCase(categoryRepositoryFactory());
-ExpenseController expenseControllerFactory() {
+
+ExpenseController expenseControllerFactory({
+  required CategoryEntity category,
+  required String debtId,
+}) {
   final createExpenseUseCase = CreateExpenseUseCase(expenseRepositoryFactory());
 
   final deleteExpenseUseCase = DeleteExpenseUseCase(expenseRepositoryFactory());
@@ -35,6 +39,8 @@ ExpenseController expenseControllerFactory() {
     getExpensesByCreatedUseCase: getExpensesByCreatedUseCase,
     getDebtsUseCase: getDebtsUseCase,
     addDebtValueUseCase: addDebtValueUseCase,
+    category: category,
+    debtId: debtId,
   );
 
   return expenseController;
@@ -44,8 +50,4 @@ ExpensePage makeExpensePage({
   required CategoryEntity category,
   required String debtId,
 }) =>
-    ExpensePage(
-      expenseController: expenseControllerFactory(),
-      category: category,
-      debtId: debtId,
-    );
+    ExpensePage(expenseControllerFactory(category: category, debtId: debtId));

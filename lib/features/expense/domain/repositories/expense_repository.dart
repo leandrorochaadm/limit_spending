@@ -11,4 +11,10 @@ abstract class ExpenseRepository {
     DateTime? startDate,
     required DateTime endDate,
   });
+
+  Future<double> getExpensesSumByPeriodCreated({
+    required String categoryId,
+    DateTime? startDate,
+    DateTime? endDate,
+  });
 }

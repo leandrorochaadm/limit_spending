@@ -19,24 +19,11 @@ class ExpenseFirebaseRepository implements ExpenseRepository {
         .collection(collectionPath)
         .doc(expense.id)
         .set(expense.toJson());
-
-    if (expense.categoryId.isNotEmpty) {
-      await categoryRepository.addConsumedCategory(
-        expense.categoryId,
-        expense.value,
-      );
-    }
   }
 
   @override
   Future<void> deleteExpense(ExpenseModel expense) async {
     await firestore.collection(collectionPath).doc(expense.id).delete();
-    if (expense.categoryId.isNotEmpty) {
-      await categoryRepository.addConsumedCategory(
-        expense.categoryId,
-        -expense.value,
-      );
-    }
   }
 
   @override
@@ -58,8 +45,8 @@ class ExpenseFirebaseRepository implements ExpenseRepository {
   Future<List<ExpenseEntity>> getExpensesByPeriodCreated({
     required String categoryId,
     DateTime? startDate,
-    required DateTime endDate,
-  }) {
+    DateTime? endDate,
+  }) async {
     // Cria uma referência inicial para a coleção
     var query = firestore
         .collection(collectionPath)
@@ -67,11 +54,13 @@ class ExpenseFirebaseRepository implements ExpenseRepository {
 
     // Adiciona o filtro de startDate se ele não for nulo
     if (startDate != null) {
-      query = query.where('createdDate', isGreaterThanOrEqualTo: startDate);
+      query = query.where('created', isGreaterThanOrEqualTo: startDate);
     }
 
     // Adiciona o filtro de endDate
-    query = query.where('createdDate', isLessThanOrEqualTo: endDate);
+    if (endDate != null) {
+      query = query.where('created', isLessThanOrEqualTo: endDate);
+    }
 
     // Converte os documentos para a entidade de despesa
     return query.get().then(
@@ -91,5 +80,25 @@ class ExpenseFirebaseRepository implements ExpenseRepository {
         .collection(collectionPath)
         .doc(expense.id)
         .update(expense.toJson());
+  }
+
+  @override
+  Future<double> getExpensesSumByPeriodCreated({
+    required String categoryId,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) {
+    return getExpensesByPeriodCreated(
+      categoryId: categoryId,
+      endDate: endDate,
+      startDate: startDate,
+    ).then(
+      (values) {
+        return values.fold<double>(
+          0.0,
+          (total, expense) => total + expense.value,
+        );
+      },
+    );
   }
 }

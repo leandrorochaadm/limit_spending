@@ -1,55 +1,95 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/core.dart';
 import '../../category/domain/domain.dart';
 import '../../debt/debit.dart';
 import '../domain/domain.dart';
 import 'expense_state.dart';
 
 class ExpenseController {
-  final CreateExpenseUseCase _createExpenseUseCase;
-  final DeleteExpenseUseCase _deleteExpenseUseCase;
-  final GetSumCategoryUseCase _getSumCategoryUseCase;
-  final GetExpensesByCreatedUseCase _getExpensesByCreatedUseCase;
-  final GetDebtsUseCase _getDebtsUseCase;
-  final AddDebtValueUseCase _addDebtValueUseCase;
-
+  final CreateExpenseUseCase createExpenseUseCase;
+  final DeleteExpenseUseCase deleteExpenseUseCase;
+  final GetSumCategoryUseCase getSumCategoryUseCase;
+  final GetExpensesByCreatedUseCase getExpensesByCreatedUseCase;
+  final GetDebtsUseCase getDebtsUseCase;
+  final AddDebtValueUseCase addDebtValueUseCase;
+  final CategoryEntity category;
+  final String debtId;
   ValueNotifier<ExpenseState> state = ValueNotifier<ExpenseState>(
-    ExpenseState(status: ExpenseStatus.initial),
+    const ExpenseState(status: ExpenseStatus.initial),
   );
 
-  ExpenseController({
-    required CreateExpenseUseCase createExpenseUseCase,
-    required DeleteExpenseUseCase deleteExpenseUseCase,
-    required GetSumCategoryUseCase getSumCategoryUseCase,
-    required GetExpensesByCreatedUseCase getExpensesByCreatedUseCase,
-    required GetDebtsUseCase getDebtsUseCase,
-    required AddDebtValueUseCase addDebtValueUseCase,
-  })  : _createExpenseUseCase = createExpenseUseCase,
-        _deleteExpenseUseCase = deleteExpenseUseCase,
-        _getSumCategoryUseCase = getSumCategoryUseCase,
-        _getExpensesByCreatedUseCase = getExpensesByCreatedUseCase,
-        _getDebtsUseCase = getDebtsUseCase,
-        _addDebtValueUseCase = addDebtValueUseCase;
+  final TextEditingController descriptionEC = TextEditingController();
+  final FocusNode descriptionFN = FocusNode();
 
-  Future<List<ExpenseEntity>> expensesStream(String categoryId) {
-    state.value = state.value.copyWith(status: ExpenseStatus.success);
+  final TextEditingController valueEC = TextEditingController();
+  final FocusNode valueFN = FocusNode();
+
+  bool isValid() => descriptionEC.text.isNotEmpty && valueEC.text.isNotEmpty;
+
+  int daysFilter = 30;
+
+  ExpenseController({
+    required this.createExpenseUseCase,
+    required this.deleteExpenseUseCase,
+    required this.getSumCategoryUseCase,
+    required this.getExpensesByCreatedUseCase,
+    required this.getDebtsUseCase,
+    required this.addDebtValueUseCase,
+    required this.category,
+    required this.debtId,
+  }) {
+    load();
+  }
+
+  Future<void> load() async {
+    state.value = state.value.copyWith(status: ExpenseStatus.loading);
     try {
-      return _getExpensesByCreatedUseCase(categoryId: categoryId);
+      final expenses = await getExpensesByCreatedUseCase(
+        categoryId: category.id,
+        days: daysFilter,
+      );
+
+      final expensesSum = expenses.fold<double>(
+        0,
+        (previousValue, expense) => previousValue + expense.value,
+      );
+      final balance = category.limitMonthly - expensesSum;
+
+      state.value = ExpenseState(
+        status: ExpenseStatus.success,
+        expenses: expenses,
+        consumedSum: expensesSum.toCurrency(),
+        limitCategory: category.limitMonthly.toCurrency(),
+        balance: balance.toCurrency(),
+      );
+
+      descriptionEC.clear();
+      valueEC.clear();
     } catch (e) {
-      state.value = state.value.copyWith(
+      state.value = const ExpenseState(
         status: ExpenseStatus.error,
         errorMessage: 'Erro ao obter despesas',
       );
     }
-    return Future.value([]);
   }
 
-  void createExpense(ExpenseEntity expense) {
+  Future<void> createExpense() async {
     state.value = state.value.copyWith(status: ExpenseStatus.loading);
+
+    final valueDouble = double.parse(valueEC.text.toPointFormat());
+    var expense = ExpenseEntity(
+      description: descriptionEC.text,
+      created: DateTime.now(),
+      value: valueEC.text.isEmpty ? 0 : valueDouble,
+      categoryId: category.id,
+      debtId: debtId,
+    );
+
     try {
-      _createExpenseUseCase(expense);
-      _addDebtValueUseCase(expense.debtId, expense.value);
-      state.value = state.value.copyWith(status: ExpenseStatus.success);
+      await createExpenseUseCase(expense);
+      await addDebtValueUseCase(expense.debtId, expense.value);
+      await load();
     } catch (e) {
       state.value = state.value.copyWith(
         status: ExpenseStatus.error,
@@ -58,12 +98,12 @@ class ExpenseController {
     }
   }
 
-  void deleteExpense(ExpenseEntity expense) {
+  Future<void> deleteExpense(ExpenseEntity expense) async {
     state.value = state.value.copyWith(status: ExpenseStatus.loading);
     try {
-      _deleteExpenseUseCase(expense);
-      _addDebtValueUseCase(expense.debtId, -expense.value);
-      state.value = state.value.copyWith(status: ExpenseStatus.success);
+      await deleteExpenseUseCase(expense);
+      await addDebtValueUseCase(expense.debtId, -expense.value);
+      await load();
     } catch (e) {
       state.value = state.value.copyWith(
         status: ExpenseStatus.error,
@@ -72,14 +112,7 @@ class ExpenseController {
     }
   }
 
-  Future<CategorySumEntity> getSumByCategory({
-    required String categoryId,
-    required double categoryLimit,
-  }) =>
-      _getSumCategoryUseCase(categoryId: categoryId, limit: categoryLimit);
-
-  Future<List<DebtEntity>> getDebts() => _getDebtsUseCase();
-
-  Future<void> addDebtValue(String debtId, double debtValue) =>
-      _addDebtValueUseCase(debtId, debtValue);
+  Future<void> addDebtValue(String debtId, double debtValue) async {
+    await addDebtValueUseCase(debtId, debtValue);
+  }
 }

@@ -1,4 +1,6 @@
-import '../domain/domain.dart';
+import 'package:equatable/equatable.dart';
+
+import '../expense.dart';
 
 enum ExpenseStatus {
   initial,
@@ -7,26 +9,42 @@ enum ExpenseStatus {
   error,
 }
 
-class ExpenseState {
+class ExpenseState extends Equatable {
   final ExpenseStatus status;
-  final List<ExpenseEntity> categories;
   final String? errorMessage;
+  final String consumedSum;
+  final String limitCategory;
+  final String balance;
+  final List<ExpenseEntity> expenses;
 
-  ExpenseState({
+  const ExpenseState({
     required this.status,
-    this.categories = const [],
     this.errorMessage,
+    this.consumedSum = '0.00',
+    this.limitCategory = '0.00',
+    this.balance = '0.00',
+    this.expenses = const [],
   });
 
   ExpenseState copyWith({
     ExpenseStatus? status,
-    List<ExpenseEntity>? categories,
     String? errorMessage,
+    String? consumedSum,
+    String? limitCategory,
+    String? balance,
+    List<ExpenseEntity>? expenses,
   }) {
     return ExpenseState(
       status: status ?? this.status,
-      categories: categories ?? this.categories,
       errorMessage: errorMessage ?? this.errorMessage,
+      consumedSum: consumedSum ?? this.consumedSum,
+      limitCategory: limitCategory ?? this.limitCategory,
+      balance: balance ?? this.balance,
+      expenses: expenses ?? this.expenses,
     );
   }
+
+  @override
+  List<Object?> get props =>
+      [status, errorMessage, consumedSum, limitCategory, balance, expenses];
 }
