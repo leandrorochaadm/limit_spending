@@ -11,8 +11,6 @@ CreateCategoryUseCase makeCreateCategoryUseCase() =>
     CreateCategoryUseCase(categoryRepositoryFactory());
 UpdateCategoryUseCase makeUpdateCategoryUseCase() =>
     UpdateCategoryUseCase(categoryRepositoryFactory());
-GetSumCategoriesUseCase makeSumCategoryUseCase() =>
-    GetSumCategoriesUseCase(makeGetCategoriesUseCase());
 
 final GetExpensesByCreatedUseCase getExpensesByCreatedUseCase =
     getExpensesByCreatedUseCaseFactory();
@@ -27,7 +25,6 @@ CategoryController categoryControllerFactory() {
     getCategoriesUseCase: makeGetCategoriesUseCase(),
     createCategoryUseCase: makeCreateCategoryUseCase(),
     updateCategoryUseCase: makeUpdateCategoryUseCase(),
-    getSumCategoriesUseCase: makeSumCategoryUseCase(),
     getSumCategoryUseCase: getSumCategoryUseCase,
   );
   return categoryController;
