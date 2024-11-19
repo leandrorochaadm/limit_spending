@@ -75,7 +75,7 @@ class CategoryFirebaseRepository implements CategoryRepository {
   @override
   Future<CategoryEntity> getCategoryStream(String categoryId) {
     return firestore.collection(collectionPath).doc(categoryId).get().then(
-      (DocumentSnapshot<Map<String, dynamic>> snapshot) {
+      (snapshot) {
         if (snapshot.exists) {
           final data = snapshot.data();
           return CategoryModel.fromJson(data!).toEntity();
