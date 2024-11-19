@@ -86,7 +86,7 @@ class CategoryPage extends StatelessWidget {
           child: ListTile(
             title: Text(category.name),
             subtitle: Text(
-              'Disponível: ${data.sumBalance.toCurrency()} \nConsumo:${data.sumConsumed.toCurrency()} \nlimite mensal: ${data.sumLimit.toCurrency()}',
+              'Disponível: ${category.balance.toCurrency()} \nConsumo:${category.consumed.toCurrency()} \nlimite mensal: ${category.limitMonthly.toCurrency()}',
             ),
             trailing: const Icon(Icons.arrow_forward_ios),
             onTap: () {
