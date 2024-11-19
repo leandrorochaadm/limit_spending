@@ -32,8 +32,8 @@ class CategoryPage extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            StreamBuilder<CategorySumEntity>(
-              stream: categoryController.getSumCategoriesUseCase(),
+            FutureBuilder<CategorySumEntity>(
+              future: categoryController.getSumCategoriesUseCase(),
               builder: (context, categorySum) {
                 if (categorySum.connectionState == ConnectionState.waiting) {
                   return const CircularProgressIndicator();
@@ -55,8 +55,8 @@ class CategoryPage extends StatelessWidget {
           ],
         ),
       ),
-      body: StreamBuilder<List<CategoryEntity>>(
-        stream: categoryController.categoriesStream,
+      body: FutureBuilder<List<CategoryEntity>>(
+        future: categoryController.categoriesStream,
         builder: (_, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -98,8 +98,8 @@ class CategoryPage extends StatelessWidget {
                       color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
-                  child: StreamBuilder<CategorySumEntity>(
-                    stream: categoryController.getSumByCategory(
+                  child: FutureBuilder<CategorySumEntity>(
+                    future: categoryController.getSumByCategory(
                       categoryId: category.id,
                       categoryLimit: category.limitMonthly,
                     ),

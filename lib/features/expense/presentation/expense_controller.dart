@@ -31,7 +31,7 @@ class ExpenseController {
         _getDebtsUseCase = getDebtsUseCase,
         _addDebtValueUseCase = addDebtValueUseCase;
 
-  Stream<List<ExpenseEntity>> expensesStream(String categoryId) {
+  Future<List<ExpenseEntity>> expensesStream(String categoryId) {
     state.value = state.value.copyWith(status: ExpenseStatus.success);
     try {
       return _getExpensesByCreatedUseCase(categoryId: categoryId);
@@ -41,7 +41,7 @@ class ExpenseController {
         errorMessage: 'Erro ao obter despesas',
       );
     }
-    return Stream.value([]);
+    return Future.value([]);
   }
 
   void createExpense(ExpenseEntity expense) {
@@ -72,13 +72,13 @@ class ExpenseController {
     }
   }
 
-  Stream<CategorySumEntity> getSumByCategory({
+  Future<CategorySumEntity> getSumByCategory({
     required String categoryId,
     required double categoryLimit,
   }) =>
       _getSumCategoryUseCase(categoryId: categoryId, limit: categoryLimit);
 
-  Future<List<DebtEntity>> getDebts() => _getDebtsUseCase().first;
+  Future<List<DebtEntity>> getDebts() => _getDebtsUseCase();
 
   Future<void> addDebtValue(String debtId, double debtValue) =>
       _addDebtValueUseCase(debtId, debtValue);

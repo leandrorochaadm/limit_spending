@@ -23,8 +23,8 @@ class DebtPage extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            StreamBuilder<double>(
-              stream: debtController.getSumDebtsUseCase(),
+            FutureBuilder<double>(
+              future: debtController.getSumDebtsUseCase(),
               builder: (context, debtsSum) {
                 if (debtsSum.connectionState == ConnectionState.waiting) {
                   return const CircularProgressIndicator();
@@ -47,8 +47,8 @@ class DebtPage extends StatelessWidget {
           ],
         ),
       ),
-      body: StreamBuilder<List<DebtEntity>>(
-        stream: debtController.getDebts(),
+      body: FutureBuilder<List<DebtEntity>>(
+        future: debtController.getDebts(),
         builder: (_, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

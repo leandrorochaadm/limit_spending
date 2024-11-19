@@ -4,8 +4,8 @@ import 'get_categories_usecase.dart';
 class GetSumCategoriesUseCase {
   final GetCategoriesUseCase getCategoriesUseCase;
   GetSumCategoriesUseCase(this.getCategoriesUseCase);
-  Stream<CategorySumEntity> call() {
-    return getCategoriesUseCase().map((categoryList) {
+  Future<CategorySumEntity> call() {
+    return getCategoriesUseCase().then((categoryList) {
       final totalConsumed = categoryList.fold<double>(
         0,
         (previousValue, category) => previousValue + category.consumed,

@@ -9,11 +9,11 @@ class GetSumCategoryUseCase {
     required this.getExpensesByCreatedUseCase,
     required this.getCategoryByIdUseCase,
   });
-  Stream<CategorySumEntity> call({
+  Future<CategorySumEntity> call({
     required String categoryId,
     required double limit,
   }) {
-    return getExpensesByCreatedUseCase(categoryId: categoryId).map((expenses) {
+    return getExpensesByCreatedUseCase(categoryId: categoryId).then((expenses) {
       double totalConsumed =
           expenses.fold(0, (sum, expense) => sum + expense.value);
       double balance = limit - totalConsumed;

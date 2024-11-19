@@ -53,8 +53,8 @@ class ExpensePage extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            StreamBuilder<CategorySumEntity>(
-              stream: expenseController.getSumByCategory(
+            FutureBuilder<CategorySumEntity>(
+              future: expenseController.getSumByCategory(
                 categoryId: category.id,
                 categoryLimit: category.limitMonthly,
               ),
@@ -82,8 +82,8 @@ class ExpensePage extends StatelessWidget {
       ),
       body: Stack(
         children: [
-          StreamBuilder<List<ExpenseEntity>>(
-            stream: expenseController.expensesStream(category.id),
+          FutureBuilder<List<ExpenseEntity>>(
+            future: expenseController.expensesStream(category.id),
             builder: (_, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());

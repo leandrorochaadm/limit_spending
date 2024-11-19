@@ -15,7 +15,7 @@ class CategoryController {
     required this.getSumCategoryUseCase,
   });
 
-  Stream<List<CategoryEntity>> get categoriesStream {
+  Future<List<CategoryEntity>> get categoriesStream {
     return getCategoriesUseCase();
   }
 
@@ -27,9 +27,9 @@ class CategoryController {
     await updateCategoryUseCase(category);
   }
 
-  Stream<CategorySumEntity> get sumCategories => getSumCategoriesUseCase();
+  Future<CategorySumEntity> get sumCategories => getSumCategoriesUseCase();
 
-  Stream<CategorySumEntity> getSumByCategory({
+  Future<CategorySumEntity> getSumByCategory({
     required String categoryId,
     required double categoryLimit,
   }) =>

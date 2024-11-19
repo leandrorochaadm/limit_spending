@@ -40,24 +40,22 @@ class ExpenseFirebaseRepository implements ExpenseRepository {
   }
 
   @override
-  Stream<List<ExpenseEntity>> getExpenses({required String categoryId}) {
+  Future<List<ExpenseEntity>> getExpenses({required String categoryId}) {
     return firestore
         .collection(collectionPath)
         .where('categoryId', isEqualTo: categoryId)
-        .snapshots()
-        .map(
-      (QuerySnapshot<Map<String, dynamic>> snapshot) {
-        return snapshot.docs.map(
-          (QueryDocumentSnapshot<Map<String, dynamic>> doc) {
-            return ExpenseModel.fromJson(doc.data()).toEntity();
-          },
-        ).toList();
-      },
-    );
+        .get()
+        .then((QuerySnapshot<Map<String, dynamic>> snapshot) {
+      return snapshot.docs.map<ExpenseEntity>(
+        (QueryDocumentSnapshot<Map<String, dynamic>> doc) {
+          return ExpenseModel.fromJson(doc.data()).toEntity();
+        },
+      ).toList();
+    });
   }
 
   @override
-  Stream<List<ExpenseEntity>> getExpensesByPeriodCreated({
+  Future<List<ExpenseEntity>> getExpensesByPeriodCreated({
     required String categoryId,
     DateTime? startDate,
     required DateTime endDate,
@@ -76,9 +74,9 @@ class ExpenseFirebaseRepository implements ExpenseRepository {
     query = query.where('createdDate', isLessThanOrEqualTo: endDate);
 
     // Converte os documentos para a entidade de despesa
-    return query.snapshots().map(
-      (QuerySnapshot<Map<String, dynamic>> snapshot) {
-        return snapshot.docs.map(
+    return query.get().then(
+      (value) {
+        return value.docs.map(
           (QueryDocumentSnapshot<Map<String, dynamic>> doc) {
             return ExpenseModel.fromJson(doc.data()).toEntity();
           },

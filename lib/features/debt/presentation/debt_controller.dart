@@ -16,8 +16,8 @@ class DebtController {
     required this.updateDebitUseCase,
   });
 
-  Stream<double> getSumDebts() => getSumDebtsUseCase();
-  Stream<List<DebtEntity>> getDebts() => getDebtsUseCase();
+  Future<double> getSumDebts() => getSumDebtsUseCase();
+  Future<List<DebtEntity>> getDebts() => getDebtsUseCase();
   Future<void> addDebtValue(String debtId, double debtValue) =>
       addDebtValueUseCase(debtId, debtValue);
   Future<void> createDebt(DebtEntity debt) => createDebtUseCase(debt);
