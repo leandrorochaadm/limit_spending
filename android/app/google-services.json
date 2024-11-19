@@ -2,14 +2,14 @@
   "project_info": {
     "project_number": "692919346587",
     "project_id": "limit-spending",
-    "storage_bucket": "limit-spending.appspot.com"
+    "storage_bucket": "limit-spending.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:692919346587:android:613dd55523d1465b956d3e",
+        "mobilesdk_app_id": "1:692919346587:android:b01271a8ed906260956d3e",
         "android_client_info": {
-          "package_name": "com.tektonsoftware.limit_spending.limit_spending"
+          "package_name": "com.tektonsoftware.limitspending"
         }
       },
       "oauth_client": [],
