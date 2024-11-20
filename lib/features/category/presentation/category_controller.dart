@@ -10,6 +10,18 @@ class CategoryController {
   final UpdateCategoryUseCase updateCategoryUseCase;
   final GetSumCategoriesUseCase getSumCategoriesUseCase;
   final ValueNotifier<CategoryState> state = ValueNotifier(CategoryState());
+  CategoryEntity _categorySelected = CategoryEntity.empty();
+
+  set categorySelected(CategoryEntity category) {
+    _categorySelected = category;
+    nameEC.text = category.name;
+    limitEC.text = category.limitMonthly.toStringAsFixed(2);
+  }
+
+  TextEditingController nameEC = TextEditingController();
+  final FocusNode nameFN = FocusNode();
+  TextEditingController limitEC = TextEditingController();
+  final FocusNode limitFN = FocusNode();
 
   CategoryController({
     required this.getCategoriesUseCase,
@@ -56,6 +68,8 @@ class CategoryController {
       (previousValue, category) => previousValue + category.balance,
     );
 
+    clearForm();
+
     state.value = CategoryState(
       status: CategoryStatus.success,
       categories: categories,
@@ -63,6 +77,11 @@ class CategoryController {
       limitSum: limitSum.toCurrency(),
       balanceSum: balanceSum.toCurrency(),
     );
+  }
+
+  void clearForm() {
+    nameEC.clear();
+    limitEC.clear();
   }
 
   void createCategory(CategoryEntity category) async {
@@ -75,5 +94,29 @@ class CategoryController {
     state.value = CategoryState(status: CategoryStatus.loading);
     await updateCategoryUseCase(category);
     await load();
+  }
+
+  void submit() {
+    final bool isModeEdition = _categorySelected.name.isNotEmpty;
+    print('isModeEdition: $isModeEdition');
+    if (isModeEdition) {
+      CategoryEntity category = _categorySelected.toModel().copyWith(
+            name: nameEC.text,
+            limitMonthly: limitEC.text.isEmpty
+                ? 0
+                : double.parse(limitEC.text.toPointFormat()),
+          );
+      print(category);
+      updateCategory(category);
+    } else {
+      final category = CategoryEntity(
+        name: nameEC.text,
+        created: DateTime.now(),
+        limitMonthly: limitEC.text.isEmpty ? 0 : double.parse(limitEC.text),
+        consumed: 0,
+      );
+      print(category);
+      createCategory(category);
+    }
   }
 }

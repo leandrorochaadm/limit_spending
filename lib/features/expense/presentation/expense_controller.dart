@@ -62,14 +62,18 @@ class ExpenseController {
         balance: balance.toCurrency(),
       );
 
-      descriptionEC.clear();
-      valueEC.clear();
+      clearForm();
     } catch (e) {
       state.value = const ExpenseState(
         status: ExpenseStatus.error,
         errorMessage: 'Erro ao obter despesas',
       );
     }
+  }
+
+  void clearForm() {
+    descriptionEC.clear();
+    valueEC.clear();
   }
 
   Future<void> createExpense() async {

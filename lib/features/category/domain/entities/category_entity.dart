@@ -13,6 +13,13 @@ class CategoryEntity extends Equatable {
     required this.consumed,
   }) : id = id ?? const Uuid().v4();
 
+  factory CategoryEntity.empty() => CategoryEntity(
+        name: '',
+        created: DateTime.now(),
+        limitMonthly: 0,
+        consumed: 0,
+      );
+
   final String id;
   final String name;
   final DateTime created;

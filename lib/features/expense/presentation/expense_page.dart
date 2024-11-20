@@ -23,6 +23,7 @@ class ExpensePage extends StatelessWidget {
               elevation: 7),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
+              expenseController.clearForm();
               modalCreateExpense(context);
             },
             child: const Icon(Icons.add),

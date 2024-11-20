@@ -30,7 +30,10 @@ class CategoryPage extends StatelessWidget {
           floatingActionButton: Padding(
             padding: const EdgeInsets.only(left: 32),
             child: FloatingActionButton(
-              onPressed: () => modalCreateCategory(context),
+              onPressed: () {
+                categoryController.clearForm();
+                modalCreateCategory(context);
+              },
               child: const Icon(Icons.add),
             ),
           ),
@@ -76,7 +79,8 @@ class CategoryPage extends StatelessWidget {
             onUpdate: (details) {
               if (!actionExecuted && details.progress > 0.5) {
                 actionExecuted = true; // Marca a ação como executada
-                modalCreateCategory(context, category: category);
+                categoryController.categorySelected = category;
+                modalCreateCategory(context);
               }
             },
             confirmDismiss: (direction) async {
@@ -117,19 +121,7 @@ class CategoryPage extends StatelessWidget {
     );
   }
 
-  Future<dynamic> modalCreateCategory(
-    BuildContext context, {
-    CategoryEntity? category,
-  }) {
-    final bool isEdit = category != null;
-    final TextEditingController nameEC =
-        TextEditingController(text: category?.name);
-    final FocusNode nameFN = FocusNode();
-
-    final TextEditingController limitEC =
-        TextEditingController(text: category?.limitMonthly.toStringAsFixed(2));
-    final FocusNode limitFN = FocusNode();
-
+  Future<dynamic> modalCreateCategory(BuildContext context) {
     return showModalBottomSheet(
       context: context,
       useSafeArea: true,
@@ -139,58 +131,48 @@ class CategoryPage extends StatelessWidget {
       builder: (BuildContext contextModal) {
         return Padding(
           padding: const EdgeInsets.all(24.0),
-          child: Column(
-            children: <Widget>[
-              TextFieldCustomWidget(
-                controller: nameEC,
-                focusNode: nameFN,
-                hintText: 'Nome da categoria',
-              ),
-              const SizedBox(height: 24),
-              TextFieldCustomWidget(
-                controller: limitEC,
-                focusNode: limitFN,
-                hintText: 'Limite mensal',
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 12,
-                    horizontal: 24,
-                  ),
-                  shape: const StadiumBorder(),
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                  textStyle: Theme.of(context).textTheme.bodyMedium,
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return ListView(
+                shrinkWrap: true,
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
                 ),
-                onPressed: () {
-                  if (isEdit) {
-                    CategoryEntity categoryUpdate = category.toModel().copyWith(
-                          name: nameEC.text,
-                          limitMonthly: limitEC.text.isEmpty
-                              ? 0
-                              : double.parse(limitEC.text.toPointFormat()),
-                        );
-                    categoryController.updateCategory(categoryUpdate);
-                  } else {
-                    categoryController.createCategory(
-                      CategoryEntity(
-                        name: nameEC.text,
-                        created: DateTime.now(),
-                        limitMonthly: limitEC.text.isEmpty
-                            ? 0
-                            : double.parse(limitEC.text),
-                        consumed: 0,
+                children: <Widget>[
+                  const SizedBox(height: 24),
+                  TextFieldCustomWidget(
+                    controller: categoryController.nameEC,
+                    focusNode: categoryController.nameFN,
+                    hintText: 'Nome da categoria',
+                  ),
+                  const SizedBox(height: 24),
+                  TextFieldCustomWidget(
+                    controller: categoryController.limitEC,
+                    focusNode: categoryController.limitFN,
+                    hintText: 'Limite mensal',
+                    keyboardType: TextInputType.number,
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 24,
                       ),
-                    );
-                  }
-                  Navigator.of(contextModal).pop();
-                },
-                child: const Text('Salvar categoria'),
-              ),
-            ],
+                      shape: const StadiumBorder(),
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                      textStyle: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    onPressed: () {
+                      categoryController.submit();
+                      Navigator.of(contextModal).pop();
+                    },
+                    child: const Text('Salvar categoria'),
+                  ),
+                ],
+              );
+            },
           ),
         );
       },
