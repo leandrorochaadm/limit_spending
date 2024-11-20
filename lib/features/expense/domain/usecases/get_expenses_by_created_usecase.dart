@@ -15,7 +15,7 @@ class GetExpensesByDateCreatedUseCase {
       endDate: DateTime.now(),
     );
 
-    expenses.sort((b, a) => b.created.compareTo(a.created));
+    expenses.sort((a, b) => b.created.compareTo(a.created));
 
     final consumedSum = expenses.fold<double>(
       0,
