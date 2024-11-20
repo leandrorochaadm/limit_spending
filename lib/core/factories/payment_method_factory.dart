@@ -13,6 +13,13 @@ UpdatePaymentMethodUseCase makeUpdatePaymentMethodUseCase() =>
 DeletePaymentMethodUseCase makeDeletePaymentMethodUseCase() =>
     DeletePaymentMethodUseCase(paymentMethodRepositoryFactory());
 
+Future<String?> makeIncrementValuePaymentMethodUseCase({
+  required String paymentMethodId,
+  required double value,
+}) =>
+    IncrementValuePaymentMethodUseCase(paymentMethodRepositoryFactory())
+        .call(paymentMethodId: paymentMethodId, value: value);
+
 PaymentMethodNotifier paymentMethodNotifierFactory() {
   final paymentMethodNotifier = PaymentMethodNotifier(
     getPaymentMethodsUseCase: makeGetPaymentMethodsUseCase(),
