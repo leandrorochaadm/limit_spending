@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/core.dart';
 import '../category.dart';
+import 'category_state.dart';
 
 class CategoryPage extends StatelessWidget {
   static const String routeName = '/category';
@@ -18,129 +19,93 @@ class CategoryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Categorias'), elevation: 7),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(left: 32),
-        child: FloatingActionButton(
-          onPressed: () => modalCreateCategory(context),
-          child: const Icon(Icons.add),
-        ),
-      ),
-      bottomSheet: Padding(
-        padding: const EdgeInsets.only(bottom: 36.0, top: 24),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            FutureBuilder<CategorySumEntity>(
-              future: categoryController.getSumCategoriesUseCase(),
-              builder: (context, categorySum) {
-                if (categorySum.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                }
-                if (categorySum.hasError) {
-                  return Text('Error: ${categorySum.error}');
-                }
-                if (categorySum.hasData) {
-                  final sumEntity = categorySum.data!;
-
-                  return Text(
-                    'Limite mensal: R\$ ${sumEntity.limit.toStringAsFixed(2)}\nDisponível: R\$ ${sumEntity.balance.toStringAsFixed(2)}',
-                    textAlign: TextAlign.center,
-                  );
-                }
-                return const SizedBox.shrink();
-              },
+    return ValueListenableBuilder(
+      valueListenable: categoryController.state,
+      builder: (context, state, __) {
+        return Scaffold(
+          appBar: AppBar(title: const Text('Categorias'), elevation: 7),
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.only(left: 32),
+            child: FloatingActionButton(
+              onPressed: () => modalCreateCategory(context),
+              child: const Icon(Icons.add),
             ),
-          ],
-        ),
-      ),
-      body: FutureBuilder<List<CategoryEntity>>(
-        future: categoryController.categoriesStream,
-        builder: (_, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(
-              child: Text('Nenhuma categoria encontrada'),
-            );
-          }
+          ),
+          bottomSheet: Padding(
+            padding: const EdgeInsets.only(bottom: 36.0, top: 24),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Limite mensal: R\$ ${state.limitSum}\nDisponível: R\$ ${state.balanceSum}\nConsumido nos ultimos ${categoryController.daysFilter} dias: R\$ ${state.consumedSum}',
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+          body: buildBodyWidget(state),
+        );
+      },
+    );
+  }
 
-          final categories = snapshot.data!;
+  Widget buildBodyWidget(CategoryState state) {
+    if (state.status == CategoryStatus.loading) {
+      return const Center(child: CircularProgressIndicator());
+    } else if (state.status == CategoryStatus.error) {
+      return Center(child: Text('Erro: ${state.messageToUser}'));
+    } else if (state.status == CategoryStatus.information) {
+      return Center(child: Text('${state.messageToUser}'));
+    }
 
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 72.0),
-            child: ListView.separated(
-              itemCount: categories.length,
-              separatorBuilder: (_, __) => const Divider(),
-              itemBuilder: (context, index) {
-                final category = categories[index];
-                return Dismissible(
-                  key: Key(category.id),
-                  direction: DismissDirection.startToEnd,
-                  onUpdate: (details) {
-                    if (!actionExecuted && details.progress > 0.5) {
-                      actionExecuted = true; // Marca a ação como executada
-                      modalCreateCategory(context, category: category);
-                    }
-                  },
-                  confirmDismiss: (direction) async {
-                    return false; // Retorne false para não descartar o item
-                  },
-                  background: Container(
-                    color: Theme.of(context).colorScheme.inversePrimary,
-                    alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Icon(
-                      Icons.edit,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                  child: FutureBuilder<CategorySumEntity>(
-                    future: categoryController.getSumByCategory(
-                      categoryId: category.id,
-                      categoryLimit: category.limitMonthly,
-                    ),
-                    builder: (context, categorySnapshot) {
-                      if (categorySnapshot.connectionState ==
-                          ConnectionState.waiting) {
-                        return const CircularProgressIndicator();
-                      }
+    final categories = state.categories;
 
-                      if (categorySnapshot.hasError) {
-                        return Text('Error: ${categorySnapshot.error}');
-                      }
-
-                      if (categorySnapshot.hasData) {
-                        final categorySum = categorySnapshot.data!;
-
-                        return ListTile(
-                          title: Text(category.name),
-                          subtitle: Text(
-                            'Disponível: ${categorySum.balance.toCurrency()} \nConsumo:${categorySum.consumed.toCurrency()} \nlimite mensal: ${categorySum.limit.toCurrency()}',
-                          ),
-                          trailing: const Icon(Icons.arrow_forward_ios),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return makeExpensePage(
-                                    category: category,
-                                    debtId: debtId,
-                                  );
-                                },
-                              ),
-                            );
-                          },
-                        );
-                      }
-                      return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 72.0),
+      child: ListView.separated(
+        itemCount: categories.length,
+        separatorBuilder: (_, __) => const Divider(),
+        itemBuilder: (context, index) {
+          final category = categories[index];
+          return Dismissible(
+            key: Key(category.id),
+            direction: DismissDirection.startToEnd,
+            onUpdate: (details) {
+              if (!actionExecuted && details.progress > 0.5) {
+                actionExecuted = true; // Marca a ação como executada
+                modalCreateCategory(context, category: category);
+              }
+            },
+            confirmDismiss: (direction) async {
+              return false; // Retorne false para não descartar o item
+            },
+            background: Container(
+              color: Theme.of(context).colorScheme.inversePrimary,
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Icon(
+                Icons.edit,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            child: ListTile(
+              title: Text(category.name),
+              subtitle: Text(
+                'Disponível: ${category.balance.toCurrency()} \nConsumo:${category.consumed.toCurrency()} \nlimite mensal: ${category.limitMonthly.toCurrency()}',
+              ),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return makeExpensePage(
+                        category: category,
+                        debtId: debtId,
+                      );
                     },
                   ),
-                );
+                ).then((_) => categoryController.load());
               },
             ),
           );

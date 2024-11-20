@@ -28,7 +28,6 @@ CategoryController categoryControllerFactory() {
     createCategoryUseCase: makeCreateCategoryUseCase(),
     updateCategoryUseCase: makeUpdateCategoryUseCase(),
     getSumCategoriesUseCase: makeSumCategoryUseCase(),
-    getSumCategoryUseCase: getSumCategoryUseCase,
   );
   return categoryController;
 }

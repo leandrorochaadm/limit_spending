@@ -4,11 +4,14 @@ import '../repositories/category_repository.dart';
 class GetCategoriesUseCase {
   final CategoryRepository _categoryRepository;
   GetCategoriesUseCase(this._categoryRepository);
-  Future<List<CategoryEntity>> call() {
-    return _categoryRepository.getCategories().then((categories) {
-      // sort by name
+  Future<(String?, List<CategoryEntity>)> call() async {
+    List<CategoryEntity> categories = [];
+    try {
+      categories = await _categoryRepository.getCategories();
       categories.sort((a, b) => a.name.compareTo(b.name));
-      return categories;
-    });
+      return (null, categories);
+    } catch (e) {
+      return (e.toString(), categories);
+    }
   }
 }

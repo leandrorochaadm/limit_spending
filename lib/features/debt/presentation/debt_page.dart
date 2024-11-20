@@ -30,7 +30,7 @@ class DebtPage extends StatelessWidget {
                   return const CircularProgressIndicator();
                 }
                 if (debtsSum.hasError) {
-                  return Text('Error: ${debtsSum.error}');
+                  return Text('Erro: ${debtsSum.error}');
                 }
                 if (debtsSum.hasData) {
                   final sumEntity = debtsSum.data!;
@@ -53,7 +53,7 @@ class DebtPage extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(child: Text('Erro: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(
               child: Text('Parabens! Nenhuma divida encontrada'),

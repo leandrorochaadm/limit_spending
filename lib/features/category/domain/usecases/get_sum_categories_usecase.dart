@@ -4,28 +4,28 @@ import 'get_categories_usecase.dart';
 class GetSumCategoriesUseCase {
   final GetCategoriesUseCase getCategoriesUseCase;
   GetSumCategoriesUseCase(this.getCategoriesUseCase);
-  Future<CategorySumEntity> call() {
-    return getCategoriesUseCase().then((categoryList) {
-      final totalConsumed = categoryList.fold<double>(
-        0,
-        (previousValue, category) => previousValue + category.consumed,
-      );
+  Future<CategorySumEntity> call() async {
+    final (_, categoryList) = await getCategoriesUseCase();
 
-      final totalLimit = categoryList.fold<double>(
-        0,
-        (previousValue, category) => previousValue + category.limitMonthly,
-      );
+    final totalConsumed = categoryList.fold<double>(
+      0,
+      (previousValue, category) => previousValue + category.consumed,
+    );
 
-      final totalBalance = categoryList.fold<double>(
-        0,
-        (previousValue, category) => previousValue + category.balance,
-      );
+    final totalLimit = categoryList.fold<double>(
+      0,
+      (previousValue, category) => previousValue + category.limitMonthly,
+    );
 
-      return CategorySumEntity(
-        consumed: totalConsumed,
-        limit: totalLimit,
-        balance: totalBalance,
-      );
-    });
+    final totalBalance = categoryList.fold<double>(
+      0,
+      (previousValue, category) => previousValue + category.balance,
+    );
+
+    return CategorySumEntity(
+      consumed: totalConsumed,
+      limit: totalLimit,
+      balance: totalBalance,
+    );
   }
 }
