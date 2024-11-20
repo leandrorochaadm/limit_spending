@@ -43,7 +43,7 @@ class CategoryPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Perido: $daysFilter dias\nLimite: R\$ ${state.limitSum}\nDisponível: R\$ ${state.balanceSum}\nConsumido: R\$ ${state.consumedSum}',
+                  'Limite: R\$ ${state.limitSum}\nDisponível: R\$ ${state.balanceSum}\nConsumido nos $daysFilter dias: R\$ ${state.consumedSum}',
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -98,7 +98,7 @@ class CategoryPage extends StatelessWidget {
             child: ListTile(
               title: Text(category.name),
               subtitle: Text(
-                'Disponível: ${category.balance.toCurrency()} \nConsumido em $daysFilter dias: ${category.consumed.toCurrency()} \nLimite mensal: ${category.limitMonthly.toCurrency()}',
+                'Disponível: ${category.balance.toCurrency()} \nConsumido nos $daysFilter dias: ${category.consumed.toCurrency()} \nLimite mensal: ${category.limitMonthly.toCurrency()}',
               ),
               trailing: const Icon(Icons.arrow_forward_ios),
               onTap: () {

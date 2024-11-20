@@ -1,1 +1,1 @@
-const int daysFilter = 90;
+const int daysFilter = 30;

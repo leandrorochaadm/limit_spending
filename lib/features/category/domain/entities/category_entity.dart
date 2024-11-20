@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../../core/constants/constants.dart';
 import '../../data/models/category_model.dart';
 
 class CategoryEntity extends Equatable {
@@ -25,8 +24,7 @@ class CategoryEntity extends Equatable {
   final DateTime created;
   final double limitMonthly;
   final double consumed;
-  double get limitByPeriod => limitMonthly * (daysFilter / 30);
-  double get balance => limitByPeriod - consumed;
+  double get balance => limitMonthly - consumed;
 
   @override
   String toString() => '$id, $name, $created, $limitMonthly, $consumed, ';

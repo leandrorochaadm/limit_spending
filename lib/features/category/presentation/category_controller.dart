@@ -55,7 +55,7 @@ class CategoryController {
 
     final limitSum = categories.fold<double>(
       0,
-      (previousValue, category) => previousValue + category.limitByPeriod,
+      (previousValue, category) => previousValue + category.limitMonthly,
     );
 
     final consumedSum = categories.fold<double>(
