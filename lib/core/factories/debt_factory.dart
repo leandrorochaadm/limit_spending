@@ -15,12 +15,6 @@ GetDebtsUseCase makeGetDebtsUseCase() {
   return getDebtsUseCase;
 }
 
-GetSumDebtsUseCase makeGetSumDebtsUseCase() {
-  DebtRepository debtRepository = makeDebtRepository();
-  GetSumDebtsUseCase getSumDebtsUseCase = GetSumDebtsUseCase(debtRepository);
-  return getSumDebtsUseCase;
-}
-
 AddDebtValueUseCase makeAddDebtValueUseCase() {
   DebtRepository debtRepository = makeDebtRepository();
   AddDebtValueUseCase addDebtValueUseCase = AddDebtValueUseCase(debtRepository);
@@ -44,14 +38,12 @@ DebtPage makeDebtPage() {
 
   CreateDebtUseCase createDebtUseCase = CreateDebtUseCase(debtRepository);
   AddDebtValueUseCase addDebtValueUseCase = makeAddDebtValueUseCase();
-  GetSumDebtsUseCase getSumDebtsUseCase = makeGetSumDebtsUseCase();
   GetDebtsUseCase getDebtsUseCase = makeGetDebtsUseCase();
   DeleteDebtUseCase deleteDebtUseCase = deleteDebtUseCaseFactory();
   UpdateDebitUseCase updateDebitUseCase = makeUpdateDebitUseCase();
 
   DebtController debtController = DebtController(
     addDebtValueUseCase: addDebtValueUseCase,
-    getSumDebtsUseCase: getSumDebtsUseCase,
     getDebtsUseCase: getDebtsUseCase,
     createDebtUseCase: createDebtUseCase,
     deleteDebtUseCase: deleteDebtUseCase,

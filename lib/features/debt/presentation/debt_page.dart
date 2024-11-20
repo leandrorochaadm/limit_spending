@@ -3,179 +3,165 @@ import 'package:intl/intl.dart';
 
 import '../../../core/core.dart';
 import '../debit.dart';
+import 'debt_state.dart';
 
 class DebtPage extends StatelessWidget {
   final DebtController debtController;
-  DebtPage(this.debtController, {super.key});
+  const DebtPage(this.debtController, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Dividas'), elevation: 7),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          modalCreateDebt(context);
-        },
-        child: const Icon(Icons.add),
-      ),
-      bottomSheet: Padding(
-        padding: const EdgeInsets.only(bottom: 36.0, top: 24),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            FutureBuilder<double>(
-              future: debtController.getSumDebtsUseCase(),
-              builder: (context, debtsSum) {
-                if (debtsSum.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                }
-                if (debtsSum.hasError) {
-                  return Text('Erro: ${debtsSum.error}');
-                }
-                if (debtsSum.hasData) {
-                  final sumEntity = debtsSum.data!;
-
-                  return Text(
-                    'Total: ${sumEntity.toCurrency()}',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  );
-                }
-                return const SizedBox.shrink();
-              },
+    return ValueListenableBuilder(
+      valueListenable: debtController.state,
+      builder: (context, state, __) {
+        return Scaffold(
+          appBar: AppBar(title: const Text('Dividas'), elevation: 7),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              modalCreateDebt(context);
+            },
+            child: const Icon(Icons.add),
+          ),
+          bottomSheet: Padding(
+            padding: const EdgeInsets.only(bottom: 36.0, top: 24),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Total: ${state.debtsSum}',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-      body: FutureBuilder<List<DebtEntity>>(
-        future: debtController.getDebts(),
-        builder: (_, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Erro: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(
-              child: Text('Parabens! Nenhuma divida encontrada'),
-            );
-          }
+          ),
+          body: buildBodyWidget(state),
+        );
+      },
+    );
+  }
 
-          final debtData = snapshot.data!;
+  Widget buildBodyWidget(DebtState state) {
+    if (state.status == DebtStatus.loading) {
+      return const Center(child: CircularProgressIndicator());
+    } else if (state.status == DebtStatus.error) {
+      return Center(child: Text('Erro: ${state.messageToUser}'));
+    } else if (state.status == DebtStatus.information) {
+      return Center(child: Text('Erro: ${state.messageToUser}'));
+    }
 
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 72.0),
-            child: ListView.separated(
-              itemCount: debtData.length,
-              separatorBuilder: (_, __) => const Divider(),
-              itemBuilder: (context, index) {
-                final debt = debtData[index];
+    final debts = state.debts;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 72.0),
+      child: ListView.separated(
+        itemCount: debts.length,
+        separatorBuilder: (_, __) => const Divider(),
+        itemBuilder: (context, index) {
+          final debt = debts[index];
 
-                return Dismissible(
-                  key: Key(debt.id),
-                  direction: DismissDirection.horizontal,
-                  confirmDismiss: (direction) async {
-                    if (direction == DismissDirection.endToStart) {
-                      final bool? result = await showModalBottomSheet<bool>(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('Excluir divida'),
-                            content: const Text(
-                              'Deseja realmente excluir esta divida?',
-                            ),
-                            actions: [
-                              TextButton(
-                                child: const Text('Cancelar'),
-                                onPressed: () {
-                                  Navigator.of(context).pop(false);
-                                },
-                              ),
-                              TextButton(
-                                child: const Text('Excluir'),
-                                onPressed: () {
-                                  Navigator.of(context).pop(true);
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                      return result ?? false;
-                    } else if (direction == DismissDirection.startToEnd) {
-                      modalCreateDebt(context, debt: debt);
-                      return false;
-                    }
-                    return false;
-                  },
-                  onDismissed: (direction) {
-                    if (direction == DismissDirection.endToStart) {
-                      debtController.deleteDebt(debt.id);
-                    }
-                  },
-                  background: Container(
-                    color: Theme.of(context).colorScheme.inversePrimary,
-                    alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Icon(
-                      Icons.edit,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                  secondaryBackground: Container(
-                    color: Theme.of(context).colorScheme.error,
-                    alignment: Alignment.centerRight,
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Icon(
-                      Icons.delete,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                  child: ListTile(
-                    title: Text('${debt.name}\n${debt.value.toCurrency()}'),
-                    subtitle: debt.isCardCredit
-                        ? Text(
-                            'Vence em: ${DateFormat('dd/MM').format(debt.getDueDate())}',
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          )
-                        : null,
-                    leading: Icon(
-                      Icons.circle,
-                      color: debt.isPayment
-                          ? (debt.isAllowsToBuy() ? Colors.green : Colors.red)
-                          : Colors.transparent,
-                    ),
-                    trailing: const Icon(Icons.arrow_forward_ios),
-                    onTap: () {
-                      if (!debt.isPayment) {
-                        showDialog<void>(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text(debt.name),
-                              content: const Text(
-                                'Não pode ser usada como uma forma de pagamento',
-                              ),
-                              actions: [
-                                TextButton(
-                                  child: const Text('Fechar'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                        return;
-                      }
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return makeCategoryPage(debt.id);
+          return Dismissible(
+            key: Key(debt.id),
+            direction: DismissDirection.horizontal,
+            confirmDismiss: (direction) async {
+              if (direction == DismissDirection.endToStart) {
+                final bool? result = await showModalBottomSheet<bool>(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text('Excluir divida'),
+                      content: const Text(
+                        'Deseja realmente excluir esta divida?',
+                      ),
+                      actions: [
+                        TextButton(
+                          child: const Text('Cancelar'),
+                          onPressed: () {
+                            Navigator.of(context).pop(false);
                           },
                         ),
+                        TextButton(
+                          child: const Text('Excluir'),
+                          onPressed: () {
+                            Navigator.of(context).pop(true);
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+                return result ?? false;
+              } else if (direction == DismissDirection.startToEnd) {
+                modalCreateDebt(context, debt: debt);
+                return false;
+              }
+              return false;
+            },
+            onDismissed: (direction) {
+              if (direction == DismissDirection.endToStart) {
+                debtController.deleteDebt(debt.id);
+              }
+            },
+            background: Container(
+              color: Theme.of(context).colorScheme.inversePrimary,
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Icon(
+                Icons.edit,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            secondaryBackground: Container(
+              color: Theme.of(context).colorScheme.error,
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Icon(
+                Icons.delete,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            child: ListTile(
+              title: Text('${debt.name}\n${debt.value.toCurrency()}'),
+              subtitle: debt.isCardCredit
+                  ? Text(
+                      'Vence em: ${DateFormat('dd/MM').format(debt.getDueDate())}',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    )
+                  : null,
+              leading: Icon(
+                Icons.circle,
+                color: debt.isPayment
+                    ? (debt.isAllowsToBuy() ? Colors.green : Colors.red)
+                    : Colors.transparent,
+              ),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                if (!debt.isPayment) {
+                  showDialog<void>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text(debt.name),
+                        content: const Text(
+                          'Não pode ser usada como uma forma de pagamento',
+                        ),
+                        actions: [
+                          TextButton(
+                            child: const Text('Fechar'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
                       );
+                    },
+                  );
+                  return;
+                }
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return makeCategoryPage(debt.id);
                     },
                   ),
                 );
