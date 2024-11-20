@@ -32,9 +32,9 @@ CategoryController categoryControllerFactory() {
   return categoryController;
 }
 
-CategoryPage makeCategoryPage(String debtId) => CategoryPage(
+CategoryPage makeCategoryPage(String paymentMethodId) => CategoryPage(
       categoryController: categoryControllerFactory(),
-      debtId: debtId,
+      paymentMethodId: paymentMethodId,
     );
 
 Future<void> makeUpdateCategoryConsumedUseCase(

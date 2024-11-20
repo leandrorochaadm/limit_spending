@@ -1,3 +1,5 @@
+// ignore_for_file: require_trailing_commas
+
 import '../../features/category/domain/domain.dart';
 import '../../features/debt/domain/usecases/usecases.dart';
 import '../../features/expense/expense.dart';
@@ -18,7 +20,7 @@ GetCategoryByIdUseCase getCategoryByIdUseCaseFactory() =>
 
 ExpenseController expenseControllerFactory({
   required CategoryEntity category,
-  required String debtId,
+  required String paymentMethodId,
 }) {
   final createExpenseUseCase = CreateExpenseUseCase(expenseRepositoryFactory());
 
@@ -40,7 +42,7 @@ ExpenseController expenseControllerFactory({
     getDebtsUseCase: getDebtsUseCase,
     addDebtValueUseCase: addDebtValueUseCase,
     category: category,
-    debtId: debtId,
+    paymentMethodId: paymentMethodId,
   );
 
   return expenseController;
@@ -48,6 +50,7 @@ ExpenseController expenseControllerFactory({
 
 ExpensePage makeExpensePage({
   required CategoryEntity category,
-  required String debtId,
+  required String paymentMethodId,
 }) =>
-    ExpensePage(expenseControllerFactory(category: category, debtId: debtId));
+    ExpensePage(expenseControllerFactory(
+        category: category, paymentMethodId: paymentMethodId));

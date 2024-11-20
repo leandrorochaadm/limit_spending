@@ -19,8 +19,9 @@ class ExpensePage extends StatelessWidget {
       builder: (context, state, __) {
         return Scaffold(
           appBar: AppBar(
-              title: Text('Despesas: ${expenseController.category.name}'),
-              elevation: 7),
+            title: Text('Despesas: ${expenseController.category.name}'),
+            elevation: 7,
+          ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
               expenseController.clearForm();
@@ -88,7 +89,8 @@ class ExpensePage extends StatelessWidget {
             ),
             child: ListTile(
               title: Text(
-                  '${expense.description} | ${(expense.value).toCurrency()}'),
+                '${expense.description} | ${(expense.value).toCurrency()}',
+              ),
               subtitle: Text(DateFormat('dd/MM HH:mm').format(expense.created)),
             ),
           );

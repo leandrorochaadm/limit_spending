@@ -23,14 +23,42 @@ class DebtPage extends StatelessWidget {
             child: const Icon(Icons.add),
           ),
           bottomSheet: Padding(
-            padding: const EdgeInsets.only(bottom: 36.0, top: 24),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            padding: const EdgeInsets.only(bottom: 36.0, top: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  'Total: ${state.debtsSum}',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleLarge,
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => makePaymentMethodPage(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 48,
+                      vertical: 4,
+                    ),
+                  ),
+                  child: const Text(
+                    'Quero gastar',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Total: ${state.debtsSum}',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -52,7 +80,7 @@ class DebtPage extends StatelessWidget {
 
     final debts = state.debts;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 72.0),
+      padding: const EdgeInsets.only(bottom: 120.0),
       child: ListView.separated(
         itemCount: debts.length,
         separatorBuilder: (_, __) => const Divider(),

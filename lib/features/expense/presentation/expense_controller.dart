@@ -14,7 +14,7 @@ class ExpenseController {
   final GetDebtsUseCase getDebtsUseCase;
   final AddDebtValueUseCase addDebtValueUseCase;
   final CategoryEntity category;
-  final String debtId;
+  final String paymentMethodId;
   ValueNotifier<ExpenseState> state = ValueNotifier<ExpenseState>(
     const ExpenseState(status: ExpenseStatus.initial),
   );
@@ -35,7 +35,7 @@ class ExpenseController {
     required this.getDebtsUseCase,
     required this.addDebtValueUseCase,
     required this.category,
-    required this.debtId,
+    required this.paymentMethodId,
   }) {
     load();
   }
@@ -85,12 +85,12 @@ class ExpenseController {
       created: DateTime.now(),
       value: valueEC.text.isEmpty ? 0 : valueDouble,
       categoryId: category.id,
-      debtId: debtId,
+      paymentMethodId: paymentMethodId,
     );
 
     try {
       await createExpenseUseCase(expense);
-      await addDebtValueUseCase(expense.debtId, expense.value);
+      await addDebtValueUseCase(expense.paymentMethodId, expense.value);
       await load();
     } catch (e) {
       state.value = state.value.copyWith(
@@ -104,7 +104,7 @@ class ExpenseController {
     state.value = state.value.copyWith(status: ExpenseStatus.loading);
     try {
       await deleteExpenseUseCase(expense);
-      await addDebtValueUseCase(expense.debtId, -expense.value);
+      await addDebtValueUseCase(expense.paymentMethodId, -expense.value);
       await load();
     } catch (e) {
       state.value = state.value.copyWith(

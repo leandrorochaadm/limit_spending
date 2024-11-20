@@ -9,10 +9,10 @@ class CategoryPage extends StatelessWidget {
   CategoryPage({
     super.key,
     required this.categoryController,
-    required this.debtId,
+    required this.paymentMethodId,
   });
 
-  final String debtId;
+  final String paymentMethodId;
 
   final CategoryController categoryController;
   bool actionExecuted = false; // Flag para controlar a execução
@@ -108,7 +108,7 @@ class CategoryPage extends StatelessWidget {
                     builder: (context) {
                       return makeExpensePage(
                         category: category,
-                        debtId: debtId,
+                        paymentMethodId: paymentMethodId,
                       );
                     },
                   ),

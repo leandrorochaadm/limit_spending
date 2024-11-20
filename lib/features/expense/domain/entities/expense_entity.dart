@@ -9,7 +9,7 @@ class ExpenseEntity extends Equatable {
   final DateTime created;
   final double value;
   final String categoryId;
-  final String debtId;
+  final String paymentMethodId;
 
   ExpenseEntity({
     String? id,
@@ -17,7 +17,7 @@ class ExpenseEntity extends Equatable {
     required this.created,
     required this.value,
     required this.categoryId,
-    required this.debtId,
+    required this.paymentMethodId,
   }) : id = id ?? const Uuid().v4();
 
   ExpenseModel toModel() {
@@ -27,7 +27,7 @@ class ExpenseEntity extends Equatable {
       created: created,
       value: value,
       categoryId: categoryId,
-      debtId: debtId,
+      paymentMethodId: paymentMethodId,
     );
   }
 
@@ -45,7 +45,7 @@ class ExpenseEntity extends Equatable {
       created: created ?? this.created,
       value: value ?? this.value,
       categoryId: categoryId ?? this.categoryId,
-      debtId: debtId ?? this.debtId,
+      paymentMethodId: debtId ?? paymentMethodId,
     );
   }
 
@@ -56,6 +56,6 @@ class ExpenseEntity extends Equatable {
         created,
         value,
         categoryId,
-        debtId,
+        paymentMethodId,
       ];
 }

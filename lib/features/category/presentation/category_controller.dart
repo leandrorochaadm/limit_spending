@@ -98,7 +98,6 @@ class CategoryController {
 
   void submit() {
     final bool isModeEdition = _categorySelected.name.isNotEmpty;
-    print('isModeEdition: $isModeEdition');
     if (isModeEdition) {
       CategoryEntity category = _categorySelected.toModel().copyWith(
             name: nameEC.text,
@@ -106,7 +105,6 @@ class CategoryController {
                 ? 0
                 : double.parse(limitEC.text.toPointFormat()),
           );
-      print(category);
       updateCategory(category);
     } else {
       final category = CategoryEntity(
@@ -115,7 +113,6 @@ class CategoryController {
         limitMonthly: limitEC.text.isEmpty ? 0 : double.parse(limitEC.text),
         consumed: 0,
       );
-      print(category);
       createCategory(category);
     }
   }
