@@ -10,7 +10,6 @@ class CategoryController {
   final UpdateCategoryUseCase updateCategoryUseCase;
   final GetSumCategoriesUseCase getSumCategoriesUseCase;
   final ValueNotifier<CategoryState> state = ValueNotifier(CategoryState());
-  final int daysFilter = 30;
 
   CategoryController({
     required this.getCategoriesUseCase,

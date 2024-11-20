@@ -37,7 +37,7 @@ class CategoryPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Limite mensal: R\$ ${state.limitSum}\nDisponível: R\$ ${state.balanceSum}\nConsumido nos ultimos ${categoryController.daysFilter} dias: R\$ ${state.consumedSum}',
+                  'Limite mensal: R\$ ${state.limitSum}\nDisponível: R\$ ${state.balanceSum}\nConsumido nos ultimos $daysFilter dias: R\$ ${state.consumedSum}',
                   textAlign: TextAlign.center,
                 ),
               ],

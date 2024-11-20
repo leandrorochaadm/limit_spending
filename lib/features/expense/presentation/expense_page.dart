@@ -34,7 +34,7 @@ class ExpensePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Limite mensal: R\$ ${state.limitCategory}\nConsumido nos ultimos ${expenseController.daysFilter} dias: R\$ ${state.consumedSum}\nDisponível: R\$ ${state.balance}',
+                  'Limite mensal: R\$ ${state.limitCategory}\nConsumido nos ultimos $daysFilter dias: R\$ ${state.consumedSum}\nDisponível: R\$ ${state.balance}',
                   textAlign: TextAlign.center,
                 ),
               ],

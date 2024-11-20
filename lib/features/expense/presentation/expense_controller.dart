@@ -27,8 +27,6 @@ class ExpenseController {
 
   bool isValid() => descriptionEC.text.isNotEmpty && valueEC.text.isNotEmpty;
 
-  int daysFilter = 30;
-
   ExpenseController({
     required this.createExpenseUseCase,
     required this.deleteExpenseUseCase,
