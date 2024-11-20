@@ -10,7 +10,7 @@ class ExpenseController {
   final CreateExpenseUseCase createExpenseUseCase;
   final DeleteExpenseUseCase deleteExpenseUseCase;
   final GetSumCategoryUseCase getSumCategoryUseCase;
-  final GetExpensesByCreatedUseCase getExpensesByCreatedUseCase;
+  final GetExpensesByDateCreatedUseCase getExpensesByCreatedUseCase;
   final GetDebtsUseCase getDebtsUseCase;
   final AddDebtValueUseCase addDebtValueUseCase;
   final CategoryEntity category;

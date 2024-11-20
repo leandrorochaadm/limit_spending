@@ -10,8 +10,8 @@ ExpenseFirebaseRepository expenseRepositoryFactory() =>
       firestore: makeFirestoreFactory(),
       categoryRepository: categoryRepositoryFactory(),
     );
-GetExpensesByCreatedUseCase getExpensesByCreatedUseCaseFactory() =>
-    GetExpensesByCreatedUseCase(expenseRepositoryFactory());
+GetExpensesByDateCreatedUseCase getExpensesByCreatedUseCaseFactory() =>
+    GetExpensesByDateCreatedUseCase(expenseRepositoryFactory());
 
 GetCategoryByIdUseCase getCategoryByIdUseCaseFactory() =>
     GetCategoryByIdUseCase(categoryRepositoryFactory());

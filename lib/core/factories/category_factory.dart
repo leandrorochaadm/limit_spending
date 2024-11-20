@@ -14,7 +14,7 @@ UpdateCategoryUseCase makeUpdateCategoryUseCase() =>
 GetSumCategoriesUseCase makeSumCategoryUseCase() =>
     GetSumCategoriesUseCase(makeGetCategoriesUseCase());
 
-final GetExpensesByCreatedUseCase getExpensesByCreatedUseCase =
+final GetExpensesByDateCreatedUseCase getExpensesByCreatedUseCase =
     getExpensesByCreatedUseCaseFactory();
 final getCategoryByIdUseCase = getCategoryByIdUseCaseFactory();
 

@@ -3,7 +3,7 @@ import '../entities/entities.dart';
 import 'get_category_by_id_usecase.dart';
 
 class GetSumCategoryUseCase {
-  final GetExpensesByCreatedUseCase getExpensesByCreatedUseCase;
+  final GetExpensesByDateCreatedUseCase getExpensesByCreatedUseCase;
   final GetCategoryByIdUseCase getCategoryByIdUseCase;
   GetSumCategoryUseCase({
     required this.getExpensesByCreatedUseCase,
