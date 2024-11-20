@@ -43,7 +43,7 @@ class CategoryPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Limite: R\$ ${state.limitSum}\nDisponível: R\$ ${state.balanceSum}\nConsumido nos $daysFilter dias: R\$ ${state.consumedSum}',
+                  'Limite: ${state.limitSum}\nDisponível: ${state.balanceSum}\nConsumido nos $daysFilter dias: ${state.consumedSum}',
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -67,7 +67,7 @@ class CategoryPage extends StatelessWidget {
     final categories = state.categories;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 72.0),
+      padding: const EdgeInsets.only(bottom: 90.0),
       child: ListView.separated(
         itemCount: categories.length,
         separatorBuilder: (_, __) => const Divider(),

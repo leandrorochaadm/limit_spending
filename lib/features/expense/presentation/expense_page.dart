@@ -35,7 +35,7 @@ class ExpensePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Limite mensal: R\$ ${state.limitCategory}\nConsumido nos ultimos $daysFilter dias: R\$ ${state.consumedSum}\nDisponível: R\$ ${state.balance}',
+                  'Limite mensal: ${state.limitCategory}\nConsumido nos ultimos $daysFilter dias: ${state.consumedSum}\nDisponível: ${state.balance}',
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -88,9 +88,8 @@ class ExpensePage extends StatelessWidget {
             ),
             child: ListTile(
               title: Text(
-                '${expense.description} (${DateFormat('dd/MM HH:mm').format(expense.created)})',
-              ),
-              subtitle: Text('Valor: ${(expense.value).toCurrency()}'),
+                  '${expense.description} | ${(expense.value).toCurrency()}'),
+              subtitle: Text(DateFormat('dd/MM HH:mm').format(expense.created)),
             ),
           );
         },
