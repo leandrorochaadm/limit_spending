@@ -52,7 +52,7 @@ class ExpenseController {
         0,
         (previousValue, expense) => previousValue + expense.value,
       );
-      final balance = category.limitMonthly - expensesSum;
+      final balance = category.limitByPeriod - expensesSum;
 
       state.value = ExpenseState(
         status: ExpenseStatus.success,

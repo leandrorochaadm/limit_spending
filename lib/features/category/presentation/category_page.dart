@@ -23,7 +23,10 @@ class CategoryPage extends StatelessWidget {
       valueListenable: categoryController.state,
       builder: (context, state, __) {
         return Scaffold(
-          appBar: AppBar(title: const Text('Categorias'), elevation: 7),
+          appBar: AppBar(
+            title: const Text('Categorias', textAlign: TextAlign.center),
+            elevation: 7,
+          ),
           floatingActionButton: Padding(
             padding: const EdgeInsets.only(left: 32),
             child: FloatingActionButton(
@@ -37,7 +40,7 @@ class CategoryPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Limite mensal: R\$ ${state.limitSum}\nDisponível: R\$ ${state.balanceSum}\nConsumido nos ultimos $daysFilter dias: R\$ ${state.consumedSum}',
+                  'Perido: $daysFilter dias\nLimite: R\$ ${state.limitSum}\nDisponível: R\$ ${state.balanceSum}\nConsumido: R\$ ${state.consumedSum}',
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -91,7 +94,7 @@ class CategoryPage extends StatelessWidget {
             child: ListTile(
               title: Text(category.name),
               subtitle: Text(
-                'Disponível: ${category.balance.toCurrency()} \nConsumo:${category.consumed.toCurrency()} \nlimite mensal: ${category.limitMonthly.toCurrency()}',
+                'Disponível: ${category.balance.toCurrency()} \nConsumido em $daysFilter dias: ${category.consumed.toCurrency()} \nLimite mensal: ${category.limitMonthly.toCurrency()}',
               ),
               trailing: const Icon(Icons.arrow_forward_ios),
               onTap: () {
