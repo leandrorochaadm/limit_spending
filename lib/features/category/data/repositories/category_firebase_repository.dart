@@ -54,6 +54,7 @@ class CategoryFirebaseRepository implements CategoryRepository {
     }
   }
 
+  @override
   Future<void> updateCategoryConsumed(
     String categoryId,
     double consumed,

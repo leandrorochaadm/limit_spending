@@ -36,3 +36,10 @@ CategoryPage makeCategoryPage(String debtId) => CategoryPage(
       categoryController: categoryControllerFactory(),
       debtId: debtId,
     );
+
+Future<void> makeUpdateCategoryConsumedUseCase(
+  String categoryId,
+  double consumed,
+) =>
+    UpdateCategoryConsumedUseCase(categoryRepositoryFactory())
+        .call(categoryId, consumed);
