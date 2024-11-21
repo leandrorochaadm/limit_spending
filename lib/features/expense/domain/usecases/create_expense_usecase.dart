@@ -10,7 +10,7 @@ class CreateExpenseUseCase {
 
     await makeIncrementValuePaymentMethodUseCase(
       paymentMethodId: expenseEntity.paymentMethodId,
-      value: -expenseEntity.value,
+      value: expenseEntity.value,
     );
   }
 }
