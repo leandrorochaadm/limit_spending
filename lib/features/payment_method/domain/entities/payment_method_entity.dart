@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../debt/domain/entity.dart';
 import '../../data/data.dart';
 
 class PaymentMethodEntity extends Equatable {
@@ -64,6 +65,14 @@ class PaymentMethodEntity extends Equatable {
       dayClose: dayClose,
       value: value,
       limit: limit,
+    );
+  }
+
+  DebtEntity toDebt() {
+    return DebtEntity(
+      id: id,
+      name: '${isMoney ? 'Dinheiro: ' : 'Cartão: '} $name',
+      value: value,
     );
   }
 

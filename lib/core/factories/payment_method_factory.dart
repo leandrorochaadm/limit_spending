@@ -1,10 +1,19 @@
+import '../../features/debt/domain/usecases/usecases.dart';
 import '../../features/payment_method/payment_method.dart';
+import 'debt_factory.dart';
 import 'firestore_factory.dart';
 
 PaymentMethodFirebaseRepository paymentMethodRepositoryFactory() =>
     PaymentMethodFirebaseRepository(makeFirestoreFactory());
+CreateDebtByPaymentMethodCardUseCase
+    makeCreateDebtByPaymentMethodCardUseCase() =>
+        CreateDebtByPaymentMethodCardUseCase(makeCreateDebtUseCase());
 GetPaymentMethodsUseCase makeGetPaymentMethodsUseCase() =>
-    GetPaymentMethodsUseCase(paymentMethodRepositoryFactory());
+    GetPaymentMethodsUseCase(
+      repository: paymentMethodRepositoryFactory(),
+      createDebtByPaymentMethodCardUseCase:
+          makeCreateDebtByPaymentMethodCardUseCase(),
+    );
 CreatePaymentMethodUseCase makeCreatePaymentMethodUseCase() =>
     CreatePaymentMethodUseCase(paymentMethodRepositoryFactory());
 UpdatePaymentMethodUseCase makeUpdatePaymentMethodUseCase() =>

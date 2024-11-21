@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../../../core/core.dart';
 import '../debit.dart';
@@ -34,7 +33,7 @@ class DebtPage extends StatelessWidget {
                       MaterialPageRoute(
                         builder: (context) => makePaymentMethodPage(),
                       ),
-                    );
+                    ).whenComplete(() => debtController.load());
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
@@ -148,52 +147,7 @@ class DebtPage extends StatelessWidget {
               ),
             ),
             child: ListTile(
-              title: Text('${debt.name}\n${debt.value.toCurrency()}'),
-              subtitle: debt.isCardCredit
-                  ? Text(
-                      'Vence em: ${DateFormat('dd/MM').format(debt.getDueDate())}',
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    )
-                  : null,
-              leading: Icon(
-                Icons.circle,
-                color: debt.isPayment
-                    ? (debt.isAllowsToBuy() ? Colors.green : Colors.red)
-                    : Colors.transparent,
-              ),
-              trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () {
-                if (!debt.isPayment) {
-                  showDialog<void>(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text(debt.name),
-                        content: const Text(
-                          'Não pode ser usada como uma forma de pagamento',
-                        ),
-                        actions: [
-                          TextButton(
-                            child: const Text('Fechar'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                  return;
-                }
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return makeCategoryPage(debt.id);
-                    },
-                  ),
-                );
-              },
+              title: Text('${debt.name} | ${debt.value.toCurrency()}'),
             ),
           );
         },
@@ -211,13 +165,6 @@ class DebtPage extends StatelessWidget {
         TextEditingController(text: debt?.value.toStringAsFixed(2));
     final FocusNode valueFN = FocusNode();
 
-    final TextEditingController dayCloseEC =
-        TextEditingController(text: debt?.dayClose.toString());
-    final FocusNode dayCloseFN = FocusNode();
-
-    bool isPayment = debt?.isPayment ?? false;
-    bool isCardCredit = debt?.isCardCredit ?? false;
-
     return showModalBottomSheet(
       context: context,
       useSafeArea: true,
@@ -229,23 +176,6 @@ class DebtPage extends StatelessWidget {
           padding: const EdgeInsets.all(24.0),
           child: StatefulBuilder(
             builder: (context, setState) {
-              void onChangedPayment(bool? newValue) {
-                setState(() {
-                  isPayment = newValue ?? false;
-
-                  if (!isPayment) {
-                    isCardCredit = false;
-                  }
-                });
-              }
-
-              void onChangedCardCredit(bool? newValue) {
-                if (!isPayment) return;
-                setState(() {
-                  isCardCredit = newValue ?? false;
-                });
-              }
-
               return Column(
                 children: <Widget>[
                   TextFieldCustomWidget(
@@ -260,42 +190,6 @@ class DebtPage extends StatelessWidget {
                     hintText: 'Valor da divida',
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
-                  ),
-                  const SizedBox(height: 24),
-                  TextFieldCustomWidget(
-                    controller: dayCloseEC,
-                    focusNode: dayCloseFN,
-                    hintText: 'Dia fechamento da fatura',
-                    keyboardType: TextInputType.number,
-                  ),
-                  const SizedBox(height: 24),
-                  GestureDetector(
-                    onTap: () {
-                      onChangedPayment(!isPayment);
-                    },
-                    child: Row(
-                      children: [
-                        const Text('É forma de pagamento?'),
-                        Checkbox(
-                          value: isPayment,
-                          onChanged: onChangedPayment,
-                        ),
-                      ],
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      onChangedCardCredit(!isCardCredit);
-                    },
-                    child: Row(
-                      children: [
-                        const Text('É cartão de crédito?'),
-                        Checkbox(
-                          value: isCardCredit,
-                          onChanged: isPayment ? onChangedCardCredit : null,
-                        ),
-                      ],
-                    ),
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton(
@@ -314,23 +208,11 @@ class DebtPage extends StatelessWidget {
                           double.parse(valueEC.text.toPointFormat());
                       if (isEdit) {
                         await debtController.updateDebt(
-                          debt.copyWith(
-                            name: nameEC.text,
-                            value: valueDouble,
-                            isPayment: isPayment,
-                            dayClose: int.tryParse(dayCloseEC.text) ?? 0,
-                            isCardCredit: isCardCredit,
-                          ),
+                          debt.copyWith(name: nameEC.text, value: valueDouble),
                         );
                       } else {
                         await debtController.createDebt(
-                          DebtEntity(
-                            name: nameEC.text,
-                            value: valueDouble,
-                            isPayment: isPayment,
-                            dayClose: int.tryParse(dayCloseEC.text) ?? 0,
-                            isCardCredit: isCardCredit,
-                          ),
+                          DebtEntity(name: nameEC.text, value: valueDouble),
                         );
                       }
                       Navigator.of(contextModal).pop();

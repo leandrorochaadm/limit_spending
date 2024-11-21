@@ -33,10 +33,11 @@ UpdateDebitUseCase makeUpdateDebitUseCase() {
   return updateDebitUseCase;
 }
 
-DebtPage makeDebtPage() {
-  DebtRepository debtRepository = makeDebtRepository();
+CreateDebtUseCase makeCreateDebtUseCase() =>
+    CreateDebtUseCase(makeDebtRepository());
 
-  CreateDebtUseCase createDebtUseCase = CreateDebtUseCase(debtRepository);
+DebtPage makeDebtPage() {
+  CreateDebtUseCase createDebtUseCase = CreateDebtUseCase(makeDebtRepository());
   AddDebtValueUseCase addDebtValueUseCase = makeAddDebtValueUseCase();
   GetDebtsUseCase getDebtsUseCase = makeGetDebtsUseCase();
   DeleteDebtUseCase deleteDebtUseCase = deleteDebtUseCaseFactory();

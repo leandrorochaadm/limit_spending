@@ -1,11 +1,18 @@
+import '../../../debt/domain/usecases/usecases.dart';
 import '../domain.dart';
 
 class GetPaymentMethodsUseCase {
   final PaymentMethodRepository repository;
-  GetPaymentMethodsUseCase(this.repository);
+  final CreateDebtByPaymentMethodCardUseCase
+      createDebtByPaymentMethodCardUseCase;
+
+  GetPaymentMethodsUseCase({
+    required this.repository,
+    required this.createDebtByPaymentMethodCardUseCase,
+  });
   Future<(String?, List<PaymentMethodEntity>)> call() async {
     try {
-      List<PaymentMethodEntity> paymentMethods =
+      final List<PaymentMethodEntity> paymentMethods =
           await repository.getPaymentMethods();
 
       paymentMethods.sort((a, b) {
@@ -16,6 +23,12 @@ class GetPaymentMethodsUseCase {
         // Se isMoney for igual, ordenar por name
         return a.name.compareTo(b.name);
       });
+
+      if (paymentMethods.isNotEmpty) {
+        for (final paymentMethod in paymentMethods) {
+          createDebtByPaymentMethodCardUseCase(paymentMethod);
+        }
+      }
 
       return Future.value((null, paymentMethods));
     } catch (e) {
