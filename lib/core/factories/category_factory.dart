@@ -11,8 +11,10 @@ CreateCategoryUseCase makeCreateCategoryUseCase() =>
     CreateCategoryUseCase(categoryRepositoryFactory());
 UpdateCategoryUseCase makeUpdateCategoryUseCase() =>
     UpdateCategoryUseCase(categoryRepositoryFactory());
+GetSumCategoriesUseCase makeSumCategoryUseCase() =>
+    GetSumCategoriesUseCase(makeGetCategoriesUseCase());
 
-final GetExpensesByCreatedUseCase getExpensesByCreatedUseCase =
+final GetExpensesByDateCreatedUseCase getExpensesByCreatedUseCase =
     getExpensesByCreatedUseCaseFactory();
 final getCategoryByIdUseCase = getCategoryByIdUseCaseFactory();
 
@@ -25,12 +27,19 @@ CategoryController categoryControllerFactory() {
     getCategoriesUseCase: makeGetCategoriesUseCase(),
     createCategoryUseCase: makeCreateCategoryUseCase(),
     updateCategoryUseCase: makeUpdateCategoryUseCase(),
-    getSumCategoryUseCase: getSumCategoryUseCase,
+    getSumCategoriesUseCase: makeSumCategoryUseCase(),
   );
   return categoryController;
 }
 
-CategoryPage makeCategoryPage(String debtId) => CategoryPage(
+CategoryPage makeCategoryPage(String paymentMethodId) => CategoryPage(
       categoryController: categoryControllerFactory(),
-      debtId: debtId,
+      paymentMethodId: paymentMethodId,
     );
+
+Future<void> makeUpdateCategoryConsumedUseCase(
+  String categoryId,
+  double consumed,
+) =>
+    UpdateCategoryConsumedUseCase(categoryRepositoryFactory())
+        .call(categoryId, consumed);

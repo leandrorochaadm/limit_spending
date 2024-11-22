@@ -1,14 +1,14 @@
-import '../entities/entities.dart';
+import '../entity.dart';
 import '../repositoy.dart';
 
 class GetDebtsUseCase {
   final DebtRepository debtRepository;
 
   GetDebtsUseCase(this.debtRepository);
-  Stream<DebtsEntity> call() {
-    return debtRepository.getDebts().map((debts) {
+  Future<List<DebtEntity>> call() {
+    return debtRepository.getDebts().then((debts) {
       debts.sort((a, b) => a.name.compareTo(b.name));
-      return DebtsEntity(debts);
+      return debts;
     });
   }
 }

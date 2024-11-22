@@ -2,35 +2,17 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'core/factories/factories.dart';
-import 'features/category/presentation/presentation.dart';
-import 'features/expense/expense.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // final firestore = FirebaseFirestore.instance;
 
-  final categoryController = categoryControllerFactory();
-  final expenseController = expenseControllerFactory();
-
-  runApp(
-    MyApp(
-      categoryController: categoryController,
-      expenseController: expenseController,
-    ),
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final CategoryController categoryController;
-  final ExpenseController expenseController;
-
-  const MyApp({
-    super.key,
-    required this.categoryController,
-    required this.expenseController,
-  });
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -50,13 +32,6 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Poppins',
       ),
       home: makeDebtPage(),
-      // initialRoute: CategoryPage.routeName,
-      // routes: {
-      //   ExpensePage.routeName: (context) =>
-      //       ExpensePage(expenseController: expenseController),
-      //   CategoryPage.routeName: (context) =>
-      //       CategoryPage(categoryController: categoryController),
-      // },
     );
   }
 }

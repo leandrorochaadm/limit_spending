@@ -12,16 +12,19 @@ class CategoryEntity extends Equatable {
     required this.consumed,
   }) : id = id ?? const Uuid().v4();
 
+  factory CategoryEntity.empty() => CategoryEntity(
+        name: '',
+        created: DateTime.now(),
+        limitMonthly: 0,
+        consumed: 0,
+      );
+
   final String id;
   final String name;
   final DateTime created;
   final double limitMonthly;
   final double consumed;
-
-  double get balance {
-    final timeMouth = (DateTime.now().difference(created).inDays / 30) + 1;
-    return (timeMouth * limitMonthly) - consumed;
-  }
+  double get balance => limitMonthly - consumed;
 
   @override
   String toString() => '$id, $name, $created, $limitMonthly, $consumed, ';

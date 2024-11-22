@@ -19,8 +19,8 @@ class FirebaseDebtRepository implements DebtRepository {
   }
 
   @override
-  Stream<List<DebtEntity>> getDebts() {
-    return firestore.collection(collectionPath).snapshots().map(
+  Future<List<DebtEntity>> getDebts() {
+    return firestore.collection(collectionPath).get().then(
       (QuerySnapshot<Map<String, dynamic>> snapshot) {
         return snapshot.docs.map(
           (QueryDocumentSnapshot<Map<String, dynamic>> doc) {
@@ -32,8 +32,8 @@ class FirebaseDebtRepository implements DebtRepository {
   }
 
   @override
-  Stream<double> getSumDebts() {
-    return firestore.collection(collectionPath).snapshots().map(
+  Future<double> getSumDebts() {
+    return firestore.collection(collectionPath).get().then(
       (QuerySnapshot<Map<String, dynamic>> snapshot) {
         return snapshot.docs.fold<double>(
           0.0,

@@ -23,8 +23,8 @@ class CategoryFirebaseRepository implements CategoryRepository {
   }
 
   @override
-  Stream<List<CategoryEntity>> getCategories() {
-    return firestore.collection(collectionPath).snapshots().map(
+  Future<List<CategoryEntity>> getCategories() {
+    return firestore.collection(collectionPath).get().then(
       (QuerySnapshot<Map<String, dynamic>> snapshot) {
         return snapshot.docs.map(
           (QueryDocumentSnapshot<Map<String, dynamic>> doc) {
@@ -54,6 +54,7 @@ class CategoryFirebaseRepository implements CategoryRepository {
     }
   }
 
+  @override
   Future<void> updateCategoryConsumed(
     String categoryId,
     double consumed,
@@ -73,9 +74,9 @@ class CategoryFirebaseRepository implements CategoryRepository {
   }
 
   @override
-  Stream<CategoryEntity> getCategoryStream(String categoryId) {
-    return firestore.collection(collectionPath).doc(categoryId).snapshots().map(
-      (DocumentSnapshot<Map<String, dynamic>> snapshot) {
+  Future<CategoryEntity> getCategoryStream(String categoryId) {
+    return firestore.collection(collectionPath).doc(categoryId).get().then(
+      (snapshot) {
         if (snapshot.exists) {
           final data = snapshot.data();
           return CategoryModel.fromJson(data!).toEntity();

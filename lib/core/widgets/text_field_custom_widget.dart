@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class TextFieldCustomWidget extends StatelessWidget {
-  const TextFieldCustomWidget({
+  TextFieldCustomWidget({
     super.key,
     required this.focusNode,
     required this.controller,
@@ -15,6 +15,7 @@ class TextFieldCustomWidget extends StatelessWidget {
     this.maxLines = 1,
     this.onChanged,
     this.inputFormatters,
+    this.validator,
   });
 
   final FocusNode focusNode;
@@ -27,6 +28,7 @@ class TextFieldCustomWidget extends StatelessWidget {
   final int? maxLines;
   final void Function(String)? onChanged;
   final List<TextInputFormatter>? inputFormatters;
+  String? Function(String?)? validator;
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +59,8 @@ class TextFieldCustomWidget extends StatelessWidget {
         final Widget suffixIcon =
             controller.text.isNotEmpty ? buttonClear : iconReturn;
 
-        return TextField(
+        return TextFormField(
+          validator: validator,
           controller: controller,
           readOnly: readOnly,
           focusNode: focusNode,

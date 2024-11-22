@@ -3,17 +3,17 @@ import '../entities/entities.dart';
 import 'get_category_by_id_usecase.dart';
 
 class GetSumCategoryUseCase {
-  final GetExpensesByCreatedUseCase getExpensesByCreatedUseCase;
+  final GetExpensesByDateCreatedUseCase getExpensesByCreatedUseCase;
   final GetCategoryByIdUseCase getCategoryByIdUseCase;
   GetSumCategoryUseCase({
     required this.getExpensesByCreatedUseCase,
     required this.getCategoryByIdUseCase,
   });
-  Stream<CategorySumEntity> call({
+  Future<CategorySumEntity> call({
     required String categoryId,
     required double limit,
   }) {
-    return getExpensesByCreatedUseCase(categoryId: categoryId).map((expenses) {
+    return getExpensesByCreatedUseCase(categoryId: categoryId).then((expenses) {
       double totalConsumed =
           expenses.fold(0, (sum, expense) => sum + expense.value);
       double balance = limit - totalConsumed;

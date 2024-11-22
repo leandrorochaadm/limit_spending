@@ -2,183 +2,104 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/core.dart';
-import '../../category/domain/entities/entities.dart';
-import '../../debt/domain/entities/debts_entity.dart';
-import '../domain/domain.dart';
 import 'expense_controller.dart';
 import 'expense_state.dart';
 
 class ExpensePage extends StatelessWidget {
   static const String routeName = '/expense';
-  const ExpensePage({
-    super.key,
-    required this.expenseController,
-    required this.category,
-    required this.debtId,
-  });
+
   final ExpenseController expenseController;
-  final CategoryEntity category;
-  final String debtId;
+
+  const ExpensePage(this.expenseController, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Despesas: ${category.name}'), elevation: 7),
-      floatingActionButton: FutureBuilder<DebtsEntity>(
-        future: expenseController.getDebts(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
-          }
-          if (snapshot.hasError) {
-            debugPrint(snapshot.error.toString());
-            return Text('Error: ${snapshot.error}');
-          }
-          if (snapshot.hasData && snapshot.data!.debts.isNotEmpty) {
-            return FloatingActionButton(
-              onPressed: () => modalCreateExpense(
-                context,
-                categoryId: category.id,
-                debtId: debtId,
-              ),
-              child: const Icon(Icons.add),
-            );
-          }
-
-          return const SizedBox.shrink();
-        },
-      ),
-      bottomSheet: Padding(
-        padding: const EdgeInsets.only(bottom: 36.0, top: 24),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            StreamBuilder<CategorySumEntity>(
-              stream: expenseController.getSumByCategory(
-                categoryId: category.id,
-                categoryLimit: category.limitMonthly,
-              ),
-              builder: (context, categorySum) {
-                if (categorySum.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                }
-                if (categorySum.hasError) {
-                  debugPrint(categorySum.error.toString());
-                  return Text('Error: ${categorySum.error}');
-                }
-                if (categorySum.hasData) {
-                  final sumEntity = categorySum.data!;
-
-                  return Text(
-                    'Limite mensal: R\$ ${sumEntity.limit.toStringAsFixed(2)}\nConsumido nos ultimos 30 dias: R\$ ${sumEntity.consumed.toStringAsFixed(2)}\nDisponível: R\$ ${sumEntity.balance.toStringAsFixed(2)}',
-                    textAlign: TextAlign.center,
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            ),
-          ],
-        ),
-      ),
-      body: Stack(
-        children: [
-          StreamBuilder<List<ExpenseEntity>>(
-            stream: expenseController.expensesStream(category.id),
-            builder: (_, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Center(child: Text('Nenhuma despesa encontrada'));
-              }
-
-              final expenses = snapshot.data!;
-
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 100.0),
-                child: ListView.separated(
-                  itemCount: expenses.length,
-                  separatorBuilder: (_, __) => const Divider(),
-                  itemBuilder: (context, index) {
-                    final expense = expenses[index];
-                    return Dismissible(
-                      key: Key(expense.id),
-                      direction: DismissDirection.endToStart,
-                      onDismissed: (direction) {
-                        expenseController.deleteExpense(expense);
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                '${expense.description} ${expense.value.toStringAsFixed(2)} foi removido',
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                      background: Container(
-                        color: Theme.of(context).colorScheme.error,
-                        alignment: Alignment.centerRight,
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: const Icon(Icons.delete, color: Colors.white),
-                      ),
-                      child: ListTile(
-                        title: Text(
-                          '${expense.description} (${DateFormat('dd/MM HH:mm').format(expense.created)})',
-                        ),
-                        subtitle: Text(
-                          'Valor: ${(expense.value).toStringAsFixed(2)}',
-                        ),
-                      ),
-                    );
-                  },
+    return ValueListenableBuilder(
+      valueListenable: expenseController.state,
+      builder: (context, state, __) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('Despesas: ${expenseController.category.name}'),
+            elevation: 7,
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              expenseController.clearForm();
+              modalCreateExpense(context);
+            },
+            child: const Icon(Icons.add),
+          ),
+          body: buildBody(state),
+          bottomSheet: Padding(
+            padding: const EdgeInsets.only(bottom: 36.0, top: 24),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Limite mensal: ${state.limitCategory}\nConsumido nos ultimos $daysFilter dias: ${state.consumedSum}\nDisponível: ${state.balance}',
+                  textAlign: TextAlign.center,
                 ),
-              );
-            },
+              ],
+            ),
           ),
-          ValueListenableBuilder<ExpenseState>(
-            valueListenable: expenseController.state,
-            builder: (context, state, __) {
-              if (state.status == ExpenseStatus.error) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        backgroundColor: Theme.of(context).colorScheme.error,
-                        content:
-                            Text(state.errorMessage ?? 'Erro desconhecido'),
-                      ),
-                    );
-                  }
-                });
+        );
+      },
+    );
+  }
+
+  Widget buildBody(ExpenseState state) {
+    if (state.status == ExpenseStatus.loading) {
+      return const Center(child: CircularProgressIndicator());
+    } else if (state.status == ExpenseStatus.loading) {
+      return Center(child: Text('${state.errorMessage}'));
+    } else if (state.status == ExpenseStatus.success &&
+        state.expenses.isEmpty) {
+      return const Center(child: Text('Nenhuma despesa encontrada'));
+    }
+
+    final expenses = state.expenses;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 100.0),
+      child: ListView.separated(
+        itemCount: expenses.length,
+        separatorBuilder: (_, __) => const Divider(),
+        itemBuilder: (context, index) {
+          final expense = expenses[index];
+          return Dismissible(
+            key: Key(expense.id),
+            direction: DismissDirection.endToStart,
+            onDismissed: (direction) {
+              expenseController.deleteExpense(expense);
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      '${expense.description} ${expense.value.toCurrency()} foi removido',
+                    ),
+                  ),
+                );
               }
-              if (state.status == ExpenseStatus.loading) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              return const SizedBox.shrink();
             },
-          ),
-        ],
+            background: Container(
+              color: Theme.of(context).colorScheme.error,
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: const Icon(Icons.delete, color: Colors.white),
+            ),
+            child: ListTile(
+              title: Text(
+                '${expense.description} | ${(expense.value).toCurrency()}',
+              ),
+              subtitle: Text(DateFormat('dd/MM HH:mm').format(expense.created)),
+            ),
+          );
+        },
       ),
     );
   }
 
-  Future<dynamic> modalCreateExpense(
-    BuildContext context, {
-    String categoryId = '',
-    String debtId = '',
-  }) {
-    // Defina um valor inicial
-
-    final TextEditingController descriptionEC = TextEditingController();
-    final FocusNode descriptionFN = FocusNode();
-
-    final TextEditingController valueEC = TextEditingController();
-    final FocusNode valueFN = FocusNode();
-
-    bool isValid() => descriptionEC.text.isNotEmpty && valueEC.text.isNotEmpty;
-
+  Future<dynamic> modalCreateExpense(BuildContext context) {
     return showModalBottomSheet(
       context: context,
       useSafeArea: true,
@@ -198,15 +119,15 @@ class ExpensePage extends StatelessWidget {
                 children: <Widget>[
                   const SizedBox(height: 24),
                   TextFieldCustomWidget(
-                    controller: descriptionEC,
-                    focusNode: descriptionFN,
+                    controller: expenseController.descriptionEC,
+                    focusNode: expenseController.descriptionFN,
                     hintText: 'Descrição da despesa',
                     onChanged: (_) => setState(() {}),
                   ),
                   const SizedBox(height: 24),
                   TextFieldCustomWidget(
-                    controller: valueEC,
-                    focusNode: valueFN,
+                    controller: expenseController.valueEC,
+                    focusNode: expenseController.valueFN,
                     hintText: 'Valor da despesa',
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
@@ -224,20 +145,10 @@ class ExpensePage extends StatelessWidget {
                       foregroundColor: Theme.of(context).colorScheme.onPrimary,
                       textStyle: Theme.of(context).textTheme.bodyMedium,
                     ),
-                    onPressed: isValid()
+                    onPressed: expenseController.isValid()
                         ? () {
-                            final valueDouble =
-                                double.parse(valueEC.text.toPointFormat());
-                            var expenseEntity = ExpenseEntity(
-                              description: descriptionEC.text,
-                              created: DateTime.now(),
-                              value: valueEC.text.isEmpty ? 0 : valueDouble,
-                              categoryId: categoryId,
-                              debtId: debtId,
-                            );
-                            expenseController.createExpense(expenseEntity);
-
-                            Navigator.of(contextModal).pop();
+                            expenseController.createExpense();
+                            Navigator.pop(context);
                           }
                         : null,
                     child: const Text('Salvar despesa'),

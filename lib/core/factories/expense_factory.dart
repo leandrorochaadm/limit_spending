@@ -1,3 +1,5 @@
+// ignore_for_file: require_trailing_commas
+
 import '../../features/category/domain/domain.dart';
 import '../../features/debt/domain/usecases/usecases.dart';
 import '../../features/expense/expense.dart';
@@ -10,12 +12,16 @@ ExpenseFirebaseRepository expenseRepositoryFactory() =>
       firestore: makeFirestoreFactory(),
       categoryRepository: categoryRepositoryFactory(),
     );
-GetExpensesByCreatedUseCase getExpensesByCreatedUseCaseFactory() =>
-    GetExpensesByCreatedUseCase(expenseRepositoryFactory());
+GetExpensesByDateCreatedUseCase getExpensesByCreatedUseCaseFactory() =>
+    GetExpensesByDateCreatedUseCase(expenseRepositoryFactory());
 
 GetCategoryByIdUseCase getCategoryByIdUseCaseFactory() =>
     GetCategoryByIdUseCase(categoryRepositoryFactory());
-ExpenseController expenseControllerFactory() {
+
+ExpenseController expenseControllerFactory({
+  required CategoryEntity category,
+  required String paymentMethodId,
+}) {
   final createExpenseUseCase = CreateExpenseUseCase(expenseRepositoryFactory());
 
   final deleteExpenseUseCase = DeleteExpenseUseCase(expenseRepositoryFactory());
@@ -35,6 +41,8 @@ ExpenseController expenseControllerFactory() {
     getExpensesByCreatedUseCase: getExpensesByCreatedUseCase,
     getDebtsUseCase: getDebtsUseCase,
     addDebtValueUseCase: addDebtValueUseCase,
+    category: category,
+    paymentMethodId: paymentMethodId,
   );
 
   return expenseController;
@@ -42,10 +50,7 @@ ExpenseController expenseControllerFactory() {
 
 ExpensePage makeExpensePage({
   required CategoryEntity category,
-  required String debtId,
+  required String paymentMethodId,
 }) =>
-    ExpensePage(
-      expenseController: expenseControllerFactory(),
-      category: category,
-      debtId: debtId,
-    );
+    ExpensePage(expenseControllerFactory(
+        category: category, paymentMethodId: paymentMethodId));
