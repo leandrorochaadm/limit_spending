@@ -8,8 +8,8 @@ PaymentMethodFirebaseRepository paymentMethodRepositoryFactory() =>
 CreateDebtByPaymentMethodCardUseCase
     makeCreateDebtByPaymentMethodCardUseCase() =>
         CreateDebtByPaymentMethodCardUseCase(makeCreateDebtUseCase());
-GetPaymentMethodsUseCase makeGetPaymentMethodsUseCase() =>
-    GetPaymentMethodsUseCase(
+GetAllPaymentMethodsUseCase makeGetPaymentMethodsUseCase() =>
+    GetAllPaymentMethodsUseCase(
       repository: paymentMethodRepositoryFactory(),
       createDebtByPaymentMethodCardUseCase:
           makeCreateDebtByPaymentMethodCardUseCase(),
@@ -29,15 +29,20 @@ Future<String?> makeIncrementValuePaymentMethodUseCase({
     IncrementValuePaymentMethodUseCase(paymentMethodRepositoryFactory())
         .call(paymentMethodId: paymentMethodId, value: value);
 
-PaymentMethodNotifier paymentMethodNotifierFactory() {
+GetMoneyPaymentMethodsUseCase makeGetMoneyPaymentMethodsUseCase() =>
+    GetMoneyPaymentMethodsUseCase(paymentMethodRepositoryFactory());
+
+PaymentMethodNotifier paymentMethodNotifierFactory(bool? isMoneyFilter) {
   final paymentMethodNotifier = PaymentMethodNotifier(
     getPaymentMethodsUseCase: makeGetPaymentMethodsUseCase(),
     createPaymentMethodUseCase: makeCreatePaymentMethodUseCase(),
     updatePaymentMethodUseCase: makeUpdatePaymentMethodUseCase(),
     deletePaymentMethodUseCase: makeDeletePaymentMethodUseCase(),
+    isMoneyFilter: isMoneyFilter,
+    getMoneyPaymentMethodsUseCase: makeGetMoneyPaymentMethodsUseCase(),
   );
   return paymentMethodNotifier;
 }
 
-PaymentMethodPage makePaymentMethodPage() =>
-    PaymentMethodPage(paymentMethodNotifierFactory());
+PaymentMethodPage makePaymentMethodPage({bool? isMoneyFilter}) =>
+    PaymentMethodPage(paymentMethodNotifierFactory(isMoneyFilter));

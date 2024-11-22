@@ -148,6 +148,40 @@ class DebtPage extends StatelessWidget {
             ),
             child: ListTile(
               title: Text('${debt.name} | ${debt.value.toCurrency()}'),
+              onTap: () async {
+                return;
+                await showModalBottomSheet<bool>(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text('Pagar divida'),
+                      content: const Text(
+                        'Deseja escolher origem do dinheiro?',
+                      ),
+                      actions: [
+                        TextButton(
+                          child: const Text('Não'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        TextButton(
+                          child: const Text('Sim'),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    makePaymentMethodPage(isMoneyFilter: true),
+                              ),
+                            ).whenComplete(() => debtController.load());
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
             ),
           );
         },

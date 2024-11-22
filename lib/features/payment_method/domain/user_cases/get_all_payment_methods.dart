@@ -1,12 +1,12 @@
 import '../../../debt/domain/usecases/usecases.dart';
 import '../domain.dart';
 
-class GetPaymentMethodsUseCase {
+class GetAllPaymentMethodsUseCase {
   final PaymentMethodRepository repository;
   final CreateDebtByPaymentMethodCardUseCase
       createDebtByPaymentMethodCardUseCase;
 
-  GetPaymentMethodsUseCase({
+  GetAllPaymentMethodsUseCase({
     required this.repository,
     required this.createDebtByPaymentMethodCardUseCase,
   });

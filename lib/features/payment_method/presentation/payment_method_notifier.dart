@@ -6,7 +6,8 @@ import '../domain/user_cases/use_cases.dart';
 import 'payment_method_state.dart';
 
 class PaymentMethodNotifier extends ValueNotifier<PaymentMethodState> {
-  final GetPaymentMethodsUseCase getPaymentMethodsUseCase;
+  final GetAllPaymentMethodsUseCase getPaymentMethodsUseCase;
+  final GetMoneyPaymentMethodsUseCase getMoneyPaymentMethodsUseCase;
   final CreatePaymentMethodUseCase createPaymentMethodUseCase;
   final UpdatePaymentMethodUseCase updatePaymentMethodUseCase;
   final DeletePaymentMethodUseCase deletePaymentMethodUseCase;
@@ -29,19 +30,33 @@ class PaymentMethodNotifier extends ValueNotifier<PaymentMethodState> {
   TextEditingController dayCloseEC = TextEditingController();
   final FocusNode dayCloseFN = FocusNode();
   bool isMoneySelected = true;
+  bool isMoneyFilter;
   PaymentMethodNotifier({
     required this.getPaymentMethodsUseCase,
     required this.createPaymentMethodUseCase,
     required this.updatePaymentMethodUseCase,
     required this.deletePaymentMethodUseCase,
-  }) : super(PaymentMethodState()) {
+    required this.getMoneyPaymentMethodsUseCase,
+    bool? isMoneyFilter,
+  })  : isMoneyFilter = isMoneyFilter ?? false,
+        super(PaymentMethodState()) {
     load();
   }
 
   Future<void> load() async {
     value = PaymentMethodState(status: PaymentMethodStatus.loading);
     clearForm();
-    final (errorMessage, paymentMethods) = await getPaymentMethodsUseCase();
+
+    (String?, List<PaymentMethodEntity>) data = (null, <PaymentMethodEntity>[]);
+
+    if (isMoneyFilter) {
+      data = await getMoneyPaymentMethodsUseCase();
+    } else {
+      data = await getPaymentMethodsUseCase();
+    }
+
+    final paymentMethods = data.$2;
+    final errorMessage = data.$1;
 
     if (errorMessage != null) {
       value = PaymentMethodState(
