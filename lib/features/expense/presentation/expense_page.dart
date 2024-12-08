@@ -50,51 +50,66 @@ class ExpensePage extends StatelessWidget {
   Widget buildBody(ExpenseState state) {
     if (state.status == ExpenseStatus.loading) {
       return const Center(child: CircularProgressIndicator());
-    } else if (state.status == ExpenseStatus.loading) {
+    } else if (state.status == ExpenseStatus.error) {
       return Center(child: Text('${state.errorMessage}'));
-    } else if (state.status == ExpenseStatus.success &&
-        state.expenses.isEmpty) {
+    } else if (state.expenses.isEmpty) {
       return const Center(child: Text('Nenhuma despesa encontrada'));
     }
 
-    final expenses = state.expenses;
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 100.0),
-      child: ListView.separated(
-        itemCount: expenses.length,
-        separatorBuilder: (_, __) => const Divider(),
-        itemBuilder: (context, index) {
-          final expense = expenses[index];
-          return Dismissible(
-            key: Key(expense.id),
-            direction: DismissDirection.endToStart,
-            onDismissed: (direction) {
-              expenseController.deleteExpense(expense);
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      '${expense.description} ${expense.value.toCurrency()} foi removido',
+    if (state.status == ExpenseStatus.success) {
+      final expenses = state.expenses;
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 100.0),
+        child: ListView.separated(
+          itemCount: expenses.length,
+          separatorBuilder: (_, __) => const Divider(),
+          itemBuilder: (context, index) {
+            final expense = expenses[index];
+            return Dismissible(
+              key: Key(expense.id),
+              direction: DismissDirection.endToStart,
+              onDismissed: (direction) {
+                expenseController.deleteExpense(expense);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        '${expense.description} ${expense.value.toCurrency()} foi removido',
+                      ),
                     ),
-                  ),
-                );
-              }
-            },
-            background: Container(
-              color: Theme.of(context).colorScheme.error,
-              alignment: Alignment.centerRight,
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: const Icon(Icons.delete, color: Colors.white),
-            ),
-            child: ListTile(
-              title: Text(
-                '${expense.description} | ${(expense.value).toCurrency()}',
+                  );
+                }
+              },
+              background: Container(
+                color: Theme.of(context).colorScheme.error,
+                alignment: Alignment.centerRight,
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: const Icon(Icons.delete, color: Colors.white),
               ),
-              subtitle: Text(DateFormat('dd/MM HH:mm').format(expense.created)),
-            ),
-          );
-        },
+              child: ListTile(
+                title: Text(
+                  '${expense.description} | ${(expense.value).toCurrency()}',
+                ),
+                subtitle: Text(
+                  DateFormat('dd/MM HH:mm').format(expense.created),
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    }
+
+    return Center(
+      child: Column(
+        children: [
+          const Text('Erro ao carregar despesas'),
+          const SizedBox.square(dimension: 24),
+          FilledButton(
+            onPressed: expenseController.load,
+            child: const Text('Tente novamente'),
+          ),
+        ],
       ),
     );
   }

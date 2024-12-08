@@ -1,16 +1,30 @@
-import '../../../../core/factories/factories.dart';
+import '../../../debt/domain/usecases/add_debt_value_usecase.dart';
+import '../../../payment_method/payment_method.dart';
 import '../entities/expense_entity.dart';
 import '../repositories/expense_repository.dart';
 
 class DeleteExpenseUseCase {
-  final ExpenseRepository _expenseRepository;
-  DeleteExpenseUseCase(this._expenseRepository);
-  Future<void> call(ExpenseEntity expenseEntity) async {
-    await _expenseRepository.deleteExpense(expenseEntity.toModel());
+  final ExpenseRepository expenseRepository;
+  final IncrementValuePaymentMethodUseCase incrementValuePaymentMethodUseCase;
+  final AddDebtValueUseCase addDebtValueUseCase;
 
-    await makeIncrementValuePaymentMethodUseCase(
+  DeleteExpenseUseCase({
+    required this.expenseRepository,
+    required this.incrementValuePaymentMethodUseCase,
+    required this.addDebtValueUseCase,
+  });
+
+  Future<void> call(ExpenseEntity expenseEntity) async {
+    await expenseRepository.deleteExpense(expenseEntity.toModel());
+
+    await incrementValuePaymentMethodUseCase(
       paymentMethodId: expenseEntity.paymentMethodId,
       value: -expenseEntity.value,
+    );
+
+    await addDebtValueUseCase(
+      debtId: expenseEntity.paymentMethodId,
+      debtValue: -expenseEntity.value,
     );
   }
 }

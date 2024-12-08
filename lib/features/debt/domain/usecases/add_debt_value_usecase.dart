@@ -4,7 +4,7 @@ class AddDebtValueUseCase {
   final DebtRepository debtRepository;
 
   AddDebtValueUseCase(this.debtRepository);
-  Future<void> call(String debtId, double debtValue) {
+  Future<void> call({required String debtId, required double debtValue}) {
     if (debtId.isEmpty) return Future.value();
     return debtRepository.addDebtValue(debtId, debtValue);
   }

@@ -90,7 +90,6 @@ class ExpenseController {
 
     try {
       await createExpenseUseCase(expense);
-      await addDebtValueUseCase(expense.paymentMethodId, expense.value);
       await load();
     } catch (e) {
       state.value = state.value.copyWith(
@@ -104,7 +103,7 @@ class ExpenseController {
     state.value = state.value.copyWith(status: ExpenseStatus.loading);
     try {
       await deleteExpenseUseCase(expense);
-      await addDebtValueUseCase(expense.paymentMethodId, -expense.value);
+
       await load();
     } catch (e) {
       state.value = state.value.copyWith(
@@ -112,9 +111,5 @@ class ExpenseController {
         errorMessage: 'Erro ao deletar despesa',
       );
     }
-  }
-
-  Future<void> addDebtValue(String debtId, double debtValue) async {
-    await addDebtValueUseCase(debtId, debtValue);
   }
 }

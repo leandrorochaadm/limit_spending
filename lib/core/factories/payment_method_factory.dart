@@ -22,12 +22,8 @@ UpdatePaymentMethodUseCase makeUpdatePaymentMethodUseCase() =>
 DeletePaymentMethodUseCase makeDeletePaymentMethodUseCase() =>
     DeletePaymentMethodUseCase(paymentMethodRepositoryFactory());
 
-Future<String?> makeIncrementValuePaymentMethodUseCase({
-  required String paymentMethodId,
-  required double value,
-}) =>
-    IncrementValuePaymentMethodUseCase(paymentMethodRepositoryFactory())
-        .call(paymentMethodId: paymentMethodId, value: value);
+IncrementValuePaymentMethodUseCase makeIncrementValuePaymentMethodUseCase() =>
+    IncrementValuePaymentMethodUseCase(paymentMethodRepositoryFactory());
 
 GetMoneyPaymentMethodsUseCase makeGetMoneyPaymentMethodsUseCase() =>
     GetMoneyPaymentMethodsUseCase(paymentMethodRepositoryFactory());

@@ -1,11 +1,10 @@
-// ignore_for_file: require_trailing_commas
-
 import '../../features/category/domain/domain.dart';
 import '../../features/debt/domain/usecases/usecases.dart';
 import '../../features/expense/expense.dart';
 import 'category_factory.dart';
 import 'debt_factory.dart';
 import 'firestore_factory.dart';
+import 'payment_method_factory.dart';
 
 ExpenseFirebaseRepository expenseRepositoryFactory() =>
     ExpenseFirebaseRepository(
@@ -22,9 +21,19 @@ ExpenseController expenseControllerFactory({
   required CategoryEntity category,
   required String paymentMethodId,
 }) {
-  final createExpenseUseCase = CreateExpenseUseCase(expenseRepositoryFactory());
+  final createExpenseUseCase = CreateExpenseUseCase(
+    expenseRepository: expenseRepositoryFactory(),
+    incrementValuePaymentMethodUseCase:
+        makeIncrementValuePaymentMethodUseCase(),
+    addDebtValueUseCase: makeAddDebtValueUseCase(),
+  );
 
-  final deleteExpenseUseCase = DeleteExpenseUseCase(expenseRepositoryFactory());
+  final deleteExpenseUseCase = DeleteExpenseUseCase(
+    expenseRepository: expenseRepositoryFactory(),
+    incrementValuePaymentMethodUseCase:
+        makeIncrementValuePaymentMethodUseCase(),
+    addDebtValueUseCase: makeAddDebtValueUseCase(),
+  );
 
   final getSumCategoryUseCase = GetSumCategoryUseCase(
     getExpensesByCreatedUseCase: getExpensesByCreatedUseCase,
@@ -52,5 +61,9 @@ ExpensePage makeExpensePage({
   required CategoryEntity category,
   required String paymentMethodId,
 }) =>
-    ExpensePage(expenseControllerFactory(
-        category: category, paymentMethodId: paymentMethodId));
+    ExpensePage(
+      expenseControllerFactory(
+        category: category,
+        paymentMethodId: paymentMethodId,
+      ),
+    );

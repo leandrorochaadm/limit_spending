@@ -47,7 +47,7 @@ class DebtController {
   }
 
   Future<void> addDebtValue(String debtId, double debtValue) =>
-      addDebtValueUseCase(debtId, debtValue);
+      addDebtValueUseCase(debtId: debtId, debtValue: debtValue);
   Future<void> createDebt(DebtEntity debt) async {
     state.value = DebtState(status: DebtStatus.loading);
     await createDebtUseCase(debt);
