@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../domain/entity.dart';
+import '../debit.dart';
 
 class DebtModel extends DebtEntity with EquatableMixin {
   DebtModel({

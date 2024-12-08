@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../debt/domain/entity.dart';
+import '../../../debt/debit.dart';
 import '../../data/data.dart';
 
 class PaymentMethodEntity extends Equatable {

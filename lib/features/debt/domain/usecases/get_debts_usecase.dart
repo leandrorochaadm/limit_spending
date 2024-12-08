@@ -1,5 +1,4 @@
-import '../entity.dart';
-import '../repositoy.dart';
+import '../../debit.dart';
 
 class GetDebtsUseCase {
   final DebtRepository debtRepository;

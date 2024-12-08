@@ -1,4 +1,4 @@
-import '../domain/entity.dart';
+import '../debit.dart';
 
 enum DebtStatus { initial, loading, success, error, information }
 

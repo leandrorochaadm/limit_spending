@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/core.dart';
 import '../category.dart';
+import '../domain/usecases/get_sum_categories_usecase.dart';
 import 'category_state.dart';
 
 class CategoryController {
