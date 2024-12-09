@@ -172,6 +172,7 @@ class DebtPage extends StatelessWidget {
                         TextButton(
                           child: const Text('Sim'),
                           onPressed: () {
+                            Navigator.pop(context);
                             Navigator.push(
                               context,
                               MaterialPageRoute(

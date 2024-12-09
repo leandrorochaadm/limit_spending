@@ -302,7 +302,8 @@ class PaymentMethodPage extends StatelessWidget {
               children: [
                 TextField(
                   controller: valueEC,
-                  keyboardType: TextInputType.number,
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
                   decoration: const InputDecoration(
                     labelText: 'Valor a Pagar',
                     border: OutlineInputBorder(),
@@ -354,7 +355,7 @@ class PaymentMethodPage extends StatelessWidget {
                             isPopping = true;
                             final double valuePaymentDebt = valueEC.text.isEmpty
                                 ? 0.0
-                                : double.parse(valueEC.text);
+                                : double.parse(valueEC.text.toPointFormat());
                             Navigator.of(contextModal).pop(valuePaymentDebt);
                           }
                         },

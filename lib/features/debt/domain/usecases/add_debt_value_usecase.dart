@@ -1,11 +1,21 @@
+import '../../../../core/exceptions/exceptions.dart';
 import '../repositoy.dart';
 
 class AddDebtValueUseCase {
   final DebtRepository debtRepository;
 
   AddDebtValueUseCase(this.debtRepository);
-  Future<void> call({required String debtId, required double debtValue}) {
-    if (debtId.isEmpty) return Future.value();
-    return debtRepository.addDebtValue(debtId, debtValue);
+  Future<Failure?> call({
+    required String debtId,
+    required double debtValue,
+  }) async {
+    try {
+      await debtRepository.addDebtValue(debtId, debtValue);
+      return null;
+    } on AppException catch (e) {
+      return Failure(e.message);
+    } catch (e) {
+      return Failure('Erro ao criar despesa');
+    }
   }
 }

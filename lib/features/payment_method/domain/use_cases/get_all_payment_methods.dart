@@ -32,6 +32,8 @@ class GetAllPaymentMethodsUseCase {
       }
 
       return (null, paymentMethods);
+    } on AppException catch (e) {
+      return (Failure(e.message), <PaymentMethodEntity>[]);
     } catch (e) {
       return (
         Failure('Não foi possível carregar os meios de pagamento'),

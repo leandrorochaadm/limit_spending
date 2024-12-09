@@ -20,6 +20,8 @@ class GetMoneyPaymentMethodsUseCase {
       });
 
       return (null, filteredPaymentMethods);
+    } on AppException catch (e) {
+      return (Failure(e.message), <PaymentMethodEntity>[]);
     } catch (e) {
       return (
         Failure('Erro ao buscar meios de pagamento'),

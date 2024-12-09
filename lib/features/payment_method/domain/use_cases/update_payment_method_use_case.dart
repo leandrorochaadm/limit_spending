@@ -1,3 +1,5 @@
+import '../../../../core/exceptions/exceptions_custom.dart';
+import '../../../../core/exceptions/failure.dart';
 import '../domain.dart';
 
 class UpdatePaymentMethodUseCase {
@@ -5,12 +7,14 @@ class UpdatePaymentMethodUseCase {
 
   UpdatePaymentMethodUseCase(this.repository);
 
-  Future<String?> call(PaymentMethodEntity paymentMethod) async {
+  Future<Failure?> call(PaymentMethodEntity paymentMethod) async {
     try {
       await repository.updatePaymentMethod(paymentMethod);
       return null;
+    } on AppException catch (e) {
+      return Failure(e.message);
     } catch (e) {
-      return e.toString();
+      return Failure('Erro ao criar despesa');
     }
   }
 }

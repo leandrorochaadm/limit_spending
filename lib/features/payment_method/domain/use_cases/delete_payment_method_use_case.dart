@@ -1,3 +1,4 @@
+import '../../../../core/exceptions/exceptions.dart';
 import '../domain.dart';
 
 class DeletePaymentMethodUseCase {
@@ -5,12 +6,14 @@ class DeletePaymentMethodUseCase {
 
   DeletePaymentMethodUseCase(this.repository);
 
-  Future<String?> call(PaymentMethodEntity paymentMethod) async {
+  Future<Failure?> call(PaymentMethodEntity paymentMethod) async {
     try {
       await repository.deletePaymentMethod(paymentMethod);
       return null;
+    } on AppException catch (e) {
+      return Failure(e.message);
     } catch (e) {
-      return e.toString();
+      return Failure('Erro ao criar despesa');
     }
   }
 }
