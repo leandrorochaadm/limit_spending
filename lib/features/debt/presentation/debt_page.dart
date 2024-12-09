@@ -95,14 +95,35 @@ class DebtPage extends StatelessWidget {
             direction: DismissDirection.horizontal,
             confirmDismiss: (direction) async {
               if (direction == DismissDirection.endToStart) {
-                final bool? result = await showModalBottomSheet<bool>(
+                if (debt.isCardCredit) {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text(
+                          'Cartão de crédito não pode ser excluido',
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(false);
+                            },
+                            child: const Text('Ok'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                  return false;
+                }
+
+                final bool? result = await showDialog<bool>(
                   context: context,
                   builder: (context) {
                     return AlertDialog(
                       title: const Text('Excluir divida'),
-                      content: const Text(
-                        'Deseja realmente excluir esta divida?',
-                      ),
+                      content:
+                          const Text('Deseja realmente excluir esta divida?'),
                       actions: [
                         TextButton(
                           child: const Text('Cancelar'),
