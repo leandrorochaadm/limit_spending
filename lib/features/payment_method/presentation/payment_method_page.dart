@@ -32,6 +32,22 @@ class PaymentMethodPage extends StatelessWidget {
       return value;
     };
 
+    paymentMethodNotifier.onShowMessage = (String message, bool isError) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          backgroundColor: isError ? Colors.red : Colors.green,
+        ),
+      );
+    };
+
     return PopScope(
       canPop: onGoBack == null,
       onPopInvokedWithResult: (bool didPop, _) {

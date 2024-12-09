@@ -46,6 +46,9 @@ class PaymentMethodNotifier extends ValueNotifier<PaymentMethodState> {
   void Function(String paymentMethodId)? onNextCategoryPage;
   Future<double> Function(PaymentMethodEntity paymentMethod)?
       onOpenModalPaymentDebt;
+
+  void Function(String message, bool isError)? onShowMessage;
+
   PaymentMethodNotifier({
     required this.getPaymentMethodsUseCase,
     required this.createPaymentMethodUseCase,
@@ -165,6 +168,11 @@ class PaymentMethodNotifier extends ValueNotifier<PaymentMethodState> {
   }
 
   Future<void> selectPaymentMethod(PaymentMethodEntity paymentMethod) async {
+    if (paymentMethod.value <= 0) {
+      onShowMessage?.call('Nenhum saldo disponível', true);
+      return;
+    }
+
     _paymentMethodSelected = paymentMethod;
     if (debtId?.isNotEmpty ?? false) {
       final value = await onOpenModalPaymentDebt?.call(paymentMethod);
