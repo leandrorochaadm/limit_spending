@@ -23,7 +23,9 @@ class ExpenseFirebaseRepository implements ExpenseRepository {
           .doc(expense.id)
           .set(expense.toJson());
     } on FirebaseException catch (e) {
-      throw AppExceptionUtils.handleFirebaseError(e);
+      final exception = AppExceptionUtils.handleFirebaseError(e);
+      LoggerService.error('deleteExpense', exception.message);
+      throw exception;
     } catch (e, s) {
       LoggerService.error('createExpense', e, s);
       rethrow;
@@ -31,11 +33,13 @@ class ExpenseFirebaseRepository implements ExpenseRepository {
   }
 
   @override
-  Future<void> deleteExpense(ExpenseModel expense) async {
+  Future<void> deleteExpense(String expenseId) async {
     try {
-      await firestore.collection(collectionPath).doc(expense.id).delete();
+      await firestore.collection(collectionPath).doc(expenseId).delete();
     } on FirebaseException catch (e) {
-      throw AppExceptionUtils.handleFirebaseError(e);
+      final exception = AppExceptionUtils.handleFirebaseError(e);
+      LoggerService.error('deleteExpense', exception.message);
+      throw exception;
     } catch (e, s) {
       LoggerService.error('deleteExpense', e, s);
       rethrow;
@@ -58,7 +62,9 @@ class ExpenseFirebaseRepository implements ExpenseRepository {
       });
       return result;
     } on FirebaseException catch (e) {
-      throw AppExceptionUtils.handleFirebaseError(e);
+      final exception = AppExceptionUtils.handleFirebaseError(e);
+      LoggerService.error('deleteExpense', exception.message);
+      throw exception;
     } catch (e, s) {
       LoggerService.error('incrementValuePaymentMethod', e, s);
       rethrow;
@@ -100,7 +106,9 @@ class ExpenseFirebaseRepository implements ExpenseRepository {
 
       return result;
     } on FirebaseException catch (e) {
-      throw AppExceptionUtils.handleFirebaseError(e);
+      final exception = AppExceptionUtils.handleFirebaseError(e);
+      LoggerService.error('deleteExpense', exception.message);
+      throw exception;
     } catch (e, s) {
       LoggerService.error('incrementValuePaymentMethod', e, s);
       rethrow;
@@ -115,7 +123,9 @@ class ExpenseFirebaseRepository implements ExpenseRepository {
           .doc(expense.id)
           .update(expense.toJson());
     } on FirebaseException catch (e) {
-      throw AppExceptionUtils.handleFirebaseError(e);
+      final exception = AppExceptionUtils.handleFirebaseError(e);
+      LoggerService.error('deleteExpense', exception.message);
+      throw exception;
     } catch (e, s) {
       LoggerService.error('incrementValuePaymentMethod', e, s);
       rethrow;
@@ -143,7 +153,9 @@ class ExpenseFirebaseRepository implements ExpenseRepository {
       );
       return result;
     } on FirebaseException catch (e) {
-      throw AppExceptionUtils.handleFirebaseError(e);
+      final exception = AppExceptionUtils.handleFirebaseError(e);
+      LoggerService.error('deleteExpense', exception.message);
+      throw exception;
     } catch (e, s) {
       LoggerService.error('incrementValuePaymentMethod', e, s);
       rethrow;

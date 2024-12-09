@@ -16,7 +16,7 @@ class ExpenseModel extends ExpenseEntity with EquatableMixin {
   factory ExpenseModel.fromJson(Map<String, dynamic> json) {
     return ExpenseModel(
       id: json['id'] as String,
-      value: double.parse(json['value'].toString()),
+      value: double.tryParse('${json['value'] ?? '0'}') ?? 0,
       created: (json['created'] as Timestamp).toDate(),
       categoryId: json['categoryId'] as String,
       description: json['description'] as String,
@@ -31,7 +31,7 @@ class ExpenseModel extends ExpenseEntity with EquatableMixin {
       'created': Timestamp.fromDate(created),
       'categoryId': categoryId,
       'description': description,
-      'debtId': paymentMethodId,
+      'paymentMethodId': paymentMethodId,
     };
   }
 

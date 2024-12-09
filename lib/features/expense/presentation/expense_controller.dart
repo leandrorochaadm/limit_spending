@@ -7,8 +7,8 @@ import '../domain/domain.dart';
 import 'expense_state.dart';
 
 class ExpenseController {
-  final CreateExpenseUseCase createExpenseUseCase;
-  final DeleteExpenseUseCase deleteExpenseUseCase;
+  final CreateTransactionUseCase createTransactionUseCase;
+  final DeleteTransactionUseCase deleteTransactionUseCase;
   final GetExpensesByDateCreatedUseCase getExpensesByCreatedUseCase;
   final GetDebtsUseCase getDebtsUseCase;
   final AddDebtValueUseCase addDebtValueUseCase;
@@ -27,8 +27,8 @@ class ExpenseController {
   bool isValid() => descriptionEC.text.isNotEmpty && valueEC.text.isNotEmpty;
 
   ExpenseController({
-    required this.createExpenseUseCase,
-    required this.deleteExpenseUseCase,
+    required this.createTransactionUseCase,
+    required this.deleteTransactionUseCase,
     required this.getExpensesByCreatedUseCase,
     required this.getDebtsUseCase,
     required this.addDebtValueUseCase,
@@ -86,28 +86,19 @@ class ExpenseController {
       paymentMethodId: paymentMethodId,
     );
 
-    try {
-      await createExpenseUseCase(expense);
-      await load();
-    } catch (e) {
-      state.value = state.value.copyWith(
-        status: ExpenseStatus.error,
-        errorMessage: 'Erro ao criar despesa',
-      );
-    }
+    final failure = await createTransactionUseCase(expense);
+    if (failure != null) {}
+    // todo: exibir erro com snackbar
+    await load();
   }
 
   Future<void> deleteExpense(ExpenseEntity expense) async {
     state.value = state.value.copyWith(status: ExpenseStatus.loading);
-    try {
-      await deleteExpenseUseCase(expense);
 
-      await load();
-    } catch (e) {
-      state.value = state.value.copyWith(
-        status: ExpenseStatus.error,
-        errorMessage: 'Erro ao deletar despesa',
-      );
-    }
+    final failure = await deleteTransactionUseCase(expense);
+    if (failure != null) {}
+    // todo: exibir erro com snackbar
+
+    await load();
   }
 }

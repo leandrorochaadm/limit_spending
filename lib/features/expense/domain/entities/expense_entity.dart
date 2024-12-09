@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../data/models/expense_model.dart';
 
@@ -18,7 +17,7 @@ class ExpenseEntity extends Equatable {
     required this.value,
     required this.categoryId,
     required this.paymentMethodId,
-  }) : id = id ?? const Uuid().v4();
+  }) : id = id ?? DateTime.now().millisecondsSinceEpoch.toString();
 
   ExpenseModel toModel() {
     return ExpenseModel(

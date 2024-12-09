@@ -16,8 +16,8 @@ GetSumCategoriesUseCase makeSumCategoryUseCase() =>
     GetSumCategoriesUseCase(makeGetCategoriesUseCase());
 
 final GetExpensesByDateCreatedUseCase getExpensesByCreatedUseCase =
-    getExpensesByCreatedUseCaseFactory();
-final getCategoryByIdUseCase = getCategoryByIdUseCaseFactory();
+    makeGetExpensesByDateCreatedUseCase();
+final getCategoryByIdUseCase = makeGetCategoryByIdUseCase();
 
 CategoryController categoryControllerFactory() {
   final categoryController = CategoryController(

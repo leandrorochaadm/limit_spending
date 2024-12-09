@@ -5,7 +5,7 @@ abstract class ExpenseRepository {
   Future<List<ExpenseEntity>> getExpenses({required String categoryId});
   Future<void> createExpense(ExpenseModel expense);
   Future<void> updateExpense(ExpenseModel expense);
-  Future<void> deleteExpense(ExpenseModel expense);
+  Future<void> deleteExpense(String expenseId);
   Future<List<ExpenseEntity>> getExpensesByPeriodCreated({
     required String categoryId,
     DateTime? startDate,
