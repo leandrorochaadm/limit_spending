@@ -1,10 +1,11 @@
+import '../../../../core/exceptions/exceptions.dart';
 import '../domain.dart';
 
 class GetMoneyPaymentMethodsUseCase {
   final PaymentMethodRepository repository;
 
   GetMoneyPaymentMethodsUseCase(this.repository);
-  Future<(String?, List<PaymentMethodEntity>)> call() async {
+  Future<(Failure?, List<PaymentMethodEntity>)> call() async {
     try {
       final List<PaymentMethodEntity> paymentMethods =
           await repository.getPaymentMethods();
@@ -18,9 +19,12 @@ class GetMoneyPaymentMethodsUseCase {
         return a.name.compareTo(b.name);
       });
 
-      return Future.value((null, filteredPaymentMethods));
+      return (null, filteredPaymentMethods);
     } catch (e) {
-      return Future.value((e.toString(), <PaymentMethodEntity>[]));
+      return (
+        Failure('Erro ao buscar meios de pagamento'),
+        <PaymentMethodEntity>[]
+      );
     }
   }
 }

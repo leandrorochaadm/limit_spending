@@ -1,3 +1,4 @@
+import '../../../../core/exceptions/exceptions.dart';
 import '../../../debt/domain/usecases/usecases.dart';
 import '../domain.dart';
 
@@ -10,7 +11,7 @@ class GetAllPaymentMethodsUseCase {
     required this.repository,
     required this.createDebtByPaymentMethodCardUseCase,
   });
-  Future<(String?, List<PaymentMethodEntity>)> call() async {
+  Future<(Failure?, List<PaymentMethodEntity>)> call() async {
     try {
       final List<PaymentMethodEntity> paymentMethods =
           await repository.getPaymentMethods();
@@ -30,9 +31,12 @@ class GetAllPaymentMethodsUseCase {
         }
       }
 
-      return Future.value((null, paymentMethods));
+      return (null, paymentMethods);
     } catch (e) {
-      return Future.value((e.toString(), <PaymentMethodEntity>[]));
+      return (
+        Failure('Não foi possível carregar os meios de pagamento'),
+        <PaymentMethodEntity>[]
+      );
     }
   }
 }

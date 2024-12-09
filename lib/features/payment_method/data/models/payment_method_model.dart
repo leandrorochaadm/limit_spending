@@ -20,8 +20,8 @@ class PaymentMethodModel extends PaymentMethodEntity with EquatableMixin {
       isCard: json['isCard'] as bool,
       isMoney: json['isMoney'] as bool,
       dayClose: json['dayClose'] as int,
-      value: json['value'] as double,
-      limit: json['limit'] as double,
+      value: double.tryParse('${json['value'] ?? '0'}') ?? 0,
+      limit: double.tryParse('${json['limit'] ?? '0'}') ?? 0,
     );
   }
 

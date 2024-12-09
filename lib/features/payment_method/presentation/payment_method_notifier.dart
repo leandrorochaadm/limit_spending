@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import '../../../core/core.dart';
 import '../../debt/debit.dart';
 import '../domain/entities/payment_method_entity.dart';
-import '../domain/user_cases/use_cases.dart';
+import '../domain/use_cases/use_cases.dart';
 import 'payment_method_state.dart';
 
 class PaymentMethodNotifier extends ValueNotifier<PaymentMethodState> {
@@ -60,27 +60,25 @@ class PaymentMethodNotifier extends ValueNotifier<PaymentMethodState> {
 
   Future<void> load() async {
     value = PaymentMethodState(status: PaymentMethodStatus.loading);
+
+    // Limpa o formulário para evitar dados residuais
     clearForm();
 
-    (String?, List<PaymentMethodEntity>) data = (null, <PaymentMethodEntity>[]);
+    // Obtém os meios de pagamento, dependendo da presença de debtId
+    final (failure, paymentMethods) = debtId?.isNotEmpty ?? false
+        ? await getMoneyPaymentMethodsUseCase()
+        : await getPaymentMethodsUseCase();
 
-    if (debtId?.isNotEmpty ?? false) {
-      data = await getMoneyPaymentMethodsUseCase();
-    } else {
-      data = await getPaymentMethodsUseCase();
-    }
-
-    final paymentMethods = data.$2;
-    final errorMessage = data.$1;
-
-    if (errorMessage != null) {
+    // Trata erros
+    if (failure != null) {
       value = PaymentMethodState(
         status: PaymentMethodStatus.error,
-        messageToUser: errorMessage,
+        messageToUser: failure.message,
       );
       return;
     }
 
+    // Nenhum meio de pagamento encontrado
     if (paymentMethods.isEmpty) {
       value = PaymentMethodState(
         status: PaymentMethodStatus.information,
@@ -89,24 +87,32 @@ class PaymentMethodNotifier extends ValueNotifier<PaymentMethodState> {
       return;
     }
 
-    double moneySum = 0;
-    double cardSum = 0;
+    // Calcula somatórios para cartões e dinheiro
+    final (moneySum, cardSum) = _calculateSums(paymentMethods);
 
-    for (final paymentMethod in paymentMethods) {
-      if (paymentMethod.isCard) {
-        cardSum += paymentMethod.balance;
-      }
-      if (paymentMethod.isMoney) {
-        moneySum += paymentMethod.balance;
-      }
-    }
-
+    // Atualiza o estado com sucesso
     value = PaymentMethodState(
       status: PaymentMethodStatus.success,
       paymentMethods: paymentMethods,
       cardSum: cardSum.toCurrency(),
       moneySum: moneySum.toCurrency(),
     );
+  }
+
+  /// Função auxiliar para calcular somatórios de valores de meios de pagamento
+  (double, double) _calculateSums(List<PaymentMethodEntity> paymentMethods) {
+    double moneySum = 0;
+    double cardSum = 0;
+
+    for (final paymentMethod in paymentMethods) {
+      if (paymentMethod.isCard) {
+        cardSum += paymentMethod.balance;
+      } else if (paymentMethod.isMoney) {
+        moneySum += paymentMethod.balance;
+      }
+    }
+
+    return (moneySum, cardSum);
   }
 
   void submit() {

@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../../core/exceptions/app_exception_utils.dart';
+import '../../../../core/services/logger_services.dart';
 import '../../domain/entities/payment_method_entity.dart';
 import '../../domain/repositories/payment_method_repository.dart';
 import '../models/payment_method_model.dart';
@@ -11,28 +13,50 @@ class PaymentMethodFirebaseRepository implements PaymentMethodRepository {
   PaymentMethodFirebaseRepository(this.firestore);
   @override
   Future<void> createPaymentMethod(PaymentMethodEntity paymentMethod) async {
-    await firestore
-        .collection(collectionPath)
-        .doc(paymentMethod.id)
-        .set(paymentMethod.toModel().toJson());
+    try {
+      await firestore
+          .collection(collectionPath)
+          .doc(paymentMethod.id)
+          .set(paymentMethod.toModel().toJson());
+    } on FirebaseException catch (e) {
+      throw AppExceptionUtils.handleFirebaseError(e);
+    } catch (e, s) {
+      LoggerService.error('incrementValuePaymentMethod', e, s);
+      rethrow;
+    }
   }
 
   @override
   Future<void> deletePaymentMethod(PaymentMethodEntity paymentMethod) async {
-    await firestore.collection(collectionPath).doc(paymentMethod.id).delete();
+    try {
+      await firestore.collection(collectionPath).doc(paymentMethod.id).delete();
+    } on FirebaseException catch (e) {
+      throw AppExceptionUtils.handleFirebaseError(e);
+    } catch (e, s) {
+      LoggerService.error('incrementValuePaymentMethod', e, s);
+      rethrow;
+    }
   }
 
   @override
-  Future<List<PaymentMethodEntity>> getPaymentMethods() {
-    return firestore.collection(collectionPath).get().then(
-      (QuerySnapshot<Map<String, dynamic>> snapshot) {
-        return snapshot.docs.map(
-          (QueryDocumentSnapshot<Map<String, dynamic>> doc) {
-            return PaymentMethodModel.fromJson(doc.data()).toEntity();
-          },
-        ).toList();
-      },
-    );
+  Future<List<PaymentMethodEntity>> getPaymentMethods() async {
+    try {
+      final result = await firestore.collection(collectionPath).get().then(
+        (QuerySnapshot<Map<String, dynamic>> snapshot) {
+          return snapshot.docs.map(
+            (QueryDocumentSnapshot<Map<String, dynamic>> doc) {
+              return PaymentMethodModel.fromJson(doc.data()).toEntity();
+            },
+          ).toList();
+        },
+      );
+      return result;
+    } on FirebaseException catch (e) {
+      throw AppExceptionUtils.handleFirebaseError(e);
+    } catch (e, s) {
+      LoggerService.error('incrementValuePaymentMethod', e, s);
+      rethrow;
+    }
   }
 
   @override
@@ -40,17 +64,31 @@ class PaymentMethodFirebaseRepository implements PaymentMethodRepository {
     String paymentMethodId,
     double value,
   ) async {
-    await firestore
-        .collection(collectionPath)
-        .doc(paymentMethodId)
-        .update({'value': FieldValue.increment(value)});
+    try {
+      await firestore
+          .collection(collectionPath)
+          .doc(paymentMethodId)
+          .update({'value': FieldValue.increment(value)});
+    } on FirebaseException catch (e) {
+      throw AppExceptionUtils.handleFirebaseError(e);
+    } catch (e, s) {
+      LoggerService.error('incrementValuePaymentMethod', e, s);
+      rethrow;
+    }
   }
 
   @override
   Future<void> updatePaymentMethod(PaymentMethodEntity paymentMethod) async {
-    await firestore
-        .collection(collectionPath)
-        .doc(paymentMethod.id)
-        .update(paymentMethod.toModel().toJson());
+    try {
+      await firestore
+          .collection(collectionPath)
+          .doc(paymentMethod.id)
+          .update(paymentMethod.toModel().toJson());
+    } on FirebaseException catch (e) {
+      throw AppExceptionUtils.handleFirebaseError(e);
+    } catch (e, s) {
+      LoggerService.error('incrementValuePaymentMethod', e, s);
+      rethrow;
+    }
   }
 }
