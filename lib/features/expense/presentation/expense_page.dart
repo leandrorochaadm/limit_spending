@@ -14,6 +14,22 @@ class ExpensePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    expenseController.onShowMessage = (String message, bool isError) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          backgroundColor: isError ? Colors.red : Colors.green,
+        ),
+      );
+    };
+
     return ValueListenableBuilder(
       valueListenable: expenseController.state,
       builder: (context, state, __) {
@@ -70,15 +86,7 @@ class ExpensePage extends StatelessWidget {
               direction: DismissDirection.endToStart,
               onDismissed: (direction) {
                 expenseController.deleteExpense(expense);
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        '${expense.description} ${expense.value.toCurrency()} foi removido',
-                      ),
-                    ),
-                  );
-                }
+                if (context.mounted) {}
               },
               background: Container(
                 color: Theme.of(context).colorScheme.error,

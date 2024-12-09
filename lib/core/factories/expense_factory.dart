@@ -1,5 +1,4 @@
 import '../../features/category/domain/domain.dart';
-import '../../features/debt/domain/usecases/usecases.dart';
 import '../../features/expense/expense.dart';
 import '../use_case/create_transaction_use_case.dart';
 import '../use_case/delete_transaction_use_case.dart';
@@ -48,15 +47,10 @@ ExpenseController expenseControllerFactory({
   required CategoryEntity category,
   required String paymentMethodId,
 }) {
-  final GetDebtsUseCase getDebtsUseCase = makeGetDebtsUseCase();
-  final AddDebtValueUseCase addDebtValueUseCase = makeAddDebtValueUseCase();
-
   final ExpenseController expenseController = ExpenseController(
     createTransactionUseCase: makeCreateTransactionUseCase(),
     deleteTransactionUseCase: makeDeleteTransactionUseCase(),
     getExpensesByCreatedUseCase: getExpensesByCreatedUseCase,
-    getDebtsUseCase: getDebtsUseCase,
-    addDebtValueUseCase: addDebtValueUseCase,
     category: category,
     paymentMethodId: paymentMethodId,
   );

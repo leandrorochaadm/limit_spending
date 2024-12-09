@@ -16,10 +16,6 @@ class IncrementValuePaymentMethodUseCase {
         return Failure('ID do meio de pagamento inválido');
       }
 
-      if (value <= 0) {
-        return Failure('Valor inválido');
-      }
-
       await repository.incrementValuePaymentMethod(paymentMethodId, value);
       return null;
     } on AppException catch (e) {

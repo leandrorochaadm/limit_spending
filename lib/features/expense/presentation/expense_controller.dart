@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../core/core.dart';
 import '../../category/domain/domain.dart';
-import '../../debt/debit.dart';
 import '../domain/domain.dart';
 import 'expense_state.dart';
 
@@ -10,8 +9,6 @@ class ExpenseController {
   final CreateTransactionUseCase createTransactionUseCase;
   final DeleteTransactionUseCase deleteTransactionUseCase;
   final GetExpensesByDateCreatedUseCase getExpensesByCreatedUseCase;
-  final GetDebtsUseCase getDebtsUseCase;
-  final AddDebtValueUseCase addDebtValueUseCase;
   final CategoryEntity category;
   final String paymentMethodId;
   ValueNotifier<ExpenseState> state = ValueNotifier<ExpenseState>(
@@ -30,13 +27,13 @@ class ExpenseController {
     required this.createTransactionUseCase,
     required this.deleteTransactionUseCase,
     required this.getExpensesByCreatedUseCase,
-    required this.getDebtsUseCase,
-    required this.addDebtValueUseCase,
     required this.category,
     required this.paymentMethodId,
   }) {
     load();
   }
+
+  void Function(String message, bool isError)? onShowMessage;
 
   Future<void> load() async {
     state.value = state.value.copyWith(status: ExpenseStatus.loading);
@@ -62,10 +59,7 @@ class ExpenseController {
 
       clearForm();
     } catch (e) {
-      state.value = const ExpenseState(
-        status: ExpenseStatus.error,
-        errorMessage: 'Erro ao obter despesas',
-      );
+      onShowMessage?.call('Erro ao obter despesas', true);
     }
   }
 
@@ -87,8 +81,14 @@ class ExpenseController {
     );
 
     final failure = await createTransactionUseCase(expense);
-    if (failure != null) {}
-    // todo: exibir erro com snackbar
+    if (failure != null) {
+      onShowMessage?.call(failure.message, true);
+    }
+
+    onShowMessage?.call(
+      'Despesa criada com sucesso: ${descriptionEC.text}',
+      false,
+    );
     await load();
   }
 
@@ -96,9 +96,14 @@ class ExpenseController {
     state.value = state.value.copyWith(status: ExpenseStatus.loading);
 
     final failure = await deleteTransactionUseCase(expense);
-    if (failure != null) {}
-    // todo: exibir erro com snackbar
+    if (failure != null) {
+      onShowMessage?.call(failure.message, true);
+    }
 
     await load();
+    onShowMessage?.call(
+      'Despesa excluida com sucesso: ${expense.description}',
+      false,
+    );
   }
 }
