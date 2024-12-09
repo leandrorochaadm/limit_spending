@@ -1,3 +1,5 @@
+import '../../../../core/exceptions/exceptions_custom.dart';
+import '../../../../core/exceptions/failure.dart';
 import '../../../debt/domain/usecases/add_debt_value_usecase.dart';
 import '../../../payment_method/payment_method.dart';
 import '../entities/expense_entity.dart';
@@ -14,17 +16,24 @@ class DeleteExpenseUseCase {
     required this.addDebtValueUseCase,
   });
 
-  Future<void> call(ExpenseEntity expenseEntity) async {
-    await expenseRepository.deleteExpense(expenseEntity.toModel());
+  Future<Failure?> call(ExpenseEntity expenseEntity) async {
+    try {
+      await expenseRepository.deleteExpense(expenseEntity.toModel());
 
-    await incrementValuePaymentMethodUseCase(
-      paymentMethodId: expenseEntity.paymentMethodId,
-      value: -expenseEntity.value,
-    );
+      await incrementValuePaymentMethodUseCase(
+        paymentMethodId: expenseEntity.paymentMethodId,
+        value: -expenseEntity.value,
+      );
 
-    await addDebtValueUseCase(
-      debtId: expenseEntity.paymentMethodId,
-      debtValue: -expenseEntity.value,
-    );
+      await addDebtValueUseCase(
+        debtId: expenseEntity.paymentMethodId,
+        debtValue: -expenseEntity.value,
+      );
+      return null;
+    } on AppException catch (e) {
+      return Failure(e.message);
+    } catch (e) {
+      return Failure('Erro ao criar despesa');
+    }
   }
 }

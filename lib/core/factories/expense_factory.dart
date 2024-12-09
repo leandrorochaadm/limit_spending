@@ -35,18 +35,12 @@ ExpenseController expenseControllerFactory({
     addDebtValueUseCase: makeAddDebtValueUseCase(),
   );
 
-  final getSumCategoryUseCase = GetSumCategoryUseCase(
-    getExpensesByCreatedUseCase: getExpensesByCreatedUseCase,
-    getCategoryByIdUseCase: getCategoryByIdUseCase,
-  );
-
   final GetDebtsUseCase getDebtsUseCase = makeGetDebtsUseCase();
   final AddDebtValueUseCase addDebtValueUseCase = makeAddDebtValueUseCase();
 
   final ExpenseController expenseController = ExpenseController(
     createExpenseUseCase: createExpenseUseCase,
     deleteExpenseUseCase: deleteExpenseUseCase,
-    getSumCategoryUseCase: getSumCategoryUseCase,
     getExpensesByCreatedUseCase: getExpensesByCreatedUseCase,
     getDebtsUseCase: getDebtsUseCase,
     addDebtValueUseCase: addDebtValueUseCase,

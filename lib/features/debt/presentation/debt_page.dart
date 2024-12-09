@@ -152,10 +152,10 @@ class DebtPage extends StatelessWidget {
             ),
             child: ListTile(
               title: Text('${debt.name} | ${debt.value.toCurrency()}'),
-              onTap: () async {
-                // return;
-                await showModalBottomSheet<bool>(
+              onTap: () {
+                showDialog<void>(
                   context: context,
+                  barrierDismissible: false,
                   builder: (context) {
                     return AlertDialog(
                       title: const Text('Pagar divida'),

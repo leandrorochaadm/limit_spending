@@ -9,7 +9,6 @@ import 'expense_state.dart';
 class ExpenseController {
   final CreateExpenseUseCase createExpenseUseCase;
   final DeleteExpenseUseCase deleteExpenseUseCase;
-  final GetSumCategoryUseCase getSumCategoryUseCase;
   final GetExpensesByDateCreatedUseCase getExpensesByCreatedUseCase;
   final GetDebtsUseCase getDebtsUseCase;
   final AddDebtValueUseCase addDebtValueUseCase;
@@ -30,7 +29,6 @@ class ExpenseController {
   ExpenseController({
     required this.createExpenseUseCase,
     required this.deleteExpenseUseCase,
-    required this.getSumCategoryUseCase,
     required this.getExpensesByCreatedUseCase,
     required this.getDebtsUseCase,
     required this.addDebtValueUseCase,
@@ -43,7 +41,7 @@ class ExpenseController {
   Future<void> load() async {
     state.value = state.value.copyWith(status: ExpenseStatus.loading);
     try {
-      final expenses = await getExpensesByCreatedUseCase(
+      final (failure, expenses) = await getExpensesByCreatedUseCase(
         categoryId: category.id,
         days: daysFilter,
       );
