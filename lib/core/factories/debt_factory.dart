@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../features/debt/debit.dart';
 import 'firestore_factory.dart';
+import 'payment_method_factory.dart';
 
 DebtRepository makeDebtRepository() {
   FirebaseFirestore firestore = makeFirestoreFactory();
@@ -51,4 +52,13 @@ DebtPage makeDebtPage() {
     updateDebitUseCase: updateDebitUseCase,
   );
   return DebtPage(debtController);
+}
+
+PaymentDebitUseCase makePaymentDebitUseCase() {
+  final paymentDebtUseCase = PaymentDebitUseCase(
+    addDebtValueUseCase: makeAddDebtValueUseCase(),
+    incrementValuePaymentMethodUseCase:
+        makeIncrementValuePaymentMethodUseCase(),
+  );
+  return paymentDebtUseCase;
 }

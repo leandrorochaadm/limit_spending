@@ -28,17 +28,18 @@ IncrementValuePaymentMethodUseCase makeIncrementValuePaymentMethodUseCase() =>
 GetMoneyPaymentMethodsUseCase makeGetMoneyPaymentMethodsUseCase() =>
     GetMoneyPaymentMethodsUseCase(paymentMethodRepositoryFactory());
 
-PaymentMethodNotifier paymentMethodNotifierFactory(bool? isMoneyFilter) {
+PaymentMethodNotifier paymentMethodNotifierFactory(String? debtId) {
   final paymentMethodNotifier = PaymentMethodNotifier(
     getPaymentMethodsUseCase: makeGetPaymentMethodsUseCase(),
     createPaymentMethodUseCase: makeCreatePaymentMethodUseCase(),
     updatePaymentMethodUseCase: makeUpdatePaymentMethodUseCase(),
     deletePaymentMethodUseCase: makeDeletePaymentMethodUseCase(),
-    isMoneyFilter: isMoneyFilter,
+    debtId: debtId,
     getMoneyPaymentMethodsUseCase: makeGetMoneyPaymentMethodsUseCase(),
+    paymentDebitUseCase: makePaymentDebitUseCase(),
   );
   return paymentMethodNotifier;
 }
 
-PaymentMethodPage makePaymentMethodPage({bool? isMoneyFilter}) =>
-    PaymentMethodPage(paymentMethodNotifierFactory(isMoneyFilter));
+PaymentMethodPage makePaymentMethodPage({String? debtId}) =>
+    PaymentMethodPage(paymentMethodNotifierFactory(debtId));

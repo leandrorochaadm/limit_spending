@@ -12,6 +12,24 @@ class PaymentMethodPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    paymentMethodNotifier.onNextCategoryPage = (String paymentMethodId) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) {
+            return makeCategoryPage(paymentMethodId);
+          },
+        ),
+      ).then((_) => paymentMethodNotifier.load());
+    };
+
+    paymentMethodNotifier.onOpenModalPaymentDebt =
+        (PaymentMethodEntity paymentMethod) async {
+      final double value = await modalPaymentDebt(context);
+
+      return value;
+    };
+
     return ValueListenableBuilder(
       valueListenable: paymentMethodNotifier,
       builder: (context, state, __) {
@@ -37,7 +55,7 @@ class PaymentMethodPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Total cartão: ${state.cardSum}\nTotal dinheiro: ${state.moneySum}',
+                  'Total dinheiro: ${state.moneySum}',
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -97,14 +115,7 @@ class PaymentMethodPage extends StatelessWidget {
                   Text('Disponível ${paymentMethod.balance.toCurrency()}'),
               trailing: const Icon(Icons.arrow_forward_ios),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return makeCategoryPage(paymentMethod.id);
-                    },
-                  ),
-                ).then((_) => paymentMethodNotifier.load());
+                paymentMethodNotifier.selectPaymentMethod(paymentMethod);
               },
             ),
           );
@@ -252,5 +263,99 @@ class PaymentMethodPage extends StatelessWidget {
         actionExecuted = false;
       },
     );
+  }
+
+  Future<double> modalPaymentDebt(BuildContext context) {
+    final TextEditingController valueEC = TextEditingController();
+    bool isPopping = false;
+
+    return showModalBottomSheet<double>(
+      context: context,
+      useSafeArea: true,
+      enableDrag: true,
+      showDragHandle: true,
+      isScrollControlled: true,
+      isDismissible: false,
+      builder: (BuildContext contextModal) {
+        return SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(contextModal).viewInsets.bottom + 16,
+              left: 16,
+              right: 16,
+              top: 16,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: valueEC,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Valor a Pagar',
+                    border: OutlineInputBorder(),
+                  ),
+                  textInputAction: TextInputAction.done,
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 24,
+                          ),
+                          shape: const StadiumBorder(),
+                          backgroundColor: Theme.of(context).colorScheme.error,
+                          foregroundColor:
+                              Theme.of(context).colorScheme.onError,
+                          textStyle: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        onPressed: () {
+                          if (!isPopping) {
+                            isPopping = true;
+                            Navigator.of(contextModal).pop(0);
+                          }
+                        },
+                        child: const Text('Cancelar'),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 24,
+                          ),
+                          shape: const StadiumBorder(),
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          foregroundColor:
+                              Theme.of(context).colorScheme.onPrimary,
+                          textStyle: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        onPressed: () {
+                          if (!isPopping) {
+                            isPopping = true;
+                            final double valuePaymentDebt = valueEC.text.isEmpty
+                                ? 0
+                                : double.parse(valueEC.text);
+                            Navigator.of(contextModal).pop(valuePaymentDebt);
+                          }
+                        },
+                        child: const Text('Pagar'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    ).then((value) => value ?? 0);
   }
 }

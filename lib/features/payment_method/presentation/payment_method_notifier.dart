@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 import '../../../core/core.dart';
+import '../../debt/debit.dart';
 import '../domain/entities/payment_method_entity.dart';
 import '../domain/user_cases/use_cases.dart';
 import 'payment_method_state.dart';
@@ -11,6 +12,7 @@ class PaymentMethodNotifier extends ValueNotifier<PaymentMethodState> {
   final CreatePaymentMethodUseCase createPaymentMethodUseCase;
   final UpdatePaymentMethodUseCase updatePaymentMethodUseCase;
   final DeletePaymentMethodUseCase deletePaymentMethodUseCase;
+  final PaymentDebitUseCase paymentDebitUseCase;
   PaymentMethodEntity? _paymentMethodSelected;
   set paymentMethodSelected(PaymentMethodEntity? paymentMethod) {
     _paymentMethodSelected = paymentMethod;
@@ -30,16 +32,29 @@ class PaymentMethodNotifier extends ValueNotifier<PaymentMethodState> {
   TextEditingController dayCloseEC = TextEditingController();
   final FocusNode dayCloseFN = FocusNode();
   bool isMoneySelected = true;
-  bool isMoneyFilter;
+  String? debtId;
+
+  @override
+  void dispose() {
+    nameEC.dispose();
+    limitEC.dispose();
+    valueEC.dispose();
+    dayCloseEC.dispose();
+    super.dispose();
+  }
+
+  void Function(String paymentMethodId)? onNextCategoryPage;
+  Future<double> Function(PaymentMethodEntity paymentMethod)?
+      onOpenModalPaymentDebt;
   PaymentMethodNotifier({
     required this.getPaymentMethodsUseCase,
     required this.createPaymentMethodUseCase,
     required this.updatePaymentMethodUseCase,
     required this.deletePaymentMethodUseCase,
     required this.getMoneyPaymentMethodsUseCase,
-    bool? isMoneyFilter,
-  })  : isMoneyFilter = isMoneyFilter ?? false,
-        super(PaymentMethodState()) {
+    required this.paymentDebitUseCase,
+    this.debtId,
+  }) : super(PaymentMethodState()) {
     load();
   }
 
@@ -49,7 +64,7 @@ class PaymentMethodNotifier extends ValueNotifier<PaymentMethodState> {
 
     (String?, List<PaymentMethodEntity>) data = (null, <PaymentMethodEntity>[]);
 
-    if (isMoneyFilter) {
+    if (debtId?.isNotEmpty ?? false) {
       data = await getMoneyPaymentMethodsUseCase();
     } else {
       data = await getPaymentMethodsUseCase();
@@ -126,5 +141,21 @@ class PaymentMethodNotifier extends ValueNotifier<PaymentMethodState> {
     limitEC.clear();
     valueEC.clear();
     dayCloseEC.clear();
+  }
+
+  void paymentDebt(String paymentMethodId, String debtId, double value) async {
+    await paymentDebitUseCase(paymentMethodId, debtId, value);
+  }
+
+  Future<void> selectPaymentMethod(PaymentMethodEntity paymentMethod) async {
+    _paymentMethodSelected = paymentMethod;
+    if (debtId?.isNotEmpty ?? false) {
+      final value = await onOpenModalPaymentDebt?.call(paymentMethod);
+      if (value != null && value > 0) {
+        paymentDebt(paymentMethod.id, debtId!, value);
+      }
+    } else {
+      onNextCategoryPage?.call(paymentMethod.id);
+    }
   }
 }

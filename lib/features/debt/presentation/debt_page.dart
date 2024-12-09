@@ -149,7 +149,7 @@ class DebtPage extends StatelessWidget {
             child: ListTile(
               title: Text('${debt.name} | ${debt.value.toCurrency()}'),
               onTap: () async {
-                return;
+                // return;
                 await showModalBottomSheet<bool>(
                   context: context,
                   builder: (context) {
@@ -172,7 +172,7 @@ class DebtPage extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    makePaymentMethodPage(isMoneyFilter: true),
+                                    makePaymentMethodPage(debtId: debt.id),
                               ),
                             ).whenComplete(() => debtController.load());
                           },
