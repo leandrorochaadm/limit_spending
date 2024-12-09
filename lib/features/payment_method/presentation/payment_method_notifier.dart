@@ -149,8 +149,19 @@ class PaymentMethodNotifier extends ValueNotifier<PaymentMethodState> {
     dayCloseEC.clear();
   }
 
-  void paymentDebt(String paymentMethodId, String debtId, double value) async {
-    await paymentDebitUseCase(paymentMethodId, debtId, value);
+  Future<void> paymentDebt(
+    String paymentMethodId,
+    String debtId,
+    double valuePayment,
+  ) async {
+    final failure =
+        await paymentDebitUseCase(paymentMethodId, debtId, valuePayment);
+    if (failure != null) {
+      value = PaymentMethodState(
+        status: PaymentMethodStatus.error,
+        messageToUser: failure.message,
+      );
+    }
   }
 
   Future<void> selectPaymentMethod(PaymentMethodEntity paymentMethod) async {
@@ -158,7 +169,8 @@ class PaymentMethodNotifier extends ValueNotifier<PaymentMethodState> {
     if (debtId?.isNotEmpty ?? false) {
       final value = await onOpenModalPaymentDebt?.call(paymentMethod);
       if (value != null && value > 0) {
-        paymentDebt(paymentMethod.id, debtId!, value);
+        await paymentDebt(paymentMethod.id, debtId!, value);
+        load();
       }
     } else {
       onNextCategoryPage?.call(paymentMethod.id);

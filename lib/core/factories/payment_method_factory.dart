@@ -28,7 +28,7 @@ IncrementValuePaymentMethodUseCase makeIncrementValuePaymentMethodUseCase() =>
 GetMoneyPaymentMethodsUseCase makeGetMoneyPaymentMethodsUseCase() =>
     GetMoneyPaymentMethodsUseCase(paymentMethodRepositoryFactory());
 
-PaymentMethodNotifier paymentMethodNotifierFactory(String? debtId) {
+PaymentMethodNotifier paymentMethodNotifierFactory([String? debtId]) {
   final paymentMethodNotifier = PaymentMethodNotifier(
     getPaymentMethodsUseCase: makeGetPaymentMethodsUseCase(),
     createPaymentMethodUseCase: makeCreatePaymentMethodUseCase(),

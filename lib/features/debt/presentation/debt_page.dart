@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/core.dart';
+import '../../payment_method/presentation/payment_method_page.dart';
 import '../debit.dart';
 import 'debt_state.dart';
 
@@ -31,9 +32,12 @@ class DebtPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => makePaymentMethodPage(),
+                        builder: (context) => PaymentMethodPage(
+                          paymentMethodNotifierFactory(),
+                          onGoBack: debtController.load,
+                        ),
                       ),
-                    ).whenComplete(() => debtController.load());
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
@@ -72,9 +76,9 @@ class DebtPage extends StatelessWidget {
     if (state.status == DebtStatus.loading) {
       return const Center(child: CircularProgressIndicator());
     } else if (state.status == DebtStatus.error) {
-      return Center(child: Text('Erro: ${state.messageToUser}'));
+      return Center(child: Text('${state.messageToUser}'));
     } else if (state.status == DebtStatus.information) {
-      return Center(child: Text('Erro: ${state.messageToUser}'));
+      return Center(child: Text('${state.messageToUser}'));
     }
 
     final debts = state.debts;
@@ -171,10 +175,12 @@ class DebtPage extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    makePaymentMethodPage(debtId: debt.id),
+                                builder: (context) => PaymentMethodPage(
+                                  paymentMethodNotifierFactory(debt.id),
+                                  onGoBack: debtController.load,
+                                ),
                               ),
-                            ).whenComplete(() => debtController.load());
+                            );
                           },
                         ),
                       ],

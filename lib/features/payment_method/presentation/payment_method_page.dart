@@ -5,7 +5,9 @@ import '../payment_method.dart';
 
 class PaymentMethodPage extends StatelessWidget {
   static const String routeName = '/paymentMethod';
-  PaymentMethodPage(this.paymentMethodNotifier, {super.key});
+
+  final VoidCallback? onGoBack;
+  PaymentMethodPage(this.paymentMethodNotifier, {super.key, this.onGoBack});
 
   final PaymentMethodNotifier paymentMethodNotifier;
   bool actionExecuted = false; // Flag para controlar a execução
@@ -30,40 +32,50 @@ class PaymentMethodPage extends StatelessWidget {
       return value;
     };
 
-    return ValueListenableBuilder(
-      valueListenable: paymentMethodNotifier,
-      builder: (context, state, __) {
-        return Scaffold(
-          appBar: AppBar(
-            title:
-                const Text('Formas de pagamento', textAlign: TextAlign.center),
-            elevation: 7,
-          ),
-          floatingActionButton: Padding(
-            padding: const EdgeInsets.only(left: 32),
-            child: FloatingActionButton(
-              onPressed: () {
-                paymentMethodNotifier.clearForm();
-                modalCreatePaymentMethod(context);
-              },
-              child: const Icon(Icons.add),
-            ),
-          ),
-          bottomSheet: Padding(
-            padding: const EdgeInsets.only(bottom: 36.0, top: 24),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Total dinheiro: ${state.moneySum}',
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-          body: buildBodyWidget(state),
-        );
+    return PopScope(
+      canPop: onGoBack == null,
+      onPopInvokedWithResult: (bool didPop, _) {
+        if (didPop) return;
+        onGoBack?.call();
+        Navigator.of(context).pop();
       },
+      child: ValueListenableBuilder(
+        valueListenable: paymentMethodNotifier,
+        builder: (context, state, __) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text(
+                'Formas de pagamento',
+                textAlign: TextAlign.center,
+              ),
+              elevation: 7,
+            ),
+            floatingActionButton: Padding(
+              padding: const EdgeInsets.only(left: 32),
+              child: FloatingActionButton(
+                onPressed: () {
+                  paymentMethodNotifier.clearForm();
+                  modalCreatePaymentMethod(context);
+                },
+                child: const Icon(Icons.add),
+              ),
+            ),
+            bottomSheet: Padding(
+              padding: const EdgeInsets.only(bottom: 36.0, top: 24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Total dinheiro: ${state.moneySum}',
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+            body: buildBodyWidget(state),
+          );
+        },
+      ),
     );
   }
 
@@ -316,7 +328,7 @@ class PaymentMethodPage extends StatelessWidget {
                         onPressed: () {
                           if (!isPopping) {
                             isPopping = true;
-                            Navigator.of(contextModal).pop(0);
+                            Navigator.of(contextModal).pop(0.0);
                           }
                         },
                         child: const Text('Cancelar'),
@@ -341,7 +353,7 @@ class PaymentMethodPage extends StatelessWidget {
                           if (!isPopping) {
                             isPopping = true;
                             final double valuePaymentDebt = valueEC.text.isEmpty
-                                ? 0
+                                ? 0.0
                                 : double.parse(valueEC.text);
                             Navigator.of(contextModal).pop(valuePaymentDebt);
                           }
@@ -356,6 +368,6 @@ class PaymentMethodPage extends StatelessWidget {
           ),
         );
       },
-    ).then((value) => value ?? 0);
+    ).then((value) => value ?? 0.0);
   }
 }

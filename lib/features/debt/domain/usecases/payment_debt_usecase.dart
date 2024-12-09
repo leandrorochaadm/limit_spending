@@ -1,3 +1,4 @@
+import '../../../../core/exceptions/exceptions.dart';
 import '../../../payment_method/domain/domain.dart';
 import '../../debit.dart';
 
@@ -10,7 +11,11 @@ class PaymentDebitUseCase {
     required this.incrementValuePaymentMethodUseCase,
   });
 
-  Future<void> call(String paymentMethodId, String debtId, double value) async {
+  Future<Failure?> call(
+    String paymentMethodId,
+    String debtId,
+    double value,
+  ) async {
     try {
       await addDebtValueUseCase(debtId: debtId, debtValue: -value);
 
@@ -18,8 +23,9 @@ class PaymentDebitUseCase {
         paymentMethodId: paymentMethodId,
         value: -value,
       );
+      return null;
     } catch (e) {
-      rethrow;
+      return Failure('Erro ao pagar dívida');
     }
   }
 }
