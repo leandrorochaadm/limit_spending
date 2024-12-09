@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../data/models/category_model.dart';
 
@@ -10,7 +9,7 @@ class CategoryEntity extends Equatable {
     required this.created,
     required this.limitMonthly,
     required this.consumed,
-  }) : id = id ?? const Uuid().v4();
+  }) : id = id ?? DateTime.now().millisecondsSinceEpoch.toString();
 
   factory CategoryEntity.empty() => CategoryEntity(
         name: '',

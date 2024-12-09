@@ -158,9 +158,9 @@ class DebtPage extends StatelessWidget {
                   barrierDismissible: false,
                   builder: (context) {
                     return AlertDialog(
-                      title: const Text('Pagar divida'),
+                      title: const Text('Deseja pagar pagar divida?'),
                       content: const Text(
-                        'Deseja escolher origem do dinheiro?',
+                        'Escolha a forma de pagamento',
                       ),
                       actions: [
                         TextButton(

@@ -1,29 +1,17 @@
-import 'package:equatable/equatable.dart';
-
 import '../debit.dart';
 
-class DebtModel extends DebtEntity with EquatableMixin {
+class DebtModel {
+  final String id;
+  final String name;
+  final double value;
+  final bool isCardCredit;
+
   DebtModel({
-    required super.id,
-    required super.name,
-    required super.value,
+    required this.id,
+    required this.name,
+    required this.value,
+    required this.isCardCredit,
   });
-
-  factory DebtModel.fromJson(Map<String, dynamic> json) {
-    return DebtModel(
-      id: json['id'] as String?,
-      name: json['name'] as String,
-      value: (json['value'] as num).toDouble(),
-    );
-  }
-
-  factory DebtModel.fromEntity(DebtEntity entity) {
-    return DebtModel(
-      id: entity.id,
-      name: entity.name,
-      value: entity.value,
-    );
-  }
 
   DebtEntity toEntity() {
     return DebtEntity(
@@ -34,10 +22,20 @@ class DebtModel extends DebtEntity with EquatableMixin {
   }
 
   Map<String, dynamic> toJson() {
-    return <String, dynamic>{
+    return {
       'id': id,
       'name': name,
       'value': value,
+      'isCardCredit': isCardCredit,
     };
+  }
+
+  factory DebtModel.fromJson(Map<String, dynamic> map) {
+    return DebtModel(
+      id: map['id'] as String,
+      name: map['name'] as String,
+      value: double.tryParse('${map['value'] ?? '0.0'}') ?? 0.0,
+      isCardCredit: map['isCardCredit'] as bool,
+    );
   }
 }

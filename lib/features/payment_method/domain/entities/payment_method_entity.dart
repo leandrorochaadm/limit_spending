@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../../debt/debit.dart';
 import '../../data/data.dart';
@@ -23,7 +22,7 @@ class PaymentMethodEntity extends Equatable {
     this.dayClose = 0,
     required this.value,
     required this.limit,
-  }) : id = id ?? const Uuid().v4();
+  }) : id = id ?? DateTime.now().millisecondsSinceEpoch.toString();
 
   @override
   List<Object?> get props => [
@@ -73,6 +72,7 @@ class PaymentMethodEntity extends Equatable {
       id: id,
       name: '${isMoney ? 'Dinheiro: ' : 'Cartão: '} $name',
       value: value,
+      isCardCredit: true,
     );
   }
 
