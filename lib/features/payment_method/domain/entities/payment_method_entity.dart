@@ -22,7 +22,11 @@ class PaymentMethodEntity extends Equatable {
     this.dayClose = 0,
     required this.value,
     required this.limit,
-  }) : id = id ?? DateTime.now().millisecondsSinceEpoch.toString();
+  })  : id = id ?? DateTime.now().millisecondsSinceEpoch.toString(),
+        assert(
+          isMoney != isCard,
+          'Não uma forma de pagamento não pode ser dinheiro e cartão ao mesmo tempo',
+        );
 
   @override
   List<Object?> get props => [

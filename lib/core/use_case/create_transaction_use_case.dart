@@ -31,7 +31,7 @@ class CreateTransactionUseCase {
       // 2. Diminui o saldo do meio de pagamento
       final failurePaymentMethod = await incrementValuePaymentMethodUseCase(
         paymentMethodId: expense.paymentMethodId,
-        value: -expense.value,
+        value: expense.value,
       );
       if (failurePaymentMethod != null) {
         await _rollbackExpense(expense.id);
