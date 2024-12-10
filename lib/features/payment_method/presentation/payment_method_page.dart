@@ -65,7 +65,6 @@ class PaymentMethodPage extends StatelessWidget {
                 'Formas de pagamento',
                 textAlign: TextAlign.center,
               ),
-              elevation: 7,
               actions: [
                 IconButton(
                   onPressed: () {
@@ -131,9 +130,8 @@ class PaymentMethodPage extends StatelessWidget {
     final paymentMethods = state.paymentMethods;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 90.0),
+      padding: const EdgeInsets.only(bottom: 100.0),
       child: ListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         itemCount: paymentMethods.length,
         itemBuilder: (context, index) {
           final paymentMethod = paymentMethods[index];
@@ -160,12 +158,6 @@ class PaymentMethodPage extends StatelessWidget {
               ),
             ),
             child: Card(
-              color: Colors.grey[850],
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              margin: const EdgeInsets.symmetric(vertical: 8),
               child: ListTile(
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -173,26 +165,15 @@ class PaymentMethodPage extends StatelessWidget {
                   paymentMethod.isMoney
                       ? Icons.account_balance_wallet
                       : Icons.credit_card,
-                  color: Colors.teal,
                   size: 32,
                 ),
                 title: Text(
                   paymentMethod.name,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
                 ),
                 subtitle: Text(
                   'Disponível: ${paymentMethod.balance.toCurrency()}',
-                  style: TextStyle(
-                    color: Colors.grey.shade400,
-                    fontSize: 14,
-                  ),
                 ),
-                trailing:
-                    const Icon(Icons.arrow_forward_ios, color: Colors.white70),
+                trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: () {
                   paymentMethodNotifier.selectPaymentMethod(paymentMethod);
                 },
@@ -317,17 +298,6 @@ class PaymentMethodPage extends StatelessWidget {
                         ],
                       ),
                     ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 24,
-                        ),
-                        shape: const StadiumBorder(),
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor:
-                            Theme.of(context).colorScheme.onPrimary,
-                        textStyle: Theme.of(context).textTheme.bodyMedium,
-                      ),
                       onPressed: () {
                         final bool val = formKey.currentState!.validate();
                         if (!val) return;
@@ -386,18 +356,7 @@ class PaymentMethodPage extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 12,
-                            horizontal: 24,
-                          ),
-                          shape: const StadiumBorder(),
-                          backgroundColor: Theme.of(context).colorScheme.error,
-                          foregroundColor:
-                              Theme.of(context).colorScheme.onError,
-                          textStyle: Theme.of(context).textTheme.bodyMedium,
-                        ),
+                      child: FilledButton(
                         onPressed: () {
                           if (!isPopping) {
                             isPopping = true;
@@ -410,18 +369,6 @@ class PaymentMethodPage extends StatelessWidget {
                     const SizedBox(width: 16),
                     Expanded(
                       child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 12,
-                            horizontal: 24,
-                          ),
-                          shape: const StadiumBorder(),
-                          backgroundColor:
-                              Theme.of(context).colorScheme.primary,
-                          foregroundColor:
-                              Theme.of(context).colorScheme.onPrimary,
-                          textStyle: Theme.of(context).textTheme.bodyMedium,
-                        ),
                         onPressed: () {
                           if (!isPopping) {
                             isPopping = true;

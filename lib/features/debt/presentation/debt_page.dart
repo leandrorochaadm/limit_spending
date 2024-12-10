@@ -49,27 +49,18 @@ class DebtPage extends StatelessWidget {
                       ),
                     );
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 48,
-                      vertical: 4,
-                    ),
-                  ),
-                  child: const Text(
-                    'Quero gastar',
-                    style: TextStyle(fontSize: 16),
-                  ),
+                  child: const Text('Quero gastar'),
                 ),
                 const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      'Total: ${state.debtsSum}',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.titleLarge,
+                    FittedBox(
+                      child: Text(
+                        'Total: ${state.debtsSum}',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.headlineMedium,
+                      ),
                     ),
                   ],
                 ),
@@ -94,9 +85,8 @@ class DebtPage extends StatelessWidget {
     final debts = state.debts;
     return Padding(
       padding: const EdgeInsets.only(bottom: 120.0),
-      child: ListView.separated(
+      child: ListView.builder(
         itemCount: debts.length,
-        separatorBuilder: (_, __) => const Divider(),
         itemBuilder: (context, index) {
           final debt = debts[index];
 
@@ -181,48 +171,57 @@ class DebtPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Icon(
                 Icons.delete,
-                color: Theme.of(context).colorScheme.primary,
+                color: Theme.of(context).colorScheme.onPrimary,
               ),
             ),
-            child: ListTile(
-              title: Text('${debt.name} | ${debt.value.toCurrency()}'),
-              onTap: () {
-                showDialog<void>(
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: const Text('Deseja pagar pagar divida?'),
-                      content: const Text(
-                        'Escolha a forma de pagamento',
-                      ),
-                      actions: [
-                        TextButton(
-                          child: const Text('Não'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
+            child: Card(
+              child: ListTile(
+                title: Text(debt.name),
+                subtitle: Text(debt.value.toCurrency()),
+                leading: Icon(
+                  debt.isCardCredit
+                      ? Icons.credit_card
+                      : Icons.monetization_on_rounded,
+                  size: 32,
+                ),
+                onTap: () {
+                  showDialog<void>(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Deseja pagar pagar divida?'),
+                        content: const Text(
+                          'Escolha a forma de pagamento',
                         ),
-                        TextButton(
-                          child: const Text('Sim'),
-                          onPressed: () {
-                            Navigator.pop(context);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => PaymentMethodPage(
-                                  paymentMethodNotifierFactory(debt.id),
-                                  onGoBack: debtController.load,
+                        actions: [
+                          TextButton(
+                            child: const Text('Não'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          TextButton(
+                            child: const Text('Sim'),
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PaymentMethodPage(
+                                    paymentMethodNotifierFactory(debt.id),
+                                    onGoBack: debtController.load,
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
+                              );
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
             ),
           );
         },
@@ -278,18 +277,6 @@ class DebtPage extends StatelessWidget {
                   children: [
                     Expanded(
                       child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 12,
-                            horizontal: 24,
-                          ),
-                          shape: const StadiumBorder(),
-                          backgroundColor:
-                              Theme.of(context).colorScheme.secondary,
-                          foregroundColor:
-                              Theme.of(context).colorScheme.onSecondary,
-                          textStyle: Theme.of(context).textTheme.bodyMedium,
-                        ),
                         onPressed: () {
                           Navigator.of(contextModal).pop(false);
                         },
@@ -299,18 +286,6 @@ class DebtPage extends StatelessWidget {
                     const SizedBox(width: 24),
                     Expanded(
                       child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 12,
-                            horizontal: 24,
-                          ),
-                          shape: const StadiumBorder(),
-                          backgroundColor:
-                              Theme.of(context).colorScheme.primary,
-                          foregroundColor:
-                              Theme.of(context).colorScheme.onPrimary,
-                          textStyle: Theme.of(context).textTheme.bodyMedium,
-                        ),
                         onPressed: () async {
                           final valueDouble =
                               double.parse(valueEC.text.toPointFormat());

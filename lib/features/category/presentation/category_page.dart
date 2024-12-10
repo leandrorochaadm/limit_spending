@@ -67,10 +67,9 @@ class CategoryPage extends StatelessWidget {
     final categories = state.categories;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 90.0),
-      child: ListView.separated(
+      padding: const EdgeInsets.only(bottom: 100.0),
+      child: ListView.builder(
         itemCount: categories.length,
-        separatorBuilder: (_, __) => const Divider(),
         itemBuilder: (context, index) {
           final category = categories[index];
           return Dismissible(
@@ -95,25 +94,36 @@ class CategoryPage extends StatelessWidget {
                 color: Theme.of(context).colorScheme.primary,
               ),
             ),
-            child: ListTile(
-              title: Text(category.name),
-              subtitle: Text(
-                'Disponível: ${category.balance.toCurrency()} \nConsumido nos $daysFilter dias: ${category.consumed.toCurrency()} \nLimite mensal: ${category.limitMonthly.toCurrency()}',
+            secondaryBackground: Container(
+              color: Theme.of(context).colorScheme.error,
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Icon(
+                Icons.delete,
+                color: Theme.of(context).colorScheme.onPrimary,
               ),
-              trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return makeExpensePage(
-                        category: category,
-                        paymentMethodId: paymentMethodId,
-                      );
-                    },
-                  ),
-                ).then((_) => categoryController.load());
-              },
+            ),
+            child: Card(
+              child: ListTile(
+                title: Text(category.name),
+                subtitle: Text(
+                  'Disponível: ${category.balance.toCurrency()} \nConsumido nos $daysFilter dias: ${category.consumed.toCurrency()} \nLimite mensal: ${category.limitMonthly.toCurrency()}',
+                ),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return makeExpensePage(
+                          category: category,
+                          paymentMethodId: paymentMethodId,
+                        );
+                      },
+                    ),
+                  ).then((_) => categoryController.load());
+                },
+              ),
             ),
           );
         },
@@ -154,16 +164,6 @@ class CategoryPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 12,
-                        horizontal: 24,
-                      ),
-                      shape: const StadiumBorder(),
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                      textStyle: Theme.of(context).textTheme.bodyMedium,
-                    ),
                     onPressed: () {
                       categoryController.submit();
                       Navigator.of(contextModal).pop();

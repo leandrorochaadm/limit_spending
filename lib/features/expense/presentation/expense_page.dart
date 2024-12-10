@@ -94,12 +94,14 @@ class ExpensePage extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: const Icon(Icons.delete, color: Colors.white),
               ),
-              child: ListTile(
-                title: Text(
-                  '${expense.description} | ${(expense.value).toCurrency()}',
-                ),
-                subtitle: Text(
-                  DateFormat('dd/MM HH:mm').format(expense.created),
+              child: Card(
+                child: ListTile(
+                  title: Text(
+                    '${expense.description} | ${(expense.value).toCurrency()}',
+                  ),
+                  subtitle: Text(
+                    DateFormat('dd/MM HH:mm').format(expense.created),
+                  ),
                 ),
               ),
             );
@@ -158,16 +160,6 @@ class ExpensePage extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 12,
-                        horizontal: 24,
-                      ),
-                      shape: const StadiumBorder(),
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                      textStyle: Theme.of(context).textTheme.bodyMedium,
-                    ),
                     onPressed: expenseController.isValid()
                         ? () {
                             expenseController.createExpense();
