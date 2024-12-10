@@ -61,7 +61,7 @@ class PaymentMethodNotifier extends ValueNotifier<PaymentMethodState> {
     load();
   }
 
-  Future<void> load() async {
+  Future<void> load([bool isValueGreaterThanZero = true]) async {
     value = PaymentMethodState(status: PaymentMethodStatus.loading);
 
     // Limpa o formulário para evitar dados residuais
@@ -69,8 +69,8 @@ class PaymentMethodNotifier extends ValueNotifier<PaymentMethodState> {
 
     // Obtém os meios de pagamento, dependendo da presença de debtId
     final (failure, paymentMethods) = debtId?.isNotEmpty ?? false
-        ? await getMoneyPaymentMethodsUseCase()
-        : await getPaymentMethodsUseCase();
+        ? await getMoneyPaymentMethodsUseCase(isValueGreaterThanZero)
+        : await getPaymentMethodsUseCase(isValueGreaterThanZero);
 
     // Trata erros
     if (failure != null) {

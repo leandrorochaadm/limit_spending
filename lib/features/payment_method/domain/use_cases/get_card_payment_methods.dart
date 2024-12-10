@@ -5,14 +5,18 @@ class GetCardPaymentMethodsUseCase {
   final PaymentMethodRepository repository;
 
   GetCardPaymentMethodsUseCase(this.repository);
-  Future<(Failure?, List<PaymentMethodEntity>)> call() async {
+  Future<(Failure?, List<PaymentMethodEntity>)> call([
+    bool isValueGreaterThanZero = true,
+  ]) async {
     try {
       final List<PaymentMethodEntity> paymentMethods =
           await repository.getPaymentMethods();
 
       final filteredPaymentMethods = paymentMethods
           .where(
-            (paymentMethod) => paymentMethod.isCard && paymentMethod.value > 0,
+            (paymentMethod) =>
+                paymentMethod.isCard &&
+                (isValueGreaterThanZero ? paymentMethod.value > 0 : true),
           )
           .toList();
 

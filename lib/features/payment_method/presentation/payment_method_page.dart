@@ -11,6 +11,7 @@ class PaymentMethodPage extends StatelessWidget {
 
   final PaymentMethodNotifier paymentMethodNotifier;
   bool actionExecuted = false; // Flag para controlar a execução
+  bool isValueGreaterThanZero = true;
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +66,19 @@ class PaymentMethodPage extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               elevation: 7,
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    isValueGreaterThanZero = !isValueGreaterThanZero;
+                    paymentMethodNotifier.load(isValueGreaterThanZero);
+                  },
+                  icon: Icon(
+                    isValueGreaterThanZero
+                        ? Icons.circle_outlined
+                        : Icons.monetization_on,
+                  ),
+                ),
+              ],
             ),
             floatingActionButton: Padding(
               padding: const EdgeInsets.only(left: 32),

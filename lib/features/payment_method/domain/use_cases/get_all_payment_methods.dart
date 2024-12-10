@@ -5,13 +5,18 @@ class GetAllPaymentMethodsUseCase {
   final PaymentMethodRepository repository;
 
   GetAllPaymentMethodsUseCase(this.repository);
-  Future<(Failure?, List<PaymentMethodEntity>)> call() async {
+  Future<(Failure?, List<PaymentMethodEntity>)> call(
+    bool isValueGreaterThanZero,
+  ) async {
     try {
       final List<PaymentMethodEntity> paymentMethods =
           await repository.getPaymentMethods();
 
       final filteredPaymentMethods = paymentMethods
-          .where((paymentMethod) => paymentMethod.balance > 0)
+          .where(
+            (paymentMethod) =>
+                (isValueGreaterThanZero ? paymentMethod.balance > 0 : true),
+          )
           .toList();
 
       filteredPaymentMethods.sort((a, b) {
