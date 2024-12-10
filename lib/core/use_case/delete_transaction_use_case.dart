@@ -2,6 +2,7 @@ import '../../features/debt/debit.dart';
 import '../../features/expense/domain/domain.dart';
 import '../../features/payment_method/domain/domain.dart';
 import '../exceptions/exceptions.dart';
+import '../services/logger_services.dart';
 
 class DeleteTransactionUseCase {
   final IncrementValuePaymentMethodUseCase incrementValuePaymentMethodUseCase;
@@ -17,23 +18,41 @@ class DeleteTransactionUseCase {
   });
 
   Future<Failure?> call(ExpenseEntity expense) async {
-    final failureExpense = await deleteExpenseUseCase(expense.id);
+    try {
+// 1. Cria a despesa
+      final failureExpense = await deleteExpenseUseCase(expense.id);
+      if (failureExpense != null) {
+        return Failure(
+          'Erro ao criar despesa: ${failureExpense.message}',
+        );
+      }
 
-    if (failureExpense != null) {
-      return Failure('Erro ao exluir despesa: ${failureExpense.message}');
+// 2. Diminui o saldo do meio de pagamento
+      final failurePaymentMethod = await incrementValuePaymentMethodUseCase(
+        paymentMethodId: expense.paymentMethodId,
+        value: expense.value,
+      );
+      if (failurePaymentMethod != null) {
+        await _rollbackExpense(expense.id);
+        return Failure(
+          'Erro ao atualizar saldo do meio de pagamento: ${failurePaymentMethod.message}',
+        );
+      }
+
+      return null; // Sucesso
+    } catch (e, s) {
+// Log detalhado do erro
+      LoggerService.error('Erro ao criar transação', e, s);
+      return Failure('Erro inesperado ao criar transação.');
     }
+  }
 
-    // acrescenta o valor ao meio de pagamento
-    final failurePaymentMethod = await incrementValuePaymentMethodUseCase(
-      paymentMethodId: expense.paymentMethodId,
-      value: expense.value,
-    );
-
-    if (failurePaymentMethod != null) {
-      // desfaz a exclusão
-      await createExpenseUseCase(expense);
-      return Failure('Erro ao criar despesa: ${failurePaymentMethod.message}');
+  Future<void> _rollbackExpense(String expenseId) async {
+    try {
+      await deleteExpenseUseCase(expenseId);
+    } catch (e, s) {
+      LoggerService.error('Erro ao reverter despesa: $expenseId', e, s);
+      rethrow;
     }
-    return null;
   }
 }

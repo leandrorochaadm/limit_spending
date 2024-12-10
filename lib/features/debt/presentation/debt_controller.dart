@@ -39,6 +39,7 @@ class DebtController {
     final debtsCards = cards.map((element) => element.toDebt());
 
     final listDebts = <DebtEntity>[...debtsCards, ...debts];
+    listDebts.sort((a, b) => b.name.compareTo(a.name));
 
     if (listDebts.isEmpty) {
       state.value = DebtState(

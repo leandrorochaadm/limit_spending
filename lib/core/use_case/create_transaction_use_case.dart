@@ -1,7 +1,6 @@
 import '../../features/debt/debit.dart';
 import '../../features/expense/domain/entities/expense_entity.dart';
 import '../../features/expense/domain/usecases/usecases.dart';
-import '../../features/payment_method/domain/use_cases/get_payment_by_id_use_case.dart';
 import '../../features/payment_method/domain/use_cases/use_cases.dart';
 import '../exceptions/failure.dart';
 import '../services/logger_services.dart';
@@ -11,17 +10,12 @@ class CreateTransactionUseCase {
   final AddDebtValueUseCase addDebtValueUseCase;
   final CreateExpenseUseCase createExpenseUseCase;
   final DeleteExpenseUseCase deleteExpenseUseCase;
-  final GetPaymentMethodsByIdUseCase getPaymentMethodsByIdUseCase;
-  final CreateDebtByPaymentMethodCardUseCase
-      createDebtByPaymentMethodCardUseCase;
 
   CreateTransactionUseCase({
     required this.incrementValuePaymentMethodUseCase,
     required this.addDebtValueUseCase,
     required this.createExpenseUseCase,
     required this.deleteExpenseUseCase,
-    required this.getPaymentMethodsByIdUseCase,
-    required this.createDebtByPaymentMethodCardUseCase,
   });
 
   Future<Failure?> call(ExpenseEntity expense) async {

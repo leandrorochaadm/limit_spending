@@ -41,9 +41,6 @@ GetPaymentMethodsByIdUseCase makeGetPaymentMethodsByIdUseCase() {
 
 CreateTransactionUseCase makeCreateTransactionUseCase() =>
     CreateTransactionUseCase(
-      createDebtByPaymentMethodCardUseCase:
-          makeCreateDebtByPaymentMethodCardUseCase(),
-      getPaymentMethodsByIdUseCase: makeGetPaymentMethodsByIdUseCase(),
       incrementValuePaymentMethodUseCase:
           makeIncrementValuePaymentMethodUseCase(),
       addDebtValueUseCase: makeAddDebtValueUseCase(),
