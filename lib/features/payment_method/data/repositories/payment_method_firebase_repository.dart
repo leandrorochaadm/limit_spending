@@ -60,6 +60,25 @@ class PaymentMethodFirebaseRepository implements PaymentMethodRepository {
   }
 
   @override
+  Future<PaymentMethodEntity?> getPaymentById(String id) async {
+    try {
+      final resultFirebase =
+          await firestore.collection(collectionPath).doc(id).get();
+      if (resultFirebase.data() != null) {
+        final resultEntity =
+            PaymentMethodModel.fromJson(resultFirebase.data()!).toEntity();
+        return resultEntity;
+      }
+      return null;
+    } on FirebaseException catch (e) {
+      throw AppExceptionUtils.handleFirebaseError(e);
+    } catch (e, s) {
+      LoggerService.error('getPaymentById', e, s);
+      rethrow;
+    }
+  }
+
+  @override
   Future<void> incrementValuePaymentMethod(
     String paymentMethodId,
     double value,

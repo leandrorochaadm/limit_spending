@@ -9,11 +9,7 @@ CreateDebtByPaymentMethodCardUseCase
     makeCreateDebtByPaymentMethodCardUseCase() =>
         CreateDebtByPaymentMethodCardUseCase(makeCreateDebtUseCase());
 GetAllPaymentMethodsUseCase makeGetPaymentMethodsUseCase() =>
-    GetAllPaymentMethodsUseCase(
-      repository: paymentMethodRepositoryFactory(),
-      createDebtByPaymentMethodCardUseCase:
-          makeCreateDebtByPaymentMethodCardUseCase(),
-    );
+    GetAllPaymentMethodsUseCase(paymentMethodRepositoryFactory());
 CreatePaymentMethodUseCase makeCreatePaymentMethodUseCase() =>
     CreatePaymentMethodUseCase(paymentMethodRepositoryFactory());
 UpdatePaymentMethodUseCase makeUpdatePaymentMethodUseCase() =>

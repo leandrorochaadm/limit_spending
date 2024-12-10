@@ -1,16 +1,10 @@
 import '../../../../core/exceptions/exceptions.dart';
-import '../../../debt/domain/usecases/usecases.dart';
 import '../domain.dart';
 
 class GetAllPaymentMethodsUseCase {
   final PaymentMethodRepository repository;
-  final CreateDebtByPaymentMethodCardUseCase
-      createDebtByPaymentMethodCardUseCase;
 
-  GetAllPaymentMethodsUseCase({
-    required this.repository,
-    required this.createDebtByPaymentMethodCardUseCase,
-  });
+  GetAllPaymentMethodsUseCase(this.repository);
   Future<(Failure?, List<PaymentMethodEntity>)> call() async {
     try {
       final List<PaymentMethodEntity> paymentMethods =
@@ -24,12 +18,6 @@ class GetAllPaymentMethodsUseCase {
         // Se isMoney for igual, ordenar por name
         return a.name.compareTo(b.name);
       });
-
-      if (paymentMethods.isNotEmpty) {
-        for (final paymentMethod in paymentMethods) {
-          createDebtByPaymentMethodCardUseCase(paymentMethod);
-        }
-      }
 
       return (null, paymentMethods);
     } on AppException catch (e) {

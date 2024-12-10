@@ -18,6 +18,7 @@ class DebtModel {
       id: id,
       name: name,
       value: value,
+      isCardCredit: isCardCredit,
     );
   }
 

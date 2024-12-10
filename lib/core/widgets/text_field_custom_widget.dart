@@ -26,7 +26,7 @@ class TextFieldCustomWidget extends StatelessWidget {
   final bool showSuffixIcon;
   final TextInputType? keyboardType;
   final int? maxLines;
-  final void Function(String)? onChanged;
+  final void Function(String?)? onChanged;
   final List<TextInputFormatter>? inputFormatters;
   String? Function(String?)? validator;
 
@@ -88,6 +88,8 @@ class TextFieldCustomWidget extends StatelessWidget {
           ),
           onTap: onTap,
           onChanged: onChanged,
+          onSaved: onChanged,
+          onFieldSubmitted: onChanged,
         );
       },
     );

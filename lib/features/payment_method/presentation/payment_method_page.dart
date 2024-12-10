@@ -295,6 +295,7 @@ class PaymentMethodPage extends StatelessWidget {
 
   Future<double> modalPaymentDebt(BuildContext context) {
     final TextEditingController valueEC = TextEditingController();
+    final FocusNode valueFN = FocusNode();
     bool isPopping = false;
 
     return showModalBottomSheet<double>(
@@ -316,15 +317,12 @@ class PaymentMethodPage extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                TextField(
+                TextFieldCustomWidget(
                   controller: valueEC,
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),
-                  decoration: const InputDecoration(
-                    labelText: 'Valor a Pagar',
-                    border: OutlineInputBorder(),
-                  ),
-                  textInputAction: TextInputAction.done,
+                  hintText: 'Valor a Pagar',
+                  focusNode: valueFN,
                 ),
                 const SizedBox(height: 24),
                 Row(

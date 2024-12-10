@@ -11,6 +11,16 @@ class DebtPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debtController.onMessage = (String message, bool isError) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          duration: const Duration(seconds: 2),
+          backgroundColor: isError ? Colors.redAccent : Colors.green,
+        ),
+      );
+    };
+
     return ValueListenableBuilder(
       valueListenable: debtController.state,
       builder: (context, state, __) {
@@ -94,14 +104,18 @@ class DebtPage extends StatelessWidget {
             key: Key(debt.id),
             direction: DismissDirection.horizontal,
             confirmDismiss: (direction) async {
+              Future<bool?>? resultDismiss;
               if (direction == DismissDirection.endToStart) {
                 if (debt.isCardCredit) {
-                  showDialog(
+                  resultDismiss = showDialog<bool>(
                     context: context,
+                    barrierDismissible: false,
                     builder: (context) {
                       return AlertDialog(
-                        title: const Text(
-                          'Cartão de crédito não pode ser excluido',
+                        title: const Text('Aviso'),
+                        content: const Text(
+                          'Cartão de crédito não pode ser excluido, pague a divida do cartão que ela será excluida automaticamente',
+                          textAlign: TextAlign.justify,
                         ),
                         actions: [
                           TextButton(
@@ -114,39 +128,38 @@ class DebtPage extends StatelessWidget {
                       );
                     },
                   );
-                  return false;
+                } else {
+                  resultDismiss = showDialog<bool>(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Excluir divida'),
+                        content:
+                            const Text('Deseja realmente excluir esta divida?'),
+                        actions: [
+                          TextButton(
+                            child: const Text('Cancelar'),
+                            onPressed: () {
+                              Navigator.of(context).pop(false);
+                            },
+                          ),
+                          TextButton(
+                            child: const Text('Excluir'),
+                            onPressed: () {
+                              Navigator.of(context).pop(true);
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 }
-
-                final bool? result = await showDialog<bool>(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: const Text('Excluir divida'),
-                      content:
-                          const Text('Deseja realmente excluir esta divida?'),
-                      actions: [
-                        TextButton(
-                          child: const Text('Cancelar'),
-                          onPressed: () {
-                            Navigator.of(context).pop(false);
-                          },
-                        ),
-                        TextButton(
-                          child: const Text('Excluir'),
-                          onPressed: () {
-                            Navigator.of(context).pop(true);
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                );
-                return result ?? false;
-              } else if (direction == DismissDirection.startToEnd) {
-                modalCreateDebt(context, debt: debt);
-                return false;
               }
-              return false;
+
+              if (direction == DismissDirection.startToEnd) {
+                resultDismiss = modalCreateDebt(context, debt: debt);
+              }
+              return resultDismiss;
             },
             onDismissed: (direction) {
               if (direction == DismissDirection.endToStart) {
@@ -217,7 +230,7 @@ class DebtPage extends StatelessWidget {
     );
   }
 
-  Future<dynamic> modalCreateDebt(BuildContext context, {DebtEntity? debt}) {
+  Future<bool?> modalCreateDebt(BuildContext context, {DebtEntity? debt}) {
     final bool isEdit = debt != null;
     final TextEditingController nameEC =
         TextEditingController(text: debt?.name);
@@ -227,63 +240,104 @@ class DebtPage extends StatelessWidget {
         TextEditingController(text: debt?.value.toStringAsFixed(2));
     final FocusNode valueFN = FocusNode();
 
-    return showModalBottomSheet(
+    return showModalBottomSheet<bool>(
       context: context,
       useSafeArea: true,
       enableDrag: true,
       showDragHandle: true,
-      isScrollControlled: true,
+      isScrollControlled: true, // Permite o ajuste com o teclado
+      isDismissible: false,
       builder: (BuildContext contextModal) {
-        return Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: StatefulBuilder(
-            builder: (context, setState) {
-              return Column(
-                children: <Widget>[
-                  TextFieldCustomWidget(
-                    controller: nameEC,
-                    focusNode: nameFN,
-                    hintText: 'Nome da divida',
+        return SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 24,
+              right: 24,
+              top: 24,
+              bottom: MediaQuery.of(contextModal).viewInsets.bottom + 24,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                TextFieldCustomWidget(
+                  controller: nameEC,
+                  focusNode: nameFN,
+                  hintText: 'Nome da dívida',
+                ),
+                const SizedBox(height: 24),
+                TextFieldCustomWidget(
+                  controller: valueEC,
+                  focusNode: valueFN,
+                  hintText: 'Valor da dívida',
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
                   ),
-                  const SizedBox(height: 24),
-                  TextFieldCustomWidget(
-                    controller: valueEC,
-                    focusNode: valueFN,
-                    hintText: 'Valor da divida',
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
-                  ),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 12,
-                        horizontal: 24,
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 24,
+                          ),
+                          shape: const StadiumBorder(),
+                          backgroundColor:
+                              Theme.of(context).colorScheme.secondary,
+                          foregroundColor:
+                              Theme.of(context).colorScheme.onSecondary,
+                          textStyle: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        onPressed: () {
+                          Navigator.of(contextModal).pop(false);
+                        },
+                        child: const Text('Cancelar'),
                       ),
-                      shape: const StadiumBorder(),
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                      textStyle: Theme.of(context).textTheme.bodyMedium,
                     ),
-                    onPressed: () async {
-                      final valueDouble =
-                          double.parse(valueEC.text.toPointFormat());
-                      if (isEdit) {
-                        await debtController.updateDebt(
-                          debt.copyWith(name: nameEC.text, value: valueDouble),
-                        );
-                      } else {
-                        await debtController.createDebt(
-                          DebtEntity(name: nameEC.text, value: valueDouble),
-                        );
-                      }
-                      Navigator.of(contextModal).pop();
-                    },
-                    child: const Text('Salvar divida'),
-                  ),
-                ],
-              );
-            },
+                    const SizedBox(width: 24),
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 24,
+                          ),
+                          shape: const StadiumBorder(),
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          foregroundColor:
+                              Theme.of(context).colorScheme.onPrimary,
+                          textStyle: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        onPressed: () async {
+                          final valueDouble =
+                              double.parse(valueEC.text.toPointFormat());
+                          if (isEdit) {
+                            await debtController.updateDebt(
+                              debt.copyWith(
+                                name: nameEC.text,
+                                value: valueDouble,
+                              ),
+                            );
+                          } else {
+                            await debtController.createDebt(
+                              DebtEntity(
+                                name: nameEC.text,
+                                value: valueDouble,
+                              ),
+                            );
+                          }
+                          Navigator.of(contextModal).pop(false);
+                        },
+                        child: const Text('Salvar dívida'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         );
       },

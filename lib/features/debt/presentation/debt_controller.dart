@@ -12,6 +12,9 @@ class DebtController {
   final UpdateDebitUseCase updateDebitUseCase;
 
   final ValueNotifier<DebtState> state = ValueNotifier(DebtState());
+
+  void Function(String message, bool isError)? onMessage;
+
   DebtController({
     required this.addDebtValueUseCase,
     required this.getDebtsUseCase,
@@ -56,7 +59,12 @@ class DebtController {
 
   Future<void> deleteDebt(String debtId) async {
     state.value = DebtState(status: DebtStatus.loading);
-    await deleteDebtUseCase(debtId);
+    final failure = await deleteDebtUseCase(debtId);
+    if (failure != null) {
+      onMessage?.call(failure.message, false);
+      return;
+    }
+    onMessage?.call('Dívida excluida com sucesso', false);
     load();
   }
 

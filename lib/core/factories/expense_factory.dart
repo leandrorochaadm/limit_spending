@@ -1,5 +1,6 @@
 import '../../features/category/domain/domain.dart';
 import '../../features/expense/expense.dart';
+import '../../features/payment_method/domain/use_cases/get_payment_by_id_use_case.dart';
 import '../use_case/create_transaction_use_case.dart';
 import '../use_case/delete_transaction_use_case.dart';
 import 'category_factory.dart';
@@ -34,8 +35,15 @@ DeleteTransactionUseCase makeDeleteTransactionUseCase() =>
       deleteExpenseUseCase: makeDeleteExpenseUseCase(),
     );
 
+GetPaymentMethodsByIdUseCase makeGetPaymentMethodsByIdUseCase() {
+  return GetPaymentMethodsByIdUseCase(paymentMethodRepositoryFactory());
+}
+
 CreateTransactionUseCase makeCreateTransactionUseCase() =>
     CreateTransactionUseCase(
+      createDebtByPaymentMethodCardUseCase:
+          makeCreateDebtByPaymentMethodCardUseCase(),
+      getPaymentMethodsByIdUseCase: makeGetPaymentMethodsByIdUseCase(),
       incrementValuePaymentMethodUseCase:
           makeIncrementValuePaymentMethodUseCase(),
       addDebtValueUseCase: makeAddDebtValueUseCase(),
