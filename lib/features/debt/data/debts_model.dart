@@ -35,7 +35,7 @@ class DebtModel {
       id: map['id'] as String,
       name: map['name'] as String,
       value: double.tryParse('${map['value'] ?? '0.0'}') ?? 0.0,
-      isCardCredit: map['isCardCredit'] as bool,
+      isCardCredit: bool.tryParse('${map['isCardCredit'] ?? 'false'}') ?? false,
     );
   }
 }

@@ -23,9 +23,10 @@ class CreateTransactionUseCase {
       return Failure('Erro ao criar despesa: ${failureExpense.message}');
     }
 
+    // diminiui o saldo do meio de pagamento
     final failurePaymentMethod = await incrementValuePaymentMethodUseCase(
       paymentMethodId: expense.paymentMethodId,
-      value: expense.value,
+      value: -expense.value,
     );
 
     if (failurePaymentMethod != null) {

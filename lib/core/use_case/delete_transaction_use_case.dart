@@ -23,9 +23,10 @@ class DeleteTransactionUseCase {
       return Failure('Erro ao exluir despesa: ${failureExpense.message}');
     }
 
+    // acrescenta o valor ao meio de pagamento
     final failurePaymentMethod = await incrementValuePaymentMethodUseCase(
       paymentMethodId: expense.paymentMethodId,
-      value: -expense.value,
+      value: expense.value,
     );
 
     if (failurePaymentMethod != null) {
