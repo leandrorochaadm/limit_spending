@@ -111,20 +111,30 @@ class PaymentMethodPage extends StatelessWidget {
 
   Widget buildBodyWidget(PaymentMethodState state) {
     if (state.status == PaymentMethodStatus.loading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator(color: Colors.teal));
     } else if (state.status == PaymentMethodStatus.error) {
-      return Center(child: Text('Erro: ${state.messageToUser}'));
+      return Center(
+        child: Text(
+          'Erro: ${state.messageToUser}',
+          style: const TextStyle(color: Colors.red, fontSize: 16),
+        ),
+      );
     } else if (state.status == PaymentMethodStatus.information) {
-      return Center(child: Text('${state.messageToUser}'));
+      return Center(
+        child: Text(
+          '${state.messageToUser}',
+          style: const TextStyle(color: Colors.white, fontSize: 16),
+        ),
+      );
     }
 
     final paymentMethods = state.paymentMethods;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 90.0),
-      child: ListView.separated(
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         itemCount: paymentMethods.length,
-        separatorBuilder: (_, __) => const Divider(),
         itemBuilder: (context, index) {
           final paymentMethod = paymentMethods[index];
           return Dismissible(
@@ -141,24 +151,52 @@ class PaymentMethodPage extends StatelessWidget {
               return false; // Retorne false para não descartar o item
             },
             background: Container(
-              color: Theme.of(context).colorScheme.inversePrimary,
+              color: Colors.teal,
               alignment: Alignment.centerLeft,
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Icon(
+              child: const Icon(
                 Icons.edit,
-                color: Theme.of(context).colorScheme.primary,
+                color: Colors.white,
               ),
             ),
-            child: ListTile(
-              title: Text(
-                '${paymentMethod.isMoney ? 'Dinheiro' : 'Cartão'}: ${paymentMethod.name}',
+            child: Card(
+              color: Colors.grey[850],
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
-              subtitle:
-                  Text('Disponível ${paymentMethod.balance.toCurrency()}'),
-              trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () {
-                paymentMethodNotifier.selectPaymentMethod(paymentMethod);
-              },
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              child: ListTile(
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                leading: Icon(
+                  paymentMethod.isMoney
+                      ? Icons.account_balance_wallet
+                      : Icons.credit_card,
+                  color: Colors.teal,
+                  size: 32,
+                ),
+                title: Text(
+                  paymentMethod.name,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                subtitle: Text(
+                  'Disponível: ${paymentMethod.balance.toCurrency()}',
+                  style: TextStyle(
+                    color: Colors.grey.shade400,
+                    fontSize: 14,
+                  ),
+                ),
+                trailing:
+                    const Icon(Icons.arrow_forward_ios, color: Colors.white70),
+                onTap: () {
+                  paymentMethodNotifier.selectPaymentMethod(paymentMethod);
+                },
+              ),
             ),
           );
         },
@@ -196,7 +234,10 @@ class PaymentMethodPage extends StatelessWidget {
                               value ?? false;
                         });
                       },
-                      title: const Text('Dinheiro'),
+                      title: const Text(
+                        'Dinheiro',
+                        style: TextStyle(color: Colors.white),
+                      ),
                       contentPadding: EdgeInsets.zero,
                     ),
                     const SizedBox(height: 24),
@@ -209,7 +250,10 @@ class PaymentMethodPage extends StatelessWidget {
                               value ?? false;
                         });
                       },
-                      title: const Text('Cartão'),
+                      title: const Text(
+                        'Cartão',
+                        style: TextStyle(color: Colors.white),
+                      ),
                       contentPadding: EdgeInsets.zero,
                     ),
                     const SizedBox(height: 24),
