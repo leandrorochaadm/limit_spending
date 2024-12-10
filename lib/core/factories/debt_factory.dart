@@ -50,6 +50,7 @@ DebtPage makeDebtPage() {
     createDebtUseCase: createDebtUseCase,
     deleteDebtUseCase: deleteDebtUseCase,
     updateDebitUseCase: updateDebitUseCase,
+    getCardPaymentMethodsUseCase: makeGetCardPaymentMethodsUseCase(),
   );
   return DebtPage(debtController);
 }

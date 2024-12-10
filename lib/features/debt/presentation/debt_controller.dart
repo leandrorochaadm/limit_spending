@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/core.dart';
+import '../../payment_method/domain/use_cases/get_card_payment_methods.dart';
 import '../debit.dart';
 import 'debt_state.dart';
 
@@ -10,6 +11,7 @@ class DebtController {
   final CreateDebtUseCase createDebtUseCase;
   final DeleteDebtUseCase deleteDebtUseCase;
   final UpdateDebitUseCase updateDebitUseCase;
+  final GetCardPaymentMethodsUseCase getCardPaymentMethodsUseCase;
 
   final ValueNotifier<DebtState> state = ValueNotifier(DebtState());
 
@@ -21,6 +23,7 @@ class DebtController {
     required this.createDebtUseCase,
     required this.deleteDebtUseCase,
     required this.updateDebitUseCase,
+    required this.getCardPaymentMethodsUseCase,
   }) {
     load();
   }
@@ -28,15 +31,23 @@ class DebtController {
   void load() async {
     state.value = DebtState(status: DebtStatus.loading);
     final debts = await getDebtsUseCase();
+    final (failureCard, cards) = await getCardPaymentMethodsUseCase();
+    if (failureCard != null) {
+      onMessage?.call(failureCard.message, true);
+    }
 
-    if (debts.isEmpty) {
+    final debtsCards = cards.map((element) => element.toDebt());
+
+    final listDebts = <DebtEntity>[...debtsCards, ...debts];
+
+    if (listDebts.isEmpty) {
       state.value = DebtState(
         status: DebtStatus.information,
         messageToUser: 'Parabens! Nenhuma dívida encontrada',
       );
     }
 
-    final debtsSum = debts.fold<double>(
+    final debtsSum = listDebts.fold<double>(
       0,
       (previousValue, debt) => previousValue + debt.value,
     );
@@ -45,7 +56,7 @@ class DebtController {
     state.value = DebtState(
       status: DebtStatus.success,
       debtsSum: debtsSumFormatted,
-      debts: debts,
+      debts: listDebts,
     );
   }
 

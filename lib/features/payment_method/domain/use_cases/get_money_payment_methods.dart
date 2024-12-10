@@ -11,7 +11,9 @@ class GetMoneyPaymentMethodsUseCase {
           await repository.getPaymentMethods();
 
       final filteredPaymentMethods = paymentMethods
-          .where((paymentMethod) => paymentMethod.isMoney)
+          .where(
+            (paymentMethod) => paymentMethod.isMoney && paymentMethod.value > 0,
+          )
           .toList();
 
       filteredPaymentMethods.sort((a, b) {

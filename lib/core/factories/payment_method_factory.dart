@@ -1,28 +1,29 @@
 import '../../features/debt/domain/usecases/usecases.dart';
+import '../../features/payment_method/domain/use_cases/get_card_payment_methods.dart';
 import '../../features/payment_method/payment_method.dart';
 import 'debt_factory.dart';
 import 'firestore_factory.dart';
 
-PaymentMethodFirebaseRepository paymentMethodRepositoryFactory() =>
+PaymentMethodFirebaseRepository makePaymentMethodRepository() =>
     PaymentMethodFirebaseRepository(makeFirestoreFactory());
 CreateDebtByPaymentMethodCardUseCase
     makeCreateDebtByPaymentMethodCardUseCase() =>
         CreateDebtByPaymentMethodCardUseCase(makeCreateDebtUseCase());
 GetAllPaymentMethodsUseCase makeGetPaymentMethodsUseCase() =>
-    GetAllPaymentMethodsUseCase(paymentMethodRepositoryFactory());
+    GetAllPaymentMethodsUseCase(makePaymentMethodRepository());
 CreatePaymentMethodUseCase makeCreatePaymentMethodUseCase() =>
-    CreatePaymentMethodUseCase(paymentMethodRepositoryFactory());
+    CreatePaymentMethodUseCase(makePaymentMethodRepository());
 UpdatePaymentMethodUseCase makeUpdatePaymentMethodUseCase() =>
-    UpdatePaymentMethodUseCase(paymentMethodRepositoryFactory());
+    UpdatePaymentMethodUseCase(makePaymentMethodRepository());
 
 DeletePaymentMethodUseCase makeDeletePaymentMethodUseCase() =>
-    DeletePaymentMethodUseCase(paymentMethodRepositoryFactory());
+    DeletePaymentMethodUseCase(makePaymentMethodRepository());
 
 IncrementValuePaymentMethodUseCase makeIncrementValuePaymentMethodUseCase() =>
-    IncrementValuePaymentMethodUseCase(paymentMethodRepositoryFactory());
+    IncrementValuePaymentMethodUseCase(makePaymentMethodRepository());
 
 GetMoneyPaymentMethodsUseCase makeGetMoneyPaymentMethodsUseCase() =>
-    GetMoneyPaymentMethodsUseCase(paymentMethodRepositoryFactory());
+    GetMoneyPaymentMethodsUseCase(makePaymentMethodRepository());
 
 PaymentMethodNotifier paymentMethodNotifierFactory([String? debtId]) {
   final paymentMethodNotifier = PaymentMethodNotifier(
@@ -39,3 +40,6 @@ PaymentMethodNotifier paymentMethodNotifierFactory([String? debtId]) {
 
 PaymentMethodPage makePaymentMethodPage({String? debtId}) =>
     PaymentMethodPage(paymentMethodNotifierFactory(debtId));
+
+GetCardPaymentMethodsUseCase makeGetCardPaymentMethodsUseCase() =>
+    GetCardPaymentMethodsUseCase(makePaymentMethodRepository());

@@ -36,7 +36,7 @@ DeleteTransactionUseCase makeDeleteTransactionUseCase() =>
     );
 
 GetPaymentMethodsByIdUseCase makeGetPaymentMethodsByIdUseCase() {
-  return GetPaymentMethodsByIdUseCase(paymentMethodRepositoryFactory());
+  return GetPaymentMethodsByIdUseCase(makePaymentMethodRepository());
 }
 
 CreateTransactionUseCase makeCreateTransactionUseCase() =>

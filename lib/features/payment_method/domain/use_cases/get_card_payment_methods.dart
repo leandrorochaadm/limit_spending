@@ -1,25 +1,23 @@
 import '../../../../core/exceptions/exceptions.dart';
 import '../domain.dart';
 
-class GetAllPaymentMethodsUseCase {
+class GetCardPaymentMethodsUseCase {
   final PaymentMethodRepository repository;
 
-  GetAllPaymentMethodsUseCase(this.repository);
+  GetCardPaymentMethodsUseCase(this.repository);
   Future<(Failure?, List<PaymentMethodEntity>)> call() async {
     try {
       final List<PaymentMethodEntity> paymentMethods =
           await repository.getPaymentMethods();
 
       final filteredPaymentMethods = paymentMethods
-          .where((paymentMethod) => paymentMethod.balance > 0)
+          .where(
+            (paymentMethod) => paymentMethod.isCard && paymentMethod.value > 0,
+          )
           .toList();
 
       filteredPaymentMethods.sort((a, b) {
-        // Primeiro, ordenar por isMoney (true vem antes de false)
-        if (a.isMoney != b.isMoney) {
-          return a.isMoney ? -1 : 1;
-        }
-        // Se isMoney for igual, ordenar por name
+        // Se isCard for igual, ordenar por name
         return a.name.compareTo(b.name);
       });
 
@@ -28,7 +26,7 @@ class GetAllPaymentMethodsUseCase {
       return (Failure(e.message), <PaymentMethodEntity>[]);
     } catch (e) {
       return (
-        Failure('Não foi possível carregar os meios de pagamento'),
+        Failure('Erro ao buscar meios de pagamento'),
         <PaymentMethodEntity>[]
       );
     }
