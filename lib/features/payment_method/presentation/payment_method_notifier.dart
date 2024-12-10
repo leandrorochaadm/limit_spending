@@ -160,10 +160,9 @@ class PaymentMethodNotifier extends ValueNotifier<PaymentMethodState> {
     final failure =
         await paymentDebitUseCase(paymentMethodId, debtId, valuePayment);
     if (failure != null) {
-      value = PaymentMethodState(
-        status: PaymentMethodStatus.error,
-        messageToUser: failure.message,
-      );
+      onShowMessage?.call(failure.message, true);
+    } else {
+      onShowMessage?.call('Pagamento realizado com sucesso', false);
     }
   }
 
