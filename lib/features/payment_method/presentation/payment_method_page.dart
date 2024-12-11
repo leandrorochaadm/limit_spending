@@ -15,12 +15,16 @@ class PaymentMethodPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    paymentMethodNotifier.onNextCategoryPage = (String paymentMethodId) {
+    paymentMethodNotifier.onNextCategoryPage =
+        (String paymentMethodId, bool isMoney) {
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) {
-            return makeCategoryPage(paymentMethodId);
+            return makeCategoryPage(
+              paymentMethodId: paymentMethodId,
+              isMoney: isMoney,
+            );
           },
         ),
       ).then((_) => paymentMethodNotifier.load());

@@ -9,6 +9,7 @@ class ExpenseEntity extends Equatable {
   final double value;
   final String categoryId;
   final String paymentMethodId;
+  final bool isMoney;
 
   ExpenseEntity({
     String? id,
@@ -17,6 +18,7 @@ class ExpenseEntity extends Equatable {
     required this.value,
     required this.categoryId,
     required this.paymentMethodId,
+    required this.isMoney,
   }) : id = id ?? DateTime.now().millisecondsSinceEpoch.toString();
 
   ExpenseModel toModel() {
@@ -27,6 +29,7 @@ class ExpenseEntity extends Equatable {
       value: value,
       categoryId: categoryId,
       paymentMethodId: paymentMethodId,
+      isMoney: isMoney,
     );
   }
 
@@ -36,7 +39,8 @@ class ExpenseEntity extends Equatable {
     DateTime? created,
     double? value,
     String? categoryId,
-    String? debtId,
+    String? paymentMethodId,
+    bool? isMoney,
   }) {
     return ExpenseEntity(
       id: id ?? this.id,
@@ -44,7 +48,8 @@ class ExpenseEntity extends Equatable {
       created: created ?? this.created,
       value: value ?? this.value,
       categoryId: categoryId ?? this.categoryId,
-      paymentMethodId: debtId ?? paymentMethodId,
+      paymentMethodId: paymentMethodId ?? this.paymentMethodId,
+      isMoney: isMoney ?? this.isMoney,
     );
   }
 
@@ -56,5 +61,6 @@ class ExpenseEntity extends Equatable {
         value,
         categoryId,
         paymentMethodId,
+        isMoney,
       ];
 }

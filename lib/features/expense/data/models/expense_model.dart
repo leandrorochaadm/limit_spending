@@ -11,6 +11,7 @@ class ExpenseModel extends ExpenseEntity with EquatableMixin {
     required super.categoryId,
     required super.description,
     required super.paymentMethodId,
+    required super.isMoney,
   });
 
   factory ExpenseModel.fromJson(Map<String, dynamic> json) {
@@ -21,6 +22,7 @@ class ExpenseModel extends ExpenseEntity with EquatableMixin {
       categoryId: json['categoryId'] as String,
       description: json['description'] as String,
       paymentMethodId: (json['paymentMethodId'] ?? '') as String,
+      isMoney: bool.tryParse('${json['isMoney'] ?? 'true'}') ?? true,
     );
   }
 
@@ -32,6 +34,7 @@ class ExpenseModel extends ExpenseEntity with EquatableMixin {
       'categoryId': categoryId,
       'description': description,
       'paymentMethodId': paymentMethodId,
+      'isMoney': isMoney,
     };
   }
 
@@ -43,6 +46,7 @@ class ExpenseModel extends ExpenseEntity with EquatableMixin {
       categoryId: categoryId,
       description: description,
       paymentMethodId: paymentMethodId,
+      isMoney: isMoney,
     );
   }
 }

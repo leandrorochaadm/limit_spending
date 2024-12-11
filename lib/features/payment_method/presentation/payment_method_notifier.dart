@@ -43,7 +43,7 @@ class PaymentMethodNotifier extends ValueNotifier<PaymentMethodState> {
     super.dispose();
   }
 
-  void Function(String paymentMethodId)? onNextCategoryPage;
+  void Function(String paymentMethodId, bool isMoney)? onNextCategoryPage;
   Future<double> Function(PaymentMethodEntity paymentMethod)?
       onOpenModalPaymentDebt;
 
@@ -180,7 +180,7 @@ class PaymentMethodNotifier extends ValueNotifier<PaymentMethodState> {
         load();
       }
     } else {
-      onNextCategoryPage?.call(paymentMethod.id);
+      onNextCategoryPage?.call(paymentMethod.id, paymentMethod.isMoney);
     }
   }
 }

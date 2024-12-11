@@ -27,10 +27,10 @@ class DeleteTransactionUseCase {
         );
       }
 
-// 2. Diminui o saldo do meio de pagamento
+//2. se for dinheiro aumenta o saldo no meio de pagamento, se for cartão diminui o valor da divida
       final failurePaymentMethod = await incrementValuePaymentMethodUseCase(
         paymentMethodId: expense.paymentMethodId,
-        value: -expense.value,
+        value: expense.isMoney ? expense.value : -expense.value,
       );
       if (failurePaymentMethod != null) {
         await _rollbackExpense(expense.id);

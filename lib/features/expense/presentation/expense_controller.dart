@@ -11,6 +11,8 @@ class ExpenseController {
   final GetExpensesByDateCreatedUseCase getExpensesByCreatedUseCase;
   final CategoryEntity category;
   final String paymentMethodId;
+  final bool isMoney;
+  final Function? onGoBack;
   ValueNotifier<ExpenseState> state = ValueNotifier<ExpenseState>(
     const ExpenseState(status: ExpenseStatus.initial),
   );
@@ -29,11 +31,14 @@ class ExpenseController {
     required this.getExpensesByCreatedUseCase,
     required this.category,
     required this.paymentMethodId,
+    required this.isMoney,
+    required this.onGoBack,
   }) {
     load();
   }
 
   void Function(String message, bool isError)? onShowMessage;
+  void Function(Function? onGoBack)? onGoBackFunction;
 
   Future<void> load() async {
     state.value = state.value.copyWith(status: ExpenseStatus.loading);
@@ -78,6 +83,7 @@ class ExpenseController {
       value: valueEC.text.isEmpty ? 0 : valueDouble,
       categoryId: category.id,
       paymentMethodId: paymentMethodId,
+      isMoney: isMoney,
     );
 
     final failure = await createTransactionUseCase(expense);
@@ -105,5 +111,9 @@ class ExpenseController {
       'Despesa excluida com sucesso: ${expense.description}',
       false,
     );
+  }
+
+  void clickGoBack() {
+    onGoBackFunction?.call(onGoBack);
   }
 }
