@@ -30,36 +30,52 @@ class ExpensePage extends StatelessWidget {
       );
     };
 
-    return ValueListenableBuilder(
-      valueListenable: expenseController.state,
-      builder: (context, state, __) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text('Despesas: ${expenseController.category.name}'),
-            elevation: 7,
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              expenseController.clearForm();
-              modalCreateExpense(context);
-            },
-            child: const Icon(Icons.add),
-          ),
-          body: buildBody(state),
-          bottomSheet: Padding(
-            padding: const EdgeInsets.only(bottom: 36.0, top: 24),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Limite mensal: ${state.limitCategory}\nConsumido nos ultimos $daysFilter dias: ${state.consumedSum}\nDisponível: ${state.balance}',
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-        );
+    expenseController.onGoBackFunction = (Function? onGoBack) {
+      if (onGoBack != null) {
+        onGoBack();
+      }
+      Navigator.pop(context);
+    };
+
+    return PopScope(
+      // garante que o popScope vai chamar o onGoBackFunction somente se o onGoBack não for nulo
+      canPop: expenseController.onGoBack == null,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          expenseController.clickGoBack();
+        }
       },
+      child: ValueListenableBuilder(
+        valueListenable: expenseController.state,
+        builder: (context, state, __) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Despesas: ${expenseController.category.name}'),
+              elevation: 7,
+            ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                expenseController.clearForm();
+                modalCreateExpense(context);
+              },
+              child: const Icon(Icons.add),
+            ),
+            body: buildBody(state),
+            bottomSheet: Padding(
+              padding: const EdgeInsets.only(bottom: 36.0, top: 24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Limite mensal: ${state.limitCategory}\nConsumido nos ultimos $daysFilter dias: ${state.consumedSum}\nDisponível: ${state.balance}',
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 

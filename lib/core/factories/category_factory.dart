@@ -29,9 +29,14 @@ CategoryController categoryControllerFactory() {
   return categoryController;
 }
 
-CategoryPage makeCategoryPage(String paymentMethodId) => CategoryPage(
+CategoryPage makeCategoryPage({
+  required String paymentMethodId,
+  required bool isMoney,
+}) =>
+    CategoryPage(
       categoryController: categoryControllerFactory(),
       paymentMethodId: paymentMethodId,
+      isMoney: isMoney,
     );
 
 Future<void> makeUpdateCategoryConsumedUseCase(

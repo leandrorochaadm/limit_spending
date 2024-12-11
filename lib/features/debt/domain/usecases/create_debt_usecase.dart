@@ -7,13 +7,13 @@ class CreateDebtUseCase {
   CreateDebtUseCase(this.debtRepository);
   Future<Failure?> call(DebtEntity debt) async {
     try {
-      debtRepository.createDebt(debt);
+      await debtRepository.createDebt(debt);
 
       return null;
     } on AppException catch (e) {
       return Failure(e.message);
     } catch (e) {
-      return Failure('Erro ao criar divida');
+      return Failure('Erro ao pagar dívida');
     }
   }
 }

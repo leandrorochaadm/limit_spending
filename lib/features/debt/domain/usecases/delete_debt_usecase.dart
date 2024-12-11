@@ -9,9 +9,11 @@ class DeleteDebtUseCase {
     if (debtId.isEmpty) return Future.value(Failure('ID da divida inválido'));
     try {
       await debtRepository.deleteDebt(debtId);
-    } on AppException catch (_) {
-      return Failure('Erro ao deletar divida');
+      return null;
+    } on AppException catch (e) {
+      return Failure(e.message);
+    } catch (e) {
+      return Failure('Erro ao pagar dívida');
     }
-    return null;
   }
 }

@@ -125,7 +125,7 @@ class CategoryPage extends StatelessWidget {
                         );
                       },
                     ),
-                  ).then((_) => categoryController.load());
+                  );
                 },
               ),
             ),

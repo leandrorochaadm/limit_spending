@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/core.dart';
+import '../../../core/widgets/snack_bar_custom.dart';
 import '../../payment_method/presentation/payment_method_page.dart';
 import '../debit.dart';
 import 'debt_state.dart';
@@ -12,12 +13,11 @@ class DebtPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     debtController.onMessage = (String message, bool isError) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          duration: const Duration(seconds: 2),
-          backgroundColor: isError ? Colors.redAccent : Colors.green,
-        ),
+      SnackBarCustom(
+        context: context,
+        message: message,
+        isError: isError,
+        duration: const Duration(seconds: 1),
       );
     };
 
@@ -92,7 +92,9 @@ class DebtPage extends StatelessWidget {
 
           return Dismissible(
             key: Key(debt.id),
-            direction: DismissDirection.horizontal,
+            direction: debt.isCardCredit
+                ? DismissDirection.none
+                : DismissDirection.horizontal,
             confirmDismiss: (direction) async {
               Future<bool?>? resultDismiss;
               if (direction == DismissDirection.endToStart) {

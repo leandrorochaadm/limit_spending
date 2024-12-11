@@ -30,13 +30,17 @@ class DebtController {
 
   void load() async {
     state.value = DebtState(status: DebtStatus.loading);
-    final debts = await getDebtsUseCase();
+    final (failureDebt, debts) = await getDebtsUseCase();
+    if (failureDebt != null) {
+      onMessage?.call(failureDebt.message, true);
+    }
+
     final (failureCard, cards) = await getCardPaymentMethodsUseCase();
     if (failureCard != null) {
       onMessage?.call(failureCard.message, true);
     }
 
-    final debtsCards = cards.map((element) => element.toDebt());
+    final debtsCards = cards.map((element) => element.toDebt()).toList();
 
     final listDebts = <DebtEntity>[...debtsCards, ...debts];
     listDebts.sort((a, b) => b.name.compareTo(a.name));
@@ -65,7 +69,13 @@ class DebtController {
       addDebtValueUseCase(debtId: debtId, debtValue: debtValue);
   Future<void> createDebt(DebtEntity debt) async {
     state.value = DebtState(status: DebtStatus.loading);
-    await createDebtUseCase(debt);
+    final failure = await createDebtUseCase(debt);
+    if (failure != null) {
+      onMessage?.call(failure.message, false);
+      return;
+    }
+
+    onMessage?.call('Dívida atualizada com sucesso', false);
     load();
   }
 
@@ -82,7 +92,13 @@ class DebtController {
 
   Future<void> updateDebt(DebtEntity debt) async {
     state.value = DebtState(status: DebtStatus.loading);
-    await updateDebitUseCase(debt);
+    final failure = await updateDebitUseCase(debt);
+    if (failure != null) {
+      onMessage?.call(failure.message, false);
+      return;
+    }
+
+    onMessage?.call('Dívida atualizada com sucesso', false);
     load();
   }
 }

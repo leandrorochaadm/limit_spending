@@ -15,7 +15,7 @@ class AddDebtValueUseCase {
     } on AppException catch (e) {
       return Failure(e.message);
     } catch (e) {
-      return Failure('Erro ao criar despesa');
+      return Failure('Erro ao adicionar valor na dívida');
     }
   }
 }

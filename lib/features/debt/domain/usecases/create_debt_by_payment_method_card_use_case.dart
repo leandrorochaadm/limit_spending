@@ -7,15 +7,21 @@ class CreateDebtByPaymentMethodCardUseCase {
 
   CreateDebtByPaymentMethodCardUseCase(this.createDebtUseCase);
   Future<Failure?> call(PaymentMethodEntity paymentMethod) async {
-    if (paymentMethod.isCard) {
-      final failure = await createDebtUseCase(paymentMethod.toDebt());
-      if (failure != null) {
-        return Failure(
-          'Erro ao criar dívida por metodo de pagamento: ${failure.message}',
-        );
+    try {
+      if (paymentMethod.isCard) {
+        final failure = await createDebtUseCase(paymentMethod.toDebt());
+        if (failure != null) {
+          return Failure(
+            'Erro ao criar dívida por metodo de pagamento: ${failure.message}',
+          );
+        }
+        return null;
       }
       return null;
+    } on AppException catch (e) {
+      return Failure(e.message);
+    } catch (e) {
+      return Failure('Erro ao converter meio de pagamento para dívida');
     }
-    return null;
   }
 }

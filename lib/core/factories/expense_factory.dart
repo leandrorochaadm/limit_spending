@@ -51,6 +51,8 @@ CreateTransactionUseCase makeCreateTransactionUseCase() =>
 ExpenseController expenseControllerFactory({
   required CategoryEntity category,
   required String paymentMethodId,
+  required bool isMoney,
+  required Function? onGoBack,
 }) {
   final ExpenseController expenseController = ExpenseController(
     createTransactionUseCase: makeCreateTransactionUseCase(),
@@ -58,6 +60,8 @@ ExpenseController expenseControllerFactory({
     getExpensesByCreatedUseCase: getExpensesByCreatedUseCase,
     category: category,
     paymentMethodId: paymentMethodId,
+    isMoney: isMoney,
+    onGoBack: onGoBack,
   );
 
   return expenseController;
@@ -66,10 +70,14 @@ ExpenseController expenseControllerFactory({
 ExpensePage makeExpensePage({
   required CategoryEntity category,
   required String paymentMethodId,
+  required bool isMoney,
+  required Function? onGoBack,
 }) =>
     ExpensePage(
       expenseControllerFactory(
         category: category,
         paymentMethodId: paymentMethodId,
+        isMoney: isMoney,
+        onGoBack: onGoBack,
       ),
     );

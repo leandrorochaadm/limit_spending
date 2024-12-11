@@ -24,8 +24,10 @@ class PaymentDebitUseCase {
         value: -value,
       );
       return null;
+    } on AppException catch (e) {
+      return Failure(e.message);
     } catch (e) {
-      return Failure('Erro ao pagar dívida');
+      return Failure('Erro ao pagar dívida');
     }
   }
 }
