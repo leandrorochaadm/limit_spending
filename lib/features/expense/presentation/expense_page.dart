@@ -102,9 +102,48 @@ class ExpensePage extends StatelessWidget {
             return Dismissible(
               key: Key(expense.id),
               direction: DismissDirection.endToStart,
+              confirmDismiss: (direction) async {
+                if (direction == DismissDirection.endToStart) {
+                  return await showDialog<bool>(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text(
+                          'Deseja realmente excluir essa despesa?',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        content: Text(
+                          '${expense.description}\n\n${expense.value.toCurrency()}',
+                          textAlign: TextAlign.justify,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context, false);
+                            },
+                            child: const Text('Não'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context, true);
+                            },
+                            child: const Text('Sim'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
+                return Future.value(false);
+              },
               onDismissed: (direction) {
-                expenseController.deleteExpense(expense);
-                if (context.mounted) {}
+                if (direction == DismissDirection.endToStart) {
+                  expenseController.deleteExpense(expense);
+                }
               },
               background: Container(
                 color: Theme.of(context).colorScheme.error,
