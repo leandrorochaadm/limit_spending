@@ -77,8 +77,8 @@ class PaymentMethodPage extends StatelessWidget {
                   },
                   icon: Icon(
                     isValueGreaterThanZero
-                        ? Icons.circle_outlined
-                        : Icons.monetization_on,
+                        ? Icons.filter_list
+                        : Icons.filter_list_off,
                   ),
                 ),
               ],
