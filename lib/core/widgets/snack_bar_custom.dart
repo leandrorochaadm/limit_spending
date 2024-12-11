@@ -20,13 +20,14 @@ class SnackBarCustom {
       SnackBar(
         content: Text(
           message,
-          textAlign: TextAlign.center, // Centraliza o texto
-          overflow: TextOverflow.ellipsis, // Trunca o texto longo
-          maxLines: 1, // Limita o texto a duas linhas
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         duration: duration,
         backgroundColor: isError ? Colors.redAccent : Colors.green,
-        // behavior: SnackBarBehavior.floating, // Deixa a SnackBar flutuante
       ),
     );
   }

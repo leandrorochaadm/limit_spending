@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/core.dart';
+import '../../../core/widgets/snack_bar_custom.dart';
 import 'expense_controller.dart';
 import 'expense_state.dart';
 
@@ -15,6 +16,8 @@ class ExpensePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     expenseController.onShowMessage = (String message, bool isError) {
+      SnackBarCustom(context: context, message: message, isError: isError);
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -92,9 +95,8 @@ class ExpensePage extends StatelessWidget {
       final expenses = state.expenses;
       return Padding(
         padding: const EdgeInsets.only(bottom: 100.0),
-        child: ListView.separated(
+        child: ListView.builder(
           itemCount: expenses.length,
-          separatorBuilder: (_, __) => const Divider(),
           itemBuilder: (context, index) {
             final expense = expenses[index];
             return Dismissible(
@@ -112,11 +114,13 @@ class ExpensePage extends StatelessWidget {
               ),
               child: Card(
                 child: ListTile(
-                  title: Text(
-                    '${expense.description} | ${(expense.value).toCurrency()}',
-                  ),
+                  title: Text(expense.description),
                   subtitle: Text(
                     DateFormat('dd/MM HH:mm').format(expense.created),
+                  ),
+                  trailing: Text(
+                    (expense.value).toCurrency(),
+                    style: const TextStyle(fontSize: 18),
                   ),
                 ),
               ),
