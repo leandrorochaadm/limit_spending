@@ -32,7 +32,7 @@ class ThemeDataCustom {
     ),
     snackBarTheme: const SnackBarThemeData(
       backgroundColor: Colors.grey,
-      contentTextStyle: TextStyle(color: Colors.white),
+      contentTextStyle: TextStyle(color: Colors.white, fontSize: 14),
     ),
     pageTransitionsTheme: PageTransitionsTheme(
       builders: {
