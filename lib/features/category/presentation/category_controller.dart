@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../../../core/core.dart';
 import '../category.dart';
-import '../domain/usecases/get_sum_categories_usecase.dart';
 import 'category_state.dart';
 
 class CategoryController {
   final GetCategoriesUseCase getCategoriesUseCase;
   final CreateCategoryUseCase createCategoryUseCase;
   final UpdateCategoryUseCase updateCategoryUseCase;
-  final GetSumCategoriesUseCase getSumCategoriesUseCase;
   final ValueNotifier<CategoryState> state = ValueNotifier(CategoryState());
   CategoryEntity _categorySelected = CategoryEntity.empty();
 
@@ -28,10 +26,11 @@ class CategoryController {
     required this.getCategoriesUseCase,
     required this.createCategoryUseCase,
     required this.updateCategoryUseCase,
-    required this.getSumCategoriesUseCase,
   }) {
     load();
   }
+
+  void Function(String message, bool isError)? onMessage;
 
   Future<void> load() async {
     state.value = CategoryState(status: CategoryStatus.loading);
@@ -40,7 +39,7 @@ class CategoryController {
     if (errorMessage != null) {
       state.value = CategoryState(
         status: CategoryStatus.error,
-        messageToUser: errorMessage,
+        messageToUser: errorMessage.message,
       );
       return;
     }
@@ -87,13 +86,22 @@ class CategoryController {
 
   void createCategory(CategoryEntity category) async {
     state.value = CategoryState(status: CategoryStatus.loading);
-    await createCategoryUseCase(category);
+
+    final failure = await createCategoryUseCase(category);
+    if (failure != null) {
+      onMessage?.call(failure.message, true);
+      return;
+    }
     await load();
   }
 
   void updateCategory(CategoryEntity category) async {
     state.value = CategoryState(status: CategoryStatus.loading);
-    await updateCategoryUseCase(category);
+    final failure = await updateCategoryUseCase(category);
+    if (failure != null) {
+      onMessage?.call(failure.message, true);
+      return;
+    }
     await load();
   }
 

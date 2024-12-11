@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/core.dart';
+import '../../../core/widgets/snack_bar_custom.dart';
 import '../category.dart';
 import 'category_state.dart';
 
@@ -21,6 +22,10 @@ class CategoryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    categoryController.onMessage = (message, isError) {
+      SnackBarCustom(message: message, isError: isError, context: context);
+    };
+
     return ValueListenableBuilder(
       valueListenable: categoryController.state,
       builder: (context, state, __) {

@@ -1,5 +1,4 @@
 import '../../features/category/category.dart';
-import '../../features/category/domain/usecases/get_sum_categories_usecase.dart';
 import '../../features/expense/domain/usecases/get_expenses_by_created_usecase.dart';
 import '../core.dart';
 import 'firestore_factory.dart';
@@ -12,8 +11,6 @@ CreateCategoryUseCase makeCreateCategoryUseCase() =>
     CreateCategoryUseCase(categoryRepositoryFactory());
 UpdateCategoryUseCase makeUpdateCategoryUseCase() =>
     UpdateCategoryUseCase(categoryRepositoryFactory());
-GetSumCategoriesUseCase makeSumCategoryUseCase() =>
-    GetSumCategoriesUseCase(makeGetCategoriesUseCase());
 
 final GetExpensesByDateCreatedUseCase getExpensesByCreatedUseCase =
     makeGetExpensesByDateCreatedUseCase();
@@ -24,7 +21,6 @@ CategoryController categoryControllerFactory() {
     getCategoriesUseCase: makeGetCategoriesUseCase(),
     createCategoryUseCase: makeCreateCategoryUseCase(),
     updateCategoryUseCase: makeUpdateCategoryUseCase(),
-    getSumCategoriesUseCase: makeSumCategoryUseCase(),
   );
   return categoryController;
 }
