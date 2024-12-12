@@ -127,7 +127,9 @@ class PaymentMethodNotifier extends ValueNotifier<PaymentMethodState> {
         isMoney: isMoneySelected,
         isCard: !isMoneySelected,
         dayClose: int.tryParse(dayCloseEC.text) ?? 0,
-        value: valueEC.text.isEmpty ? 0 : double.parse(valueEC.text),
+        value: valueEC.text.isEmpty
+            ? 0
+            : double.parse(valueEC.text.toPointFormat()),
       );
       updatePaymentMethodUseCase(paymentMethod);
     } else {
@@ -137,7 +139,9 @@ class PaymentMethodNotifier extends ValueNotifier<PaymentMethodState> {
         isMoney: isMoneySelected,
         isCard: !isMoneySelected,
         dayClose: int.tryParse(dayCloseEC.text) ?? 0,
-        value: valueEC.text.isEmpty ? 0 : double.parse(valueEC.text),
+        value: valueEC.text.isEmpty
+            ? 0
+            : double.parse(valueEC.text.toPointFormat()),
       );
       createPaymentMethodUseCase(paymentMethod);
     }

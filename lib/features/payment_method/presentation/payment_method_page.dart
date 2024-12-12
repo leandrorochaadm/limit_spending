@@ -258,14 +258,8 @@ class PaymentMethodPage extends StatelessWidget {
                       controller: paymentMethodNotifier.valueEC,
                       focusNode: paymentMethodNotifier.valueFN,
                       hintText: 'Valor',
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        final day = double.tryParse(value!) ?? 0;
-                        if (day <= 0) {
-                          return 'Valor inválido';
-                        }
-                        return null;
-                      },
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
                     ),
                     const SizedBox(height: 24),
                     if (!paymentMethodNotifier.isMoneySelected)
@@ -275,14 +269,9 @@ class PaymentMethodPage extends StatelessWidget {
                             controller: paymentMethodNotifier.limitEC,
                             focusNode: paymentMethodNotifier.limitFN,
                             hintText: 'Limite do cartão',
-                            keyboardType: TextInputType.number,
-                            validator: (value) {
-                              final day = double.tryParse(value!) ?? 0;
-                              if (day <= 0) {
-                                return 'Limite inválido';
-                              }
-                              return null;
-                            },
+                            keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true,
+                            ),
                           ),
                           const SizedBox(height: 24),
                           TextFieldCustomWidget(

@@ -169,7 +169,8 @@ class CategoryPage extends StatelessWidget {
                     controller: categoryController.limitEC,
                     focusNode: categoryController.limitFN,
                     hintText: 'Limite mensal',
-                    keyboardType: TextInputType.number,
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton(

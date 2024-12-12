@@ -270,9 +270,8 @@ class DebtPage extends StatelessWidget {
                   controller: valueEC,
                   focusNode: valueFN,
                   hintText: 'Valor da dívida',
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
                 ),
                 const SizedBox(height: 24),
                 Row(
