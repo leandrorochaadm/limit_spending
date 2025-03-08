@@ -15,8 +15,7 @@ class PaymentMethodPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    paymentMethodNotifier.onNextCategoryPage =
-        (String paymentMethodId, bool isMoney) {
+    paymentMethodNotifier.onNextCategoryPage = (String paymentMethodId, bool isMoney) {
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -30,8 +29,7 @@ class PaymentMethodPage extends StatelessWidget {
       ).then((_) => paymentMethodNotifier.load());
     };
 
-    paymentMethodNotifier.onOpenModalPaymentDebt =
-        (PaymentMethodEntity paymentMethod) async {
+    paymentMethodNotifier.onOpenModalPaymentDebt = (PaymentMethodEntity paymentMethod) async {
       final double value = await modalPaymentDebt(context);
 
       return value;
@@ -64,51 +62,59 @@ class PaymentMethodPage extends StatelessWidget {
         valueListenable: paymentMethodNotifier,
         builder: (context, state, __) {
           return Scaffold(
-            appBar: AppBar(
-              title: const Text(
-                'Formas de pagamento',
-                textAlign: TextAlign.center,
-              ),
-              actions: [
-                IconButton(
-                  onPressed: () {
-                    isValueGreaterThanZero = !isValueGreaterThanZero;
-                    paymentMethodNotifier.load(isValueGreaterThanZero);
-                  },
-                  icon: Icon(
-                    isValueGreaterThanZero
-                        ? Icons.filter_list
-                        : Icons.filter_list_off,
-                  ),
-                ),
-              ],
-            ),
-            floatingActionButton: Padding(
-              padding: const EdgeInsets.only(left: 32),
-              child: FloatingActionButton(
-                onPressed: () {
-                  paymentMethodNotifier.clearForm();
-                  modalCreatePaymentMethod(context);
-                },
-                child: const Icon(Icons.add),
-              ),
-            ),
-            bottomSheet: Padding(
-              padding: const EdgeInsets.only(bottom: 36.0, top: 24),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Total dinheiro: ${state.moneySum}',
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
+            appBar: _appBar(context),
+            bottomSheet: _bottomSheet(state),
             body: buildBodyWidget(state),
           );
         },
       ),
+    );
+  }
+
+  Padding _bottomSheet(PaymentMethodState state) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 36.0, top: 24),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'Total dinheiro: ${state.moneySum}',
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  AppBar _appBar(BuildContext context) {
+    return AppBar(
+      title: const Text(
+        'Formas de pagamento',
+        textAlign: TextAlign.center,
+      ),
+      actions: [
+        PopupMenuButton<int>(
+          onSelected: (int value) {
+            switch (value) {
+              case 0:
+                isValueGreaterThanZero = !isValueGreaterThanZero;
+                paymentMethodNotifier.load(isValueGreaterThanZero);
+                break;
+              case 1:
+                paymentMethodNotifier.clearForm();
+                modalCreatePaymentMethod(context);
+                break;
+            }
+          },
+          itemBuilder: (context) => [
+            PopupMenuItem<int>(
+                value: 0,
+                child: Text(
+                    isValueGreaterThanZero ? 'Exibir todos os valores' : 'Exibir apenas valores maiores que zero')),
+            const PopupMenuItem<int>(value: 1, child: Text('Criar nova forma de pagamento')),
+          ],
+        ),
+      ],
     );
   }
 
@@ -163,12 +169,9 @@ class PaymentMethodPage extends StatelessWidget {
             ),
             child: Card(
               child: ListTile(
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 leading: Icon(
-                  paymentMethod.isMoney
-                      ? Icons.account_balance_wallet
-                      : Icons.credit_card,
+                  paymentMethod.isMoney ? Icons.account_balance_wallet : Icons.credit_card,
                   size: 32,
                 ),
                 title: Text(
@@ -215,8 +218,7 @@ class PaymentMethodPage extends StatelessWidget {
                       groupValue: paymentMethodNotifier.isMoneySelected,
                       onChanged: (value) {
                         setState(() {
-                          paymentMethodNotifier.isMoneySelected =
-                              value ?? false;
+                          paymentMethodNotifier.isMoneySelected = value ?? false;
                         });
                       },
                       title: const Text(
@@ -231,8 +233,7 @@ class PaymentMethodPage extends StatelessWidget {
                       groupValue: paymentMethodNotifier.isMoneySelected,
                       onChanged: (value) {
                         setState(() {
-                          paymentMethodNotifier.isMoneySelected =
-                              value ?? false;
+                          paymentMethodNotifier.isMoneySelected = value ?? false;
                         });
                       },
                       title: const Text(
@@ -258,8 +259,7 @@ class PaymentMethodPage extends StatelessWidget {
                       controller: paymentMethodNotifier.valueEC,
                       focusNode: paymentMethodNotifier.valueFN,
                       hintText: 'Valor',
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     ),
                     const SizedBox(height: 24),
                     if (!paymentMethodNotifier.isMoneySelected)
@@ -340,8 +340,7 @@ class PaymentMethodPage extends StatelessWidget {
               children: [
                 TextFieldCustomWidget(
                   controller: valueEC,
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
                   hintText: 'Valor a Pagar',
                   focusNode: valueFN,
                 ),
@@ -365,9 +364,8 @@ class PaymentMethodPage extends StatelessWidget {
                         onPressed: () {
                           if (!isPopping) {
                             isPopping = true;
-                            final double valuePaymentDebt = valueEC.text.isEmpty
-                                ? 0.0
-                                : double.parse(valueEC.text.toPointFormat());
+                            final double valuePaymentDebt =
+                                valueEC.text.isEmpty ? 0.0 : double.parse(valueEC.text.toPointFormat());
                             Navigator.of(contextModal).pop(valuePaymentDebt);
                           }
                         },
