@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../../core/constants/constants.dart';
 import '../../../../core/exceptions/app_exception_utils.dart';
 import '../../../../core/services/logger_services.dart';
 import '../../domain/entities/entities.dart';
@@ -14,10 +15,7 @@ class CategoryFirebaseRepository implements CategoryRepository {
   @override
   Future<void> createCategory(CategoryEntity category) async {
     try {
-      await firestore
-          .collection(collectionPath)
-          .doc(category.id)
-          .set(category.toModel().toJson());
+      await firestore.collection(collectionPath).doc(category.id).set(category.toModel().toJson());
     } on FirebaseException catch (e) {
       final exception = AppExceptionUtils.handleFirebaseError(e);
       LoggerService.error('deleteExpense', exception.message);
@@ -44,6 +42,7 @@ class CategoryFirebaseRepository implements CategoryRepository {
 
   @override
   Future<List<CategoryEntity>> getCategories() async {
+    await checkAndCreateDefaultCategory();
     try {
       final result = await firestore.collection(collectionPath).get().then(
         (QuerySnapshot<Map<String, dynamic>> snapshot) {
@@ -68,10 +67,7 @@ class CategoryFirebaseRepository implements CategoryRepository {
   @override
   Future<void> updateCategory(CategoryEntity category) async {
     try {
-      await firestore
-          .collection(collectionPath)
-          .doc(category.id)
-          .update(category.toModel().toJson());
+      await firestore.collection(collectionPath).doc(category.id).update(category.toModel().toJson());
     } on FirebaseException catch (e) {
       final exception = AppExceptionUtils.handleFirebaseError(e);
       LoggerService.error('deleteExpense', exception.message);
@@ -85,8 +81,7 @@ class CategoryFirebaseRepository implements CategoryRepository {
   @override
   Future<CategoryEntity> categoryById(String categoryId) async {
     try {
-      final doc =
-          await firestore.collection(collectionPath).doc(categoryId).get();
+      final doc = await firestore.collection(collectionPath).doc(categoryId).get();
       if (doc.exists) {
         return CategoryModel.fromJson(doc.data()!).toEntity();
       } else {
@@ -108,10 +103,7 @@ class CategoryFirebaseRepository implements CategoryRepository {
     double consumed,
   ) async {
     try {
-      await firestore
-          .collection(collectionPath)
-          .doc(categoryId)
-          .update({'consumed': consumed});
+      await firestore.collection(collectionPath).doc(categoryId).update({'consumed': consumed});
     } on FirebaseException catch (e) {
       final exception = AppExceptionUtils.handleFirebaseError(e);
       LoggerService.error('deleteExpense', exception.message);
@@ -125,10 +117,7 @@ class CategoryFirebaseRepository implements CategoryRepository {
   @override
   Future<void> addConsumedCategory(String categoryId, double consumed) async {
     try {
-      await firestore
-          .collection(collectionPath)
-          .doc(categoryId)
-          .update({'consumed': FieldValue.increment(consumed)});
+      await firestore.collection(collectionPath).doc(categoryId).update({'consumed': FieldValue.increment(consumed)});
     } on FirebaseException catch (e) {
       final exception = AppExceptionUtils.handleFirebaseError(e);
       LoggerService.error('deleteExpense', exception.message);
@@ -142,8 +131,7 @@ class CategoryFirebaseRepository implements CategoryRepository {
   @override
   Future<CategoryEntity> getCategoryStream(String categoryId) async {
     try {
-      final resutl =
-          await firestore.collection(collectionPath).doc(categoryId).get().then(
+      final resutl = await firestore.collection(collectionPath).doc(categoryId).get().then(
         (snapshot) {
           if (snapshot.exists) {
             final data = snapshot.data();
@@ -161,6 +149,38 @@ class CategoryFirebaseRepository implements CategoryRepository {
     } catch (e, s) {
       LoggerService.error('createExpense', e, s);
       rethrow;
+    }
+  }
+
+  Future<void> checkAndCreateDefaultCategory() async {
+    // supermarket
+    final CategoryEntity categorySupermarket = CategoryEntity(
+      id: categorySuperMarketConst,
+      name: categorySuperMarketConst,
+      created: DateTime.now(),
+      consumed: 0.0,
+      limitMonthly: 0.0,
+    );
+
+    try {
+      await categoryById(categorySupermarket.id);
+    } catch (e) {
+      await createCategory(categorySupermarket);
+    }
+
+    // Health
+    final CategoryEntity categoryHealth = CategoryEntity(
+      id: categoryHealthConst,
+      name: categoryHealthConst,
+      created: DateTime.now(),
+      consumed: 0.0,
+      limitMonthly: 0.0,
+    );
+
+    try {
+      await categoryById(categoryHealth.id);
+    } catch (e) {
+      await createCategory(categoryHealth);
     }
   }
 }

@@ -96,7 +96,7 @@ class ThemeDataCustom {
         ),
         overlayColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.pressed)) {
-            return Colors.teal.withOpacity(0.2); // Cor ao pressionar
+            return Colors.teal.withValues(alpha: 0.2); // Cor ao pressionar
           }
           return null;
         }),

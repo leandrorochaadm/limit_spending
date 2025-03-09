@@ -108,9 +108,10 @@ class PaymentMethodPage extends StatelessWidget {
           },
           itemBuilder: (context) => [
             PopupMenuItem<int>(
-                value: 0,
-                child: Text(
-                    isValueGreaterThanZero ? 'Exibir todos os valores' : 'Exibir apenas valores maiores que zero')),
+              value: 0,
+              child:
+                  Text(isValueGreaterThanZero ? 'Exibir todos os valores' : 'Exibir apenas valores maiores que zero'),
+            ),
             const PopupMenuItem<int>(value: 1, child: Text('Criar nova forma de pagamento')),
           ],
         ),
