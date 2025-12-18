@@ -1,3 +1,4 @@
+import '../../../../core/pagination/pagination.dart';
 import '../entities/category_entity.dart';
 
 abstract class CategoryRepository {
@@ -9,4 +10,8 @@ abstract class CategoryRepository {
   Future<List<CategoryEntity>> getCategories();
   Future<void> addConsumedCategory(String categoryId, double consumed);
   Future<CategoryEntity> getCategoryStream(String categoryId);
+
+  Future<PaginatedResult<CategoryEntity>> getCategoriesPaginated({
+    required PaginationParams paginationParams,
+  });
 }

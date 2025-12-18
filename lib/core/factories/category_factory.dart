@@ -7,6 +7,8 @@ CategoryFirebaseRepository categoryRepositoryFactory() =>
     CategoryFirebaseRepository(makeFirestoreFactory());
 GetCategoriesUseCase makeGetCategoriesUseCase() =>
     GetCategoriesUseCase(categoryRepositoryFactory());
+GetCategoriesPaginatedUseCase makeGetCategoriesPaginatedUseCase() =>
+    GetCategoriesPaginatedUseCase(categoryRepositoryFactory());
 CreateCategoryUseCase makeCreateCategoryUseCase() =>
     CreateCategoryUseCase(categoryRepositoryFactory());
 UpdateCategoryUseCase makeUpdateCategoryUseCase() =>
@@ -19,6 +21,7 @@ final getCategoryByIdUseCase = makeGetCategoryByIdUseCase();
 CategoryController categoryControllerFactory() {
   final categoryController = CategoryController(
     getCategoriesUseCase: makeGetCategoriesUseCase(),
+    getCategoriesPaginatedUseCase: makeGetCategoriesPaginatedUseCase(),
     createCategoryUseCase: makeCreateCategoryUseCase(),
     updateCategoryUseCase: makeUpdateCategoryUseCase(),
   );

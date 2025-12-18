@@ -15,6 +15,9 @@ ExpenseRepository makeExpenseRepository() => ExpenseFirebaseRepository(
 GetExpensesByDateCreatedUseCase makeGetExpensesByDateCreatedUseCase() =>
     GetExpensesByDateCreatedUseCase(makeExpenseRepository());
 
+GetExpensesPaginatedUseCase makeGetExpensesPaginatedUseCase() =>
+    GetExpensesPaginatedUseCase(makeExpenseRepository());
+
 GetCategoryByIdUseCase makeGetCategoryByIdUseCase() =>
     GetCategoryByIdUseCase(categoryRepositoryFactory());
 
@@ -57,7 +60,8 @@ ExpenseController expenseControllerFactory({
   final ExpenseController expenseController = ExpenseController(
     createTransactionUseCase: makeCreateTransactionUseCase(),
     deleteTransactionUseCase: makeDeleteTransactionUseCase(),
-    getExpensesByCreatedUseCase: getExpensesByCreatedUseCase,
+    getExpensesByCreatedUseCase: makeGetExpensesByDateCreatedUseCase(),
+    getExpensesPaginatedUseCase: makeGetExpensesPaginatedUseCase(),
     category: category,
     paymentMethodId: paymentMethodId,
     isMoney: isMoney,

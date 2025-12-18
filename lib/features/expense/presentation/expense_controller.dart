@@ -9,10 +9,14 @@ class ExpenseController {
   final CreateTransactionUseCase createTransactionUseCase;
   final DeleteTransactionUseCase deleteTransactionUseCase;
   final GetExpensesByDateCreatedUseCase getExpensesByCreatedUseCase;
+  final GetExpensesPaginatedUseCase getExpensesPaginatedUseCase;
   final CategoryEntity category;
   final String paymentMethodId;
   final bool isMoney;
   final Function? onGoBack;
+
+  static const int _pageSize = 10;
+
   ValueNotifier<ExpenseState> state = ValueNotifier<ExpenseState>(
     const ExpenseState(status: ExpenseStatus.initial),
   );
@@ -29,6 +33,7 @@ class ExpenseController {
     required this.createTransactionUseCase,
     required this.deleteTransactionUseCase,
     required this.getExpensesByCreatedUseCase,
+    required this.getExpensesPaginatedUseCase,
     required this.category,
     required this.paymentMethodId,
     required this.isMoney,
@@ -41,30 +46,105 @@ class ExpenseController {
   void Function(Function? onGoBack)? onGoBackFunction;
 
   Future<void> load() async {
-    state.value = state.value.copyWith(status: ExpenseStatus.loading);
+    state.value = state.value.copyWith(
+      status: ExpenseStatus.loading,
+      clearLastDocument: true,
+    );
+
     try {
-      final (failure, expenses) = await getExpensesByCreatedUseCase(
+      // Load first page
+      final (failure, result) = await getExpensesPaginatedUseCase(
+        categoryId: category.id,
+        days: daysFilter,
+        paginationParams: PaginationParams.firstPage(pageSize: _pageSize),
+      );
+
+      if (failure != null) {
+        state.value = state.value.copyWith(
+          status: ExpenseStatus.error,
+          errorMessage: failure.message,
+        );
+        onShowMessage?.call(failure.message, true);
+        return;
+      }
+
+      // Calculate sum using non-paginated query to get accurate total
+      final (_, allExpenses) = await getExpensesByCreatedUseCase(
         categoryId: category.id,
         days: daysFilter,
       );
 
-      final expensesSum = expenses.fold<double>(
+      final expensesSum = allExpenses.fold<double>(
         0,
         (previousValue, expense) => previousValue + expense.value,
       );
+
       final balance = category.limitMonthly - expensesSum;
 
       state.value = ExpenseState(
         status: ExpenseStatus.success,
-        expenses: expenses,
+        expenses: result.items,
         consumedSum: expensesSum.toCurrency(),
         limitCategory: category.limitMonthly.toCurrency(),
         balance: balance.toCurrency(),
+        hasMore: result.hasMore,
+        lastDocument: result.lastDocument,
+        isLoadingMore: false,
       );
 
       clearForm();
     } catch (e) {
+      state.value = state.value.copyWith(
+        status: ExpenseStatus.error,
+        errorMessage: 'Erro ao obter despesas',
+      );
       onShowMessage?.call('Erro ao obter despesas', true);
+    }
+  }
+
+  Future<void> loadMore() async {
+    if (!state.value.canLoadMore) return;
+    if (state.value.lastDocument == null) return;
+
+    state.value = state.value.copyWith(
+      isLoadingMore: true,
+      status: ExpenseStatus.loadingMore,
+    );
+
+    try {
+      final (failure, result) = await getExpensesPaginatedUseCase(
+        categoryId: category.id,
+        days: daysFilter,
+        paginationParams: PaginationParams.nextPage(
+          lastDocument: state.value.lastDocument!,
+          pageSize: _pageSize,
+        ),
+      );
+
+      if (failure != null) {
+        state.value = state.value.copyWith(
+          status: ExpenseStatus.success,
+          isLoadingMore: false,
+        );
+        onShowMessage?.call(failure.message, true);
+        return;
+      }
+
+      final allExpenses = [...state.value.expenses, ...result.items];
+
+      state.value = state.value.copyWith(
+        status: ExpenseStatus.success,
+        expenses: allExpenses,
+        hasMore: result.hasMore,
+        lastDocument: result.lastDocument,
+        isLoadingMore: false,
+      );
+    } catch (e) {
+      state.value = state.value.copyWith(
+        status: ExpenseStatus.success,
+        isLoadingMore: false,
+      );
+      onShowMessage?.call('Erro ao carregar mais despesas', true);
     }
   }
 

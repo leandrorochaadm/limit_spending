@@ -85,10 +85,30 @@ class DebtPage extends StatelessWidget {
     final debts = state.debts;
     return Padding(
       padding: const EdgeInsets.only(bottom: 120.0),
-      child: ListView.builder(
-        itemCount: debts.length,
-        itemBuilder: (context, index) {
-          final debt = debts[index];
+      child: NotificationListener<ScrollNotification>(
+        onNotification: (ScrollNotification scrollInfo) {
+          if (scrollInfo.metrics.pixels >=
+              scrollInfo.metrics.maxScrollExtent - 200) {
+            debtController.loadMore();
+          }
+          return false;
+        },
+        child: ListView.builder(
+          itemCount: debts.length + (state.hasMore ? 1 : 0),
+          itemBuilder: (context, index) {
+            // Show loading indicator at the end
+            if (index == debts.length) {
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Center(
+                  child: state.isLoadingMore
+                      ? const CircularProgressIndicator()
+                      : const SizedBox.shrink(),
+                ),
+              );
+            }
+
+            final debt = debts[index];
 
           return Dismissible(
             key: Key(debt.id),
@@ -225,8 +245,9 @@ class DebtPage extends StatelessWidget {
                 },
               ),
             ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

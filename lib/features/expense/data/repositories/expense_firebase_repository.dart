@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../../core/exceptions/exceptions.dart';
+import '../../../../core/pagination/pagination.dart';
 import '../../../../core/services/logger_services.dart';
 import '../../../category/category.dart';
 import '../../domain/domain.dart';
@@ -158,6 +159,76 @@ class ExpenseFirebaseRepository implements ExpenseRepository {
       throw exception;
     } catch (e, s) {
       LoggerService.error('incrementValuePaymentMethod', e, s);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<PaginatedResult<ExpenseEntity>> getExpensesPaginated({
+    required String categoryId,
+    DateTime? startDate,
+    DateTime? endDate,
+    required PaginationParams paginationParams,
+  }) async {
+    try {
+      // Build base query with ordering (REQUIRED for cursor pagination)
+      Query<Map<String, dynamic>> query = firestore
+          .collection(collectionPath)
+          .where('categoryId', isEqualTo: categoryId)
+          .orderBy('created', descending: true);
+
+      // Apply date filters
+      if (startDate != null) {
+        query = query.where(
+          'created',
+          isGreaterThanOrEqualTo: Timestamp.fromDate(startDate),
+        );
+      }
+      if (endDate != null) {
+        query = query.where(
+          'created',
+          isLessThanOrEqualTo: Timestamp.fromDate(endDate),
+        );
+      }
+
+      // Apply cursor pagination
+      if (paginationParams.startAfterDocument != null) {
+        query = query.startAfterDocument(paginationParams.startAfterDocument!);
+      }
+
+      // Apply limit (fetch one extra to check if there are more)
+      query = query.limit(paginationParams.pageSize + 1);
+
+      // Execute query
+      final snapshot = await query.get();
+      final docs = snapshot.docs;
+
+      // Check if there are more results
+      final hasMore = docs.length > paginationParams.pageSize;
+
+      // Get actual items (remove extra if present)
+      final actualDocs =
+          hasMore ? docs.sublist(0, paginationParams.pageSize) : docs;
+
+      // Map to entities
+      final items = actualDocs
+          .map((doc) => ExpenseModel.fromJson(doc.data()).toEntity())
+          .toList();
+
+      // Get last document for cursor
+      final lastDocument = actualDocs.isNotEmpty ? actualDocs.last : null;
+
+      return PaginatedResult<ExpenseEntity>(
+        items: items,
+        lastDocument: lastDocument,
+        hasMore: hasMore,
+      );
+    } on FirebaseException catch (e) {
+      final exception = AppExceptionUtils.handleFirebaseError(e);
+      LoggerService.error('getExpensesPaginated', exception.message);
+      throw exception;
+    } catch (e, s) {
+      LoggerService.error('getExpensesPaginated', e, s);
       rethrow;
     }
   }

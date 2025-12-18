@@ -1,3 +1,4 @@
+import '../../../core/pagination/pagination.dart';
 import 'entities/debt_entity.dart';
 
 abstract class DebtRepository {
@@ -7,4 +8,8 @@ abstract class DebtRepository {
   Future<double> getSumDebts();
   Future<void> deleteDebt(String debtId);
   Future<void> updateDebt(DebtEntity debt);
+
+  Future<PaginatedResult<DebtEntity>> getDebtsPaginated({
+    required PaginationParams paginationParams,
+  });
 }

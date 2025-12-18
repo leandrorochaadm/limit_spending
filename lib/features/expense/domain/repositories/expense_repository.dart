@@ -1,3 +1,4 @@
+import '../../../../core/pagination/pagination.dart';
 import '../../data/data.dart';
 import '../domain.dart';
 
@@ -16,5 +17,12 @@ abstract class ExpenseRepository {
     required String categoryId,
     DateTime? startDate,
     DateTime? endDate,
+  });
+
+  Future<PaginatedResult<ExpenseEntity>> getExpensesPaginated({
+    required String categoryId,
+    DateTime? startDate,
+    DateTime? endDate,
+    required PaginationParams paginationParams,
   });
 }

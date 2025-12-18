@@ -91,80 +91,102 @@ class ExpensePage extends StatelessWidget {
       return const Center(child: Text('Nenhuma despesa encontrada'));
     }
 
-    if (state.status == ExpenseStatus.success) {
+    if (state.status == ExpenseStatus.success ||
+        state.status == ExpenseStatus.loadingMore) {
       final expenses = state.expenses;
       return Padding(
         padding: const EdgeInsets.only(bottom: 100.0),
-        child: ListView.builder(
-          itemCount: expenses.length,
-          itemBuilder: (context, index) {
-            final expense = expenses[index];
-            return Dismissible(
-              key: Key(expense.id),
-              direction: DismissDirection.endToStart,
-              confirmDismiss: (direction) async {
-                if (direction == DismissDirection.endToStart) {
-                  return await showDialog<bool>(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text(
-                          'Deseja realmente excluir essa despesa?',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        content: Text(
-                          '${expense.description}\n\n${expense.value.toCurrency()}',
-                          textAlign: TextAlign.justify,
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context, false);
-                            },
-                            child: const Text('Não'),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context, true);
-                            },
-                            child: const Text('Sim'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                }
-                return Future.value(false);
-              },
-              onDismissed: (direction) {
-                if (direction == DismissDirection.endToStart) {
-                  expenseController.deleteExpense(expense);
-                }
-              },
-              background: Container(
-                color: Theme.of(context).colorScheme.error,
-                alignment: Alignment.centerRight,
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: const Icon(Icons.delete, color: Colors.white),
-              ),
-              child: Card(
-                child: ListTile(
-                  title: Text(expense.description),
-                  subtitle: Text(
-                    DateFormat('dd/MM HH:mm').format(expense.created),
+        child: NotificationListener<ScrollNotification>(
+          onNotification: (ScrollNotification scrollInfo) {
+            if (scrollInfo.metrics.pixels >=
+                scrollInfo.metrics.maxScrollExtent - 200) {
+              expenseController.loadMore();
+            }
+            return false;
+          },
+          child: ListView.builder(
+            itemCount: expenses.length + (state.hasMore ? 1 : 0),
+            itemBuilder: (context, index) {
+              // Show loading indicator at the end
+              if (index == expenses.length) {
+                return Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Center(
+                    child: state.isLoadingMore
+                        ? const CircularProgressIndicator()
+                        : const SizedBox.shrink(),
                   ),
-                  trailing: Text(
-                    (expense.value).toCurrency(),
-                    style: const TextStyle(fontSize: 18),
+                );
+              }
+
+              final expense = expenses[index];
+              return Dismissible(
+                key: Key(expense.id),
+                direction: DismissDirection.endToStart,
+                confirmDismiss: (direction) async {
+                  if (direction == DismissDirection.endToStart) {
+                    return await showDialog<bool>(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text(
+                            'Deseja realmente excluir essa despesa?',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          content: Text(
+                            '${expense.description}\n\n${expense.value.toCurrency()}',
+                            textAlign: TextAlign.justify,
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context, false);
+                              },
+                              child: const Text('Não'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context, true);
+                              },
+                              child: const Text('Sim'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                  return Future.value(false);
+                },
+                onDismissed: (direction) {
+                  if (direction == DismissDirection.endToStart) {
+                    expenseController.deleteExpense(expense);
+                  }
+                },
+                background: Container(
+                  color: Theme.of(context).colorScheme.error,
+                  alignment: Alignment.centerRight,
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: const Icon(Icons.delete, color: Colors.white),
+                ),
+                child: Card(
+                  child: ListTile(
+                    title: Text(expense.description),
+                    subtitle: Text(
+                      DateFormat('dd/MM HH:mm').format(expense.created),
+                    ),
+                    trailing: Text(
+                      (expense.value).toCurrency(),
+                      style: const TextStyle(fontSize: 18),
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       );
     }

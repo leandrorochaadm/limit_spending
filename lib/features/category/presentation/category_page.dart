@@ -75,11 +75,31 @@ class CategoryPage extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 100.0),
-      child: ListView.builder(
-        itemCount: categories.length,
-        itemBuilder: (context, index) {
-          final category = categories[index];
-          return Dismissible(
+      child: NotificationListener<ScrollNotification>(
+        onNotification: (ScrollNotification scrollInfo) {
+          if (scrollInfo.metrics.pixels >=
+              scrollInfo.metrics.maxScrollExtent - 200) {
+            categoryController.loadMore();
+          }
+          return false;
+        },
+        child: ListView.builder(
+          itemCount: categories.length + (state.hasMore ? 1 : 0),
+          itemBuilder: (context, index) {
+            // Show loading indicator at the end
+            if (index == categories.length) {
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Center(
+                  child: state.isLoadingMore
+                      ? const CircularProgressIndicator()
+                      : const SizedBox.shrink(),
+                ),
+              );
+            }
+
+            final category = categories[index];
+            return Dismissible(
             key: Key(category.id),
             direction: DismissDirection.startToEnd,
             onUpdate: (details) {
@@ -134,8 +154,9 @@ class CategoryPage extends StatelessWidget {
                 },
               ),
             ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
