@@ -21,8 +21,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.dark,
       theme: ThemeDataCustom.darkTheme,
-      // home: makeDebtPage(),
-      home: supermarketPageFactory(),
+      home: makeDebtPage(),
+      // home: supermarketPageFactory(),
     );
   }
 }

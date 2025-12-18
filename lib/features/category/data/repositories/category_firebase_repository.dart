@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../../../core/constants/constants.dart';
 import '../../../../core/exceptions/app_exception_utils.dart';
 import '../../../../core/services/logger_services.dart';
 import '../../domain/entities/entities.dart';
@@ -42,7 +41,6 @@ class CategoryFirebaseRepository implements CategoryRepository {
 
   @override
   Future<List<CategoryEntity>> getCategories() async {
-    await checkAndCreateDefaultCategory();
     try {
       final result = await firestore.collection(collectionPath).get().then(
         (QuerySnapshot<Map<String, dynamic>> snapshot) {
@@ -149,38 +147,6 @@ class CategoryFirebaseRepository implements CategoryRepository {
     } catch (e, s) {
       LoggerService.error('createExpense', e, s);
       rethrow;
-    }
-  }
-
-  Future<void> checkAndCreateDefaultCategory() async {
-    // supermarket
-    final CategoryEntity categorySupermarket = CategoryEntity(
-      id: categorySuperMarketConst,
-      name: categorySuperMarketConst,
-      created: DateTime.now(),
-      consumed: 0.0,
-      limitMonthly: 0.0,
-    );
-
-    try {
-      await categoryById(categorySupermarket.id);
-    } catch (e) {
-      await createCategory(categorySupermarket);
-    }
-
-    // Health
-    final CategoryEntity categoryHealth = CategoryEntity(
-      id: categoryHealthConst,
-      name: categoryHealthConst,
-      created: DateTime.now(),
-      consumed: 0.0,
-      limitMonthly: 0.0,
-    );
-
-    try {
-      await categoryById(categoryHealth.id);
-    } catch (e) {
-      await createCategory(categoryHealth);
     }
   }
 }

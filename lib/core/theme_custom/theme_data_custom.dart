@@ -119,7 +119,7 @@ class ThemeDataCustom {
         fontSize: 18,
       ),
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: Colors.grey.shade900,
       elevation: 10,
       shape: RoundedRectangleBorder(
@@ -127,6 +127,6 @@ class ThemeDataCustom {
       ),
       margin: const EdgeInsets.symmetric(vertical: 8),
     ),
-    dialogTheme: DialogTheme(backgroundColor: Colors.grey.shade900),
+    dialogTheme: DialogThemeData(backgroundColor: Colors.grey.shade900),
   );
 }
