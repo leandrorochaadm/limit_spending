@@ -54,3 +54,5 @@ ios/Runner/GoogleService-Info.plist
 ios/Runner/Firebase/dev/GoogleService-Info.plist
 ios/Runner/Firebase/prod/GoogleService-Info.plist
 
+# FVM Version Cache
+.fvm/
