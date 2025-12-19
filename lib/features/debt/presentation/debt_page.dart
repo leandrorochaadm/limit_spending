@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/core.dart';
-import '../../../core/widgets/snack_bar_custom.dart';
 import '../../payment_method/presentation/payment_method_page.dart';
 import '../debit.dart';
 import 'debt_state.dart';
@@ -26,32 +25,28 @@ class DebtPage extends StatelessWidget {
       builder: (context, state, __) {
         return Scaffold(
           appBar: AppBar(title: const Text('Dividas'), elevation: 7),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              modalCreateDebt(context);
-            },
-            child: const Icon(Icons.add),
+          floatingActionButton: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              FloatingActionButton(
+                heroTag: 'quick_expense',
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => makeQuickExpensePage(),
+                    ),
+                  ).then((_) => debtController.load());
+                },
+                child: const Icon(Icons.add_shopping_cart),
+              ),
+            ],
           ),
           bottomSheet: Padding(
             padding: const EdgeInsets.only(bottom: 36.0, top: 16),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PaymentMethodPage(
-                          paymentMethodNotifierFactory(),
-                          onGoBack: debtController.load,
-                        ),
-                      ),
-                    );
-                  },
-                  child: const Text('Quero gastar'),
-                ),
-                const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -87,8 +82,7 @@ class DebtPage extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 120.0),
       child: NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollInfo) {
-          if (scrollInfo.metrics.pixels >=
-              scrollInfo.metrics.maxScrollExtent - 200) {
+          if (scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent - 200) {
             debtController.loadMore();
           }
           return false;
@@ -101,150 +95,143 @@ class DebtPage extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Center(
-                  child: state.isLoadingMore
-                      ? const CircularProgressIndicator()
-                      : const SizedBox.shrink(),
+                  child: state.isLoadingMore ? const CircularProgressIndicator() : const SizedBox.shrink(),
                 ),
               );
             }
 
             final debt = debts[index];
 
-          return Dismissible(
-            key: Key(debt.id),
-            direction: debt.isCardCredit
-                ? DismissDirection.none
-                : DismissDirection.horizontal,
-            confirmDismiss: (direction) async {
-              Future<bool?>? resultDismiss;
-              if (direction == DismissDirection.endToStart) {
-                if (debt.isCardCredit) {
-                  resultDismiss = showDialog<bool>(
-                    context: context,
-                    barrierDismissible: false,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text('Aviso'),
-                        content: const Text(
-                          'Cartão de crédito não pode ser excluido, pague a divida do cartão que ela será excluida automaticamente',
-                          textAlign: TextAlign.justify,
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop(false);
-                            },
-                            child: const Text('Ok'),
+            return Dismissible(
+              key: Key(debt.id),
+              direction: debt.isCardCredit ? DismissDirection.none : DismissDirection.horizontal,
+              confirmDismiss: (direction) async {
+                Future<bool?>? resultDismiss;
+                if (direction == DismissDirection.endToStart) {
+                  if (debt.isCardCredit) {
+                    resultDismiss = showDialog<bool>(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text('Aviso'),
+                          content: const Text(
+                            'Cartão de crédito não pode ser excluido, pague a divida do cartão que ela será excluida automaticamente',
+                            textAlign: TextAlign.justify,
                           ),
-                        ],
-                      );
-                    },
-                  );
-                } else {
-                  resultDismiss = showDialog<bool>(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text('Excluir divida'),
-                        content:
-                            const Text('Deseja realmente excluir esta divida?'),
-                        actions: [
-                          TextButton(
-                            child: const Text('Cancelar'),
-                            onPressed: () {
-                              Navigator.of(context).pop(false);
-                            },
-                          ),
-                          TextButton(
-                            child: const Text('Excluir'),
-                            onPressed: () {
-                              Navigator.of(context).pop(true);
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  );
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(false);
+                              },
+                              child: const Text('Ok'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  } else {
+                    resultDismiss = showDialog<bool>(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text('Excluir divida'),
+                          content: const Text('Deseja realmente excluir esta divida?'),
+                          actions: [
+                            TextButton(
+                              child: const Text('Cancelar'),
+                              onPressed: () {
+                                Navigator.of(context).pop(false);
+                              },
+                            ),
+                            TextButton(
+                              child: const Text('Excluir'),
+                              onPressed: () {
+                                Navigator.of(context).pop(true);
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
                 }
-              }
 
-              if (direction == DismissDirection.startToEnd) {
-                resultDismiss = modalCreateDebt(context, debt: debt);
-              }
-              return resultDismiss;
-            },
-            onDismissed: (direction) {
-              if (direction == DismissDirection.endToStart) {
-                debtController.deleteDebt(debt.id);
-              }
-            },
-            background: Container(
-              color: Theme.of(context).colorScheme.inversePrimary,
-              alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Icon(
-                Icons.edit,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ),
-            secondaryBackground: Container(
-              color: Theme.of(context).colorScheme.error,
-              alignment: Alignment.centerRight,
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Icon(
-                Icons.delete,
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
-            ),
-            child: Card(
-              child: ListTile(
-                title: Text(debt.name),
-                subtitle: Text(debt.value.toCurrency()),
-                leading: Icon(
-                  debt.isCardCredit
-                      ? Icons.credit_card
-                      : Icons.monetization_on_rounded,
-                  size: 32,
+                if (direction == DismissDirection.startToEnd) {
+                  resultDismiss = modalCreateDebt(context, debt: debt);
+                }
+                return resultDismiss;
+              },
+              onDismissed: (direction) {
+                if (direction == DismissDirection.endToStart) {
+                  debtController.deleteDebt(debt.id);
+                }
+              },
+              background: Container(
+                color: Theme.of(context).colorScheme.inversePrimary,
+                alignment: Alignment.centerLeft,
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Icon(
+                  Icons.edit,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
-                onTap: () {
-                  showDialog<void>(
-                    context: context,
-                    barrierDismissible: false,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text('Deseja pagar pagar divida?'),
-                        content: const Text(
-                          'Escolha a forma de pagamento',
-                        ),
-                        actions: [
-                          TextButton(
-                            child: const Text('Não'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                          TextButton(
-                            child: const Text('Sim'),
-                            onPressed: () {
-                              Navigator.pop(context);
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PaymentMethodPage(
-                                    paymentMethodNotifierFactory(debt.id),
-                                    onGoBack: debtController.load,
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
               ),
-            ),
+              secondaryBackground: Container(
+                color: Theme.of(context).colorScheme.error,
+                alignment: Alignment.centerRight,
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Icon(
+                  Icons.delete,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+              ),
+              child: Card(
+                child: ListTile(
+                  title: Text(debt.name),
+                  subtitle: Text(debt.value.toCurrency()),
+                  leading: Icon(
+                    debt.isCardCredit ? Icons.credit_card : Icons.monetization_on_rounded,
+                    size: 32,
+                  ),
+                  onTap: () {
+                    showDialog<void>(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text('Deseja pagar pagar divida?'),
+                          content: const Text(
+                            'Escolha a forma de pagamento',
+                          ),
+                          actions: [
+                            TextButton(
+                              child: const Text('Não'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                            TextButton(
+                              child: const Text('Sim'),
+                              onPressed: () {
+                                Navigator.pop(context);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PaymentMethodPage(
+                                      paymentMethodNotifierFactory(debt.id),
+                                      onGoBack: debtController.load,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
             );
           },
         ),
@@ -254,12 +241,10 @@ class DebtPage extends StatelessWidget {
 
   Future<bool?> modalCreateDebt(BuildContext context, {DebtEntity? debt}) {
     final bool isEdit = debt != null;
-    final TextEditingController nameEC =
-        TextEditingController(text: debt?.name);
+    final TextEditingController nameEC = TextEditingController(text: debt?.name);
     final FocusNode nameFN = FocusNode();
 
-    final TextEditingController valueEC =
-        TextEditingController(text: debt?.value.toStringAsFixed(2));
+    final TextEditingController valueEC = TextEditingController(text: debt?.value.toStringAsFixed(2));
     final FocusNode valueFN = FocusNode();
 
     return showModalBottomSheet<bool>(
@@ -291,8 +276,7 @@ class DebtPage extends StatelessWidget {
                   controller: valueEC,
                   focusNode: valueFN,
                   hintText: 'Valor da dívida',
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 ),
                 const SizedBox(height: 24),
                 Row(
@@ -309,8 +293,7 @@ class DebtPage extends StatelessWidget {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () async {
-                          final valueDouble =
-                              double.parse(valueEC.text.toPointFormat());
+                          final valueDouble = double.parse(valueEC.text.toPointFormat());
                           if (isEdit) {
                             await debtController.updateDebt(
                               debt.copyWith(
