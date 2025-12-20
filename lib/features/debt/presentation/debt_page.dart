@@ -39,6 +39,15 @@ class DebtPage extends StatelessWidget {
                         builder: (context) => makeCategoryPage(),
                       ),
                     ).then((_) => debtController.load());
+                  } else if (value == 'payment_methods') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => makePaymentMethodPage(),
+                      ),
+                    ).then((_) => debtController.load());
+                  } else if (value == 'create_debt') {
+                    modalCreateDebt(context).then((_) => debtController.load());
                   }
                 },
                 itemBuilder: (BuildContext context) => [
@@ -49,6 +58,26 @@ class DebtPage extends StatelessWidget {
                         Icon(Icons.category),
                         SizedBox(width: 12),
                         Text('Gerenciar Categorias'),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuItem<String>(
+                    value: 'payment_methods',
+                    child: Row(
+                      children: [
+                        Icon(Icons.payment),
+                        SizedBox(width: 12),
+                        Text('Gerenciar Meios de Pagamento'),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuItem<String>(
+                    value: 'create_debt',
+                    child: Row(
+                      children: [
+                        Icon(Icons.add),
+                        SizedBox(width: 12),
+                        Text('Criar nova dívida'),
                       ],
                     ),
                   ),
@@ -71,6 +100,7 @@ class DebtPage extends StatelessWidget {
                 },
                 child: const Icon(Icons.add_shopping_cart),
               ),
+              const SizedBox(height: 16),
             ],
           ),
           bottomSheet: Padding(
