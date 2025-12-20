@@ -1,6 +1,7 @@
 import '../../features/category/category.dart';
 import '../../features/expense/domain/usecases/get_expenses_by_created_usecase.dart';
 import '../core.dart';
+import 'expense_factory.dart';
 import 'firestore_factory.dart';
 
 CategoryFirebaseRepository categoryRepositoryFactory() =>
@@ -13,6 +14,10 @@ CreateCategoryUseCase makeCreateCategoryUseCase() =>
     CreateCategoryUseCase(categoryRepositoryFactory());
 UpdateCategoryUseCase makeUpdateCategoryUseCase() =>
     UpdateCategoryUseCase(categoryRepositoryFactory());
+DeleteCategoryUseCase makeDeleteCategoryUseCase() => DeleteCategoryUseCase(
+      categoryRepositoryFactory(),
+      makeExpenseRepository(),
+    );
 
 final GetExpensesByDateCreatedUseCase getExpensesByCreatedUseCase =
     makeGetExpensesByDateCreatedUseCase();
@@ -24,13 +29,14 @@ CategoryController categoryControllerFactory() {
     getCategoriesPaginatedUseCase: makeGetCategoriesPaginatedUseCase(),
     createCategoryUseCase: makeCreateCategoryUseCase(),
     updateCategoryUseCase: makeUpdateCategoryUseCase(),
+    deleteCategoryUseCase: makeDeleteCategoryUseCase(),
   );
   return categoryController;
 }
 
 CategoryPage makeCategoryPage({
-  required String paymentMethodId,
-  required bool isMoney,
+  String? paymentMethodId,
+  bool? isMoney,
 }) =>
     CategoryPage(
       categoryController: categoryControllerFactory(),

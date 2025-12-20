@@ -25,4 +25,6 @@ abstract class ExpenseRepository {
     DateTime? endDate,
     required PaginationParams paginationParams,
   });
+
+  Future<void> deleteExpensesByCategory(String categoryId);
 }

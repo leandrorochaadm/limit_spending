@@ -9,6 +9,7 @@ class CategoryController {
   final GetCategoriesPaginatedUseCase getCategoriesPaginatedUseCase;
   final CreateCategoryUseCase createCategoryUseCase;
   final UpdateCategoryUseCase updateCategoryUseCase;
+  final DeleteCategoryUseCase deleteCategoryUseCase;
 
   static const int _pageSize = 10;
 
@@ -32,6 +33,7 @@ class CategoryController {
     required this.getCategoriesPaginatedUseCase,
     required this.createCategoryUseCase,
     required this.updateCategoryUseCase,
+    required this.deleteCategoryUseCase,
   }) {
     load();
   }
@@ -179,5 +181,20 @@ class CategoryController {
       );
       createCategory(category);
     }
+  }
+
+  Future<void> deleteCategory(String categoryId) async {
+    state.value = state.value.copyWith(status: CategoryStatus.loading);
+
+    final failure = await deleteCategoryUseCase(categoryId);
+
+    if (failure != null) {
+      state.value = state.value.copyWith(status: CategoryStatus.success);
+      onMessage?.call(failure.message, true);
+      return;
+    }
+
+    await load();
+    onMessage?.call('Categoria excluída com sucesso', false);
   }
 }

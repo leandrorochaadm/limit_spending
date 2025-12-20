@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/core.dart';
-import '../../../core/widgets/snack_bar_custom.dart';
 import '../category.dart';
 import 'category_state.dart';
 
@@ -10,12 +9,12 @@ class CategoryPage extends StatelessWidget {
   CategoryPage({
     super.key,
     required this.categoryController,
-    required this.paymentMethodId,
-    required this.isMoney,
+    this.paymentMethodId,
+    this.isMoney,
   });
 
-  final String paymentMethodId;
-  final bool isMoney;
+  final String? paymentMethodId;
+  final bool? isMoney;
 
   final CategoryController categoryController;
   bool actionExecuted = false; // Flag para controlar a execução
@@ -101,16 +100,55 @@ class CategoryPage extends StatelessWidget {
             final category = categories[index];
             return Dismissible(
             key: Key(category.id),
-            direction: DismissDirection.startToEnd,
+            direction: DismissDirection.horizontal,
             onUpdate: (details) {
-              if (!actionExecuted && details.progress > 0.5) {
-                actionExecuted = true; // Marca a ação como executada
+              if (!actionExecuted &&
+                  details.direction == DismissDirection.startToEnd &&
+                  details.progress > 0.5) {
+                actionExecuted = true;
                 categoryController.categorySelected = category;
                 modalCreateCategory(context);
               }
             },
             confirmDismiss: (direction) async {
-              return false; // Retorne false para não descartar o item
+              if (direction == DismissDirection.endToStart) {
+                return await showDialog<bool>(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text(
+                        'Deseja realmente excluir esta categoria?',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      content: Text(
+                        '${category.name}\n\n'
+                        'Todas as despesas desta categoria também serão excluídas.',
+                        textAlign: TextAlign.justify,
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          child: const Text('Não'),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, true),
+                          child: const Text('Sim'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
+              return false;
+            },
+            onDismissed: (direction) {
+              if (direction == DismissDirection.endToStart) {
+                categoryController.deleteCategory(category.id);
+              }
             },
             background: Container(
               color: Theme.of(context).colorScheme.inversePrimary,
@@ -136,22 +174,26 @@ class CategoryPage extends StatelessWidget {
                 subtitle: Text(
                   'Disponível: ${category.balance.toCurrency()} \nConsumido nos $daysFilter dias: ${category.consumed.toCurrency()} \nLimite mensal: ${category.limitMonthly.toCurrency()}',
                 ),
-                trailing: const Icon(Icons.arrow_forward_ios),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return makeExpensePage(
-                          category: category,
-                          paymentMethodId: paymentMethodId,
-                          isMoney: isMoney,
-                          onGoBack: categoryController.load,
+                trailing: paymentMethodId != null
+                    ? const Icon(Icons.arrow_forward_ios)
+                    : null,
+                onTap: paymentMethodId != null && isMoney != null
+                    ? () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return makeExpensePage(
+                                category: category,
+                                paymentMethodId: paymentMethodId!,
+                                isMoney: isMoney!,
+                                onGoBack: categoryController.load,
+                              );
+                            },
+                          ),
                         );
-                      },
-                    ),
-                  );
-                },
+                      }
+                    : null,
               ),
             ),
             );

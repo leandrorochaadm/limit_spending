@@ -24,7 +24,38 @@ class DebtPage extends StatelessWidget {
       valueListenable: debtController.state,
       builder: (context, state, __) {
         return Scaffold(
-          appBar: AppBar(title: const Text('Dividas'), elevation: 7),
+          appBar: AppBar(
+            title: const Text('Dividas'),
+            elevation: 7,
+            actions: [
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.more_vert),
+                tooltip: 'Opções',
+                onSelected: (String value) {
+                  if (value == 'categories') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => makeCategoryPage(),
+                      ),
+                    ).then((_) => debtController.load());
+                  }
+                },
+                itemBuilder: (BuildContext context) => [
+                  const PopupMenuItem<String>(
+                    value: 'categories',
+                    child: Row(
+                      children: [
+                        Icon(Icons.category),
+                        SizedBox(width: 12),
+                        Text('Gerenciar Categorias'),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
           floatingActionButton: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
