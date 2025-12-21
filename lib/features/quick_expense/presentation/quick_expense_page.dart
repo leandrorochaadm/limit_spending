@@ -117,14 +117,15 @@ class _QuickExpensePageState extends State<QuickExpensePage> {
           decoration: const InputDecoration(
             filled: true,
             hintText: 'Selecione uma categoria',
+            hintStyle: TextStyle(color: Colors.white),
             border: OutlineInputBorder(),
           ),
           items: state.categories.map((category) {
             return DropdownMenuItem<CategoryEntity>(
               value: category,
               child: Text(
-                '${category.name} • Gasto: ${category.balance.toCurrency()}',
-                style: const TextStyle(fontSize: 14),
+                '${category.name} • Gasto: ${category.consumed.toCurrency()} • Disp: ${category.balance.toCurrency()}',
+                style: const TextStyle(fontSize: 14, color: Colors.white),
               ),
             );
           }).toList(),
@@ -134,17 +135,6 @@ class _QuickExpensePageState extends State<QuickExpensePage> {
             }
           },
         ),
-        if (state.selectedCategory != null) ...[
-          const SizedBox(height: 8),
-          Text(
-            'Disponível: ${state.selectedCategory?.limitMonthly.toCurrency()}',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: state.selectedCategory!.balance >= 0 ? Colors.green : Colors.red,
-            ),
-          ),
-        ],
       ],
     );
   }
@@ -163,24 +153,17 @@ class _QuickExpensePageState extends State<QuickExpensePage> {
           decoration: const InputDecoration(
             filled: true,
             hintText: 'Selecione uma conta',
+            hintStyle: TextStyle(color: Colors.white),
             border: OutlineInputBorder(),
           ),
           items: state.accounts.map((account) {
-            final icon = account.isMoney
-                ? '💰'
-                : account.isCard
-                    ? '💳'
-                    : '🏦';
-            final typeLabel = account.isMoney
-                ? 'Dinheiro'
-                : account.isCard
-                    ? 'Cartão'
-                    : 'Empréstimo';
+            final icon = account.isMoney ? '💰' : '💳';
+            final typeLabel = account.isMoney ? 'Dinheiro' : 'Cartão';
             return DropdownMenuItem<AccountEntity>(
               value: account,
               child: Text(
                 '$icon ${account.name} ($typeLabel) • ${account.balance.toCurrency()}',
-                style: const TextStyle(fontSize: 14),
+                style: const TextStyle(fontSize: 14, color: Colors.white),
               ),
             );
           }).toList(),
@@ -190,17 +173,6 @@ class _QuickExpensePageState extends State<QuickExpensePage> {
             }
           },
         ),
-        if (state.selectedAccount != null) ...[
-          const SizedBox(height: 8),
-          Text(
-            'Saldo: ${state.selectedAccount!.balance.toCurrency()}',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: state.selectedAccount!.balance >= 0 ? Colors.green : Colors.red,
-            ),
-          ),
-        ],
       ],
     );
   }

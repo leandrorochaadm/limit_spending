@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/core.dart';
-import '../../domain/entities/account_entity.dart';
-import '../../domain/entities/account_type.dart';
-import '../account_controller.dart';
-import '../account_state.dart';
+import '../../../core/core.dart';
+import '../domain/entities/account_entity.dart';
+import '../domain/entities/account_type.dart';
+import 'account_controller.dart';
+import 'account_state.dart';
 
 class AccountPage extends StatelessWidget {
   static const String routeName = '/account';
@@ -74,14 +74,7 @@ class AccountPage extends StatelessWidget {
           ),
           floatingActionButton: Padding(
             padding: const EdgeInsets.only(left: 32),
-            child: /*FloatingActionButton(
-              onPressed: () {
-                accountController.clearForm();
-                modalCreateAccount(context);
-              },
-              child: const Icon(Icons.add),
-            ),*/
-                FloatingActionButton(
+            child: FloatingActionButton(
               heroTag: 'quick_expense',
               onPressed: () {
                 Navigator.push(
@@ -125,7 +118,7 @@ class AccountPage extends StatelessWidget {
     final accounts = state.accounts;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 100.0),
+      padding: const EdgeInsets.only(bottom: 100.0, left: 24, right: 24, top: 8),
       child: NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollInfo) {
           if (scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent - 200) {
@@ -217,9 +210,7 @@ class AccountPage extends StatelessWidget {
               child: Card(
                 child: ListTile(
                   title: Text(account.name),
-                  subtitle: Text(
-                    _buildAccountSubtitle(account),
-                  ),
+                  subtitle: Text(_buildAccountSubtitle(account)),
                 ),
               ),
             );
