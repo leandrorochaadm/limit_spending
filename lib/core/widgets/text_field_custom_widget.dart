@@ -30,6 +30,8 @@ class TextFieldCustomWidget extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   String? Function(String?)? validator;
 
+
+
   @override
   Widget build(BuildContext context) {
     final InkWell buttonClear = InkWell(
@@ -67,7 +69,6 @@ class TextFieldCustomWidget extends StatelessWidget {
           autocorrect: false,
           enableSuggestions: true,
           textInputAction: TextInputAction.done,
-          // style: AppTextStyles.primaryDark16w500,
           keyboardType: keyboardType,
           maxLines: maxLines,
           minLines: maxLines,
@@ -77,13 +78,7 @@ class TextFieldCustomWidget extends StatelessWidget {
             floatingLabelBehavior: FloatingLabelBehavior.always,
             filled: true,
             hintText: hintText,
-            // hintStyle: AppTextStyles.primaryDark16w500,
             labelText: hintText,
-            // labelStyle: AppTextStyles.text12w500.copyWith(
-            //   color: AppColors.blueFA,
-            // ),
-            // counterStyle: AppTextStyles.primaryDark16w500,
-            // fillColor: AppColors.white,
             suffixIcon: suffixIcon,
           ),
           onTap: onTap,

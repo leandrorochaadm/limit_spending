@@ -27,6 +27,7 @@ class AccountPage extends StatelessWidget {
       valueListenable: accountController.state,
       builder: (context, state, __) {
         return Scaffold(
+
           appBar: AppBar(
             title: const Text('Contas', textAlign: TextAlign.center),
             elevation: 7,
@@ -293,10 +294,11 @@ class AccountPage extends StatelessWidget {
                     focusNode: accountController.valueFN,
                     hintText: 'Valor',
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
+
                   ),
                   if (accountController.selectedType == AccountType.card) ...[
                     const SizedBox(height: 24),
-                    TextFieldCustomWidget(
+                    TextFieldCustodget(
                       controller: accountController.limitEC,
                       focusNode: accountController.limitFN,
                       hintText: 'Limite',
@@ -313,7 +315,7 @@ class AccountPage extends StatelessWidget {
                   const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: () {
-                      accountController.submit();
+                    accountController.submit();
                       Navigator.of(contextModal).pop();
                     },
                     child: const Text('Salvar conta'),

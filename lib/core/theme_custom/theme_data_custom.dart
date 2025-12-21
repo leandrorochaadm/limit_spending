@@ -41,9 +41,88 @@ class ThemeDataCustom {
       },
     ),
     textTheme: const TextTheme(
-      bodyMedium: TextStyle(
+      // Display styles
+      displayLarge: TextStyle(
+        color: Colors.white,
+        fontSize: 57,
+        fontWeight: FontWeight.w400,
+      ),
+      displayMedium: TextStyle(
+        color: Colors.white,
+        fontSize: 45,
+        fontWeight: FontWeight.w400,
+      ),
+      displaySmall: TextStyle(
+        color: Colors.white,
+        fontSize: 36,
+        fontWeight: FontWeight.w400,
+      ),
+
+      // Headline styles
+      headlineLarge: TextStyle(
+        color: Colors.white,
+        fontSize: 32,
+        fontWeight: FontWeight.w400,
+      ),
+      headlineMedium: TextStyle(
+        color: Colors.white,
+        fontSize: 28,
+        fontWeight: FontWeight.w400,
+      ),
+      headlineSmall: TextStyle(
+        color: Colors.white,
+        fontSize: 24,
+        fontWeight: FontWeight.w400,
+      ),
+
+      // Title styles
+      titleLarge: TextStyle(
+        color: Colors.white,
+        fontSize: 22,
+        fontWeight: FontWeight.w500,
+      ),
+      titleMedium: TextStyle(
         color: Colors.white,
         fontSize: 16,
+        fontWeight: FontWeight.w500,
+      ),
+      titleSmall: TextStyle(
+        color: Colors.white,
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+      ),
+
+      // Body styles (usado por TextFields e Dropdowns)
+      bodyLarge: TextStyle(
+        color: Colors.white,
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
+      ),
+      bodyMedium: TextStyle(
+        color: Colors.white,
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+      ),
+      bodySmall: TextStyle(
+        color: Colors.white,
+        fontSize: 12,
+        fontWeight: FontWeight.w400,
+      ),
+
+      // Label styles
+      labelLarge: TextStyle(
+        color: Colors.white,
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+      ),
+      labelMedium: TextStyle(
+        color: Colors.white,
+        fontSize: 12,
+        fontWeight: FontWeight.w500,
+      ),
+      labelSmall: TextStyle(
+        color: Colors.white,
+        fontSize: 11,
         fontWeight: FontWeight.w500,
       ),
     ),
@@ -128,5 +207,50 @@ class ThemeDataCustom {
       margin: const EdgeInsets.symmetric(vertical: 8),
     ),
     dialogTheme: DialogThemeData(backgroundColor: Colors.grey.shade900),
+    inputDecorationTheme: InputDecorationTheme(
+      // Hint text (placeholder) - cinza para contraste
+      hintStyle: TextStyle(
+        color: Colors.grey.shade400,
+        fontSize: 16,
+      ),
+      // Label text - branco
+      labelStyle: const TextStyle(
+        color: Colors.white,
+        fontSize: 14,
+      ),
+      // Floating label quando focado - teal para destaque
+      floatingLabelStyle: const TextStyle(
+        color: Colors.teal,
+        fontSize: 14,
+      ),
+      // Ícones
+      iconColor: Colors.white,
+      suffixIconColor: Colors.white,
+      prefixIconColor: Colors.white,
+      // Preenchimento
+      fillColor: Colors.grey[900],
+      filled: true,
+      // Bordas
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: Colors.grey.shade700),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: Colors.grey.shade700),
+      ),
+      focusedBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+        borderSide: BorderSide(color: Colors.teal, width: 2),
+      ),
+      errorBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+        borderSide: BorderSide(color: Colors.red),
+      ),
+      focusedErrorBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+        borderSide: BorderSide(color: Colors.red, width: 2),
+      ),
+    ),
   );
 }

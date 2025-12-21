@@ -53,6 +53,8 @@ lib/firebase_options_prod.dart
 ios/Runner/GoogleService-Info.plist
 ios/Runner/Firebase/dev/GoogleService-Info.plist
 ios/Runner/Firebase/prod/GoogleService-Info.plist
+.firebase/
+.claude/settings.local.json
 
 # FVM Version Cache
 .fvm/
