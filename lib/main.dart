@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-import 'core/factories/factories.dart';
+import 'core/factories/account_factory.dart';
 import 'core/theme_custom/theme_data_custom.dart';
 import 'firebase_options.dart';
 
@@ -21,8 +21,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.dark,
       theme: ThemeDataCustom.darkTheme,
-      home: makeDebtPage(),
-      // home: supermarketPageFactory(),
+      home: makeAccountPage(),
     );
   }
 }

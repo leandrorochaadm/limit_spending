@@ -27,4 +27,5 @@ abstract class ExpenseRepository {
   });
 
   Future<void> deleteExpensesByCategory(String categoryId);
+  Future<void> deleteExpensesByAccount(String accountId);
 }

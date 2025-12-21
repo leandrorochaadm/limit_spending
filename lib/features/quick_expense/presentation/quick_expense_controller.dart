@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import '../../../core/core.dart';
+import '../../account/domain/entities/account_entity.dart';
+import '../../account/domain/usecases/get_accounts_usecase.dart';
 import '../../category/domain/entities/category_entity.dart';
 import '../../category/domain/usecases/usecases.dart';
 import '../../expense/domain/entities/expense_entity.dart';
-import '../../payment_method/domain/entities/payment_method_entity.dart';
-import '../../payment_method/domain/use_cases/get_all_payment_methods.dart';
 import 'quick_expense_state.dart';
 
 class QuickExpenseController {
   // Dependencies
   final GetCategoriesUseCase getCategoriesUseCase;
-  final GetAllPaymentMethodsUseCase getPaymentMethodsUseCase;
+  final GetAccountsUseCase getAccountsUseCase;
   final CreateTransactionUseCase createTransactionUseCase;
   Function? onShowMessage;
   Function? onGoBack;
@@ -26,7 +26,7 @@ class QuickExpenseController {
 
   QuickExpenseController({
     required this.getCategoriesUseCase,
-    required this.getPaymentMethodsUseCase,
+    required this.getAccountsUseCase,
     required this.createTransactionUseCase,
     this.onShowMessage,
     this.onGoBack,
@@ -46,23 +46,26 @@ class QuickExpenseController {
       return;
     }
 
-    // Buscar payment methods
-    final (paymentFailure, paymentMethods) = await getPaymentMethodsUseCase(false);
+    // Buscar accounts
+    final (accountFailure, accounts) = await getAccountsUseCase(false);
 
-    if (paymentFailure != null) {
+    if (accountFailure != null) {
       state.value = state.value.copyWith(
         status: QuickExpenseStatus.error,
-        errorMessage: paymentFailure.message,
+        errorMessage: accountFailure.message,
       );
       return;
     }
 
+    // Filtrar apenas contas que não são do tipo loan
+    final availableAccounts = accounts?.where((account) => !account.isLoan).toList() ?? [];
+
     state.value = QuickExpenseState(
       status: QuickExpenseStatus.success,
       categories: categories,
-      paymentMethods: paymentMethods,
+      accounts: availableAccounts,
       selectedCategory: null,
-      selectedPaymentMethod: null,
+      selectedAccount: null,
     );
   }
 
@@ -70,15 +73,15 @@ class QuickExpenseController {
     state.value = state.value.copyWith(selectedCategory: category);
   }
 
-  void selectPaymentMethod(PaymentMethodEntity paymentMethod) {
-    state.value = state.value.copyWith(selectedPaymentMethod: paymentMethod);
+  void selectAccount(AccountEntity account) {
+    state.value = state.value.copyWith(selectedAccount: account);
   }
 
   bool isValid() {
     return descriptionEC.text.isNotEmpty &&
         valueEC.text.isNotEmpty &&
         state.value.selectedCategory != null &&
-        state.value.selectedPaymentMethod != null;
+        state.value.selectedAccount != null;
   }
 
   Future<void> createExpense() async {
@@ -95,8 +98,9 @@ class QuickExpenseController {
       created: DateTime.now(),
       value: valueDouble,
       categoryId: state.value.selectedCategory!.id,
-      paymentMethodId: state.value.selectedPaymentMethod!.id,
-      isMoney: state.value.selectedPaymentMethod!.isMoney,
+      paymentMethodId: '', // Não usado mais
+      isMoney: state.value.selectedAccount!.isMoney,
+      accountId: state.value.selectedAccount!.id,
     );
 
     final failure = await createTransactionUseCase(expense);

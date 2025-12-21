@@ -255,4 +255,27 @@ class ExpenseFirebaseRepository implements ExpenseRepository {
       rethrow;
     }
   }
+
+  @override
+  Future<void> deleteExpensesByAccount(String accountId) async {
+    try {
+      final snapshot = await firestore
+          .collection(collectionPath)
+          .where('accountId', isEqualTo: accountId)
+          .get();
+
+      final batch = firestore.batch();
+      for (final doc in snapshot.docs) {
+        batch.delete(doc.reference);
+      }
+      await batch.commit();
+    } on FirebaseException catch (e) {
+      final exception = AppExceptionUtils.handleFirebaseError(e);
+      LoggerService.error('deleteExpensesByAccount', exception.message);
+      throw exception;
+    } catch (e, s) {
+      LoggerService.error('deleteExpensesByAccount', e, s);
+      rethrow;
+    }
+  }
 }

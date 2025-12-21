@@ -1,40 +1,40 @@
 import 'package:equatable/equatable.dart';
+import '../../account/domain/entities/account_entity.dart';
 import '../../category/domain/entities/category_entity.dart';
-import '../../payment_method/domain/entities/payment_method_entity.dart';
 
 enum QuickExpenseStatus { initial, loading, success, error, saved }
 
 class QuickExpenseState extends Equatable {
   final QuickExpenseStatus status;
   final List<CategoryEntity> categories;
-  final List<PaymentMethodEntity> paymentMethods;
+  final List<AccountEntity> accounts;
   final CategoryEntity? selectedCategory;
-  final PaymentMethodEntity? selectedPaymentMethod;
+  final AccountEntity? selectedAccount;
   final String? errorMessage;
 
   const QuickExpenseState({
     required this.status,
     this.categories = const [],
-    this.paymentMethods = const [],
+    this.accounts = const [],
     this.selectedCategory,
-    this.selectedPaymentMethod,
+    this.selectedAccount,
     this.errorMessage,
   });
 
   QuickExpenseState copyWith({
     QuickExpenseStatus? status,
     List<CategoryEntity>? categories,
-    List<PaymentMethodEntity>? paymentMethods,
+    List<AccountEntity>? accounts,
     CategoryEntity? selectedCategory,
-    PaymentMethodEntity? selectedPaymentMethod,
+    AccountEntity? selectedAccount,
     String? errorMessage,
   }) {
     return QuickExpenseState(
       status: status ?? this.status,
       categories: categories ?? this.categories,
-      paymentMethods: paymentMethods ?? this.paymentMethods,
+      accounts: accounts ?? this.accounts,
       selectedCategory: selectedCategory ?? this.selectedCategory,
-      selectedPaymentMethod: selectedPaymentMethod ?? this.selectedPaymentMethod,
+      selectedAccount: selectedAccount ?? this.selectedAccount,
       errorMessage: errorMessage,
     );
   }
@@ -43,9 +43,9 @@ class QuickExpenseState extends Equatable {
   List<Object?> get props => [
         status,
         categories,
-        paymentMethods,
+        accounts,
         selectedCategory,
-        selectedPaymentMethod,
+        selectedAccount,
         errorMessage,
       ];
 }

@@ -1,12 +1,10 @@
 import '../../features/category/domain/domain.dart';
 import '../../features/expense/expense.dart';
-import '../../features/payment_method/domain/use_cases/get_payment_by_id_use_case.dart';
 import '../use_case/create_transaction_use_case.dart';
 import '../use_case/delete_transaction_use_case.dart';
+import 'account_factory.dart';
 import 'category_factory.dart';
-import 'debt_factory.dart';
 import 'firestore_factory.dart';
-import 'payment_method_factory.dart';
 
 ExpenseRepository makeExpenseRepository() => ExpenseFirebaseRepository(
       firestore: makeFirestoreFactory(),
@@ -31,22 +29,14 @@ DeleteExpenseUseCase makeDeleteExpenseUseCase() {
 
 DeleteTransactionUseCase makeDeleteTransactionUseCase() =>
     DeleteTransactionUseCase(
-      incrementValuePaymentMethodUseCase:
-          makeIncrementValuePaymentMethodUseCase(),
-      addDebtValueUseCase: makeAddDebtValueUseCase(),
+      incrementAccountValueUseCase: makeIncrementAccountValueUseCase(),
       createExpenseUseCase: makeCreateExpenseUseCase(),
       deleteExpenseUseCase: makeDeleteExpenseUseCase(),
     );
 
-GetPaymentMethodsByIdUseCase makeGetPaymentMethodsByIdUseCase() {
-  return GetPaymentMethodsByIdUseCase(makePaymentMethodRepository());
-}
-
 CreateTransactionUseCase makeCreateTransactionUseCase() =>
     CreateTransactionUseCase(
-      incrementValuePaymentMethodUseCase:
-          makeIncrementValuePaymentMethodUseCase(),
-      addDebtValueUseCase: makeAddDebtValueUseCase(),
+      incrementAccountValueUseCase: makeIncrementAccountValueUseCase(),
       createExpenseUseCase: makeCreateExpenseUseCase(),
       deleteExpenseUseCase: makeDeleteExpenseUseCase(),
     );

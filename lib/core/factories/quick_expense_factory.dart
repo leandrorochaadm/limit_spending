@@ -1,12 +1,12 @@
 import '../../features/quick_expense/quick_expense.dart';
+import 'account_factory.dart';
 import 'category_factory.dart';
 import 'expense_factory.dart';
-import 'payment_method_factory.dart';
 
 QuickExpenseController makeQuickExpenseController() {
   return QuickExpenseController(
     getCategoriesUseCase: makeGetCategoriesUseCase(),
-    getPaymentMethodsUseCase: makeGetPaymentMethodsUseCase(),
+    getAccountsUseCase: makeGetAccountsUseCase(),
     createTransactionUseCase: makeCreateTransactionUseCase(),
   );
 }

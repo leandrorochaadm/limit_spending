@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/core.dart';
+import '../../account/domain/entities/account_entity.dart';
 import '../../category/domain/entities/category_entity.dart';
-import '../../payment_method/domain/entities/payment_method_entity.dart';
 import 'quick_expense_controller.dart';
 import 'quick_expense_state.dart';
 
@@ -88,7 +88,7 @@ class _QuickExpensePageState extends State<QuickExpensePage> {
               children: [
                 _buildCategorySection(state),
                 const SizedBox(height: 24),
-                _buildPaymentMethodSection(state),
+                _buildAccountSection(state),
                 const SizedBox(height: 24),
                 _buildDescriptionField(),
                 const SizedBox(height: 16),
@@ -149,46 +149,55 @@ class _QuickExpensePageState extends State<QuickExpensePage> {
     );
   }
 
-  Widget _buildPaymentMethodSection(QuickExpenseState state) {
+  Widget _buildAccountSection(QuickExpenseState state) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          '💳 Forma de Pagamento',
+          '💳 Conta',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
-        DropdownButtonFormField<PaymentMethodEntity>(
-          value: state.selectedPaymentMethod,
+        DropdownButtonFormField<AccountEntity>(
+          value: state.selectedAccount,
           decoration: const InputDecoration(
             filled: true,
-            hintText: 'Selecione uma forma de pagamento',
+            hintText: 'Selecione uma conta',
             border: OutlineInputBorder(),
           ),
-          items: state.paymentMethods.map((paymentMethod) {
-            final icon = paymentMethod.isMoney ? '💰' : '💳';
-            return DropdownMenuItem<PaymentMethodEntity>(
-              value: paymentMethod,
+          items: state.accounts.map((account) {
+            final icon = account.isMoney
+                ? '💰'
+                : account.isCard
+                    ? '💳'
+                    : '🏦';
+            final typeLabel = account.isMoney
+                ? 'Dinheiro'
+                : account.isCard
+                    ? 'Cartão'
+                    : 'Empréstimo';
+            return DropdownMenuItem<AccountEntity>(
+              value: account,
               child: Text(
-                '$icon ${paymentMethod.name} • ${paymentMethod.balance.toCurrency()}',
+                '$icon ${account.name} ($typeLabel) • ${account.balance.toCurrency()}',
                 style: const TextStyle(fontSize: 14),
               ),
             );
           }).toList(),
-          onChanged: (paymentMethod) {
-            if (paymentMethod != null) {
-              widget.controller.selectPaymentMethod(paymentMethod);
+          onChanged: (account) {
+            if (account != null) {
+              widget.controller.selectAccount(account);
             }
           },
         ),
-        if (state.selectedPaymentMethod != null) ...[
+        if (state.selectedAccount != null) ...[
           const SizedBox(height: 8),
           Text(
-            'Saldo: ${state.selectedPaymentMethod!.balance.toCurrency()}',
+            'Saldo: ${state.selectedAccount!.balance.toCurrency()}',
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
-              color: state.selectedPaymentMethod!.balance >= 0 ? Colors.green : Colors.red,
+              color: state.selectedAccount!.balance >= 0 ? Colors.green : Colors.red,
             ),
           ),
         ],

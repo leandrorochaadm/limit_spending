@@ -1,19 +1,16 @@
-import '../../features/debt/debit.dart';
+import '../../features/account/domain/usecases/increment_account_value_usecase.dart';
 import '../../features/expense/domain/entities/expense_entity.dart';
 import '../../features/expense/domain/usecases/usecases.dart';
-import '../../features/payment_method/domain/use_cases/use_cases.dart';
 import '../exceptions/failure.dart';
 import '../services/logger_services.dart';
 
 class CreateTransactionUseCase {
-  final IncrementValuePaymentMethodUseCase incrementValuePaymentMethodUseCase;
-  final AddDebtValueUseCase addDebtValueUseCase;
+  final IncrementAccountValueUseCase incrementAccountValueUseCase;
   final CreateExpenseUseCase createExpenseUseCase;
   final DeleteExpenseUseCase deleteExpenseUseCase;
 
   CreateTransactionUseCase({
-    required this.incrementValuePaymentMethodUseCase,
-    required this.addDebtValueUseCase,
+    required this.incrementAccountValueUseCase,
     required this.createExpenseUseCase,
     required this.deleteExpenseUseCase,
   });
@@ -28,16 +25,18 @@ class CreateTransactionUseCase {
         );
       }
 
-      //2. se for dinheiro diminui o saldo no meio de pagamento, se for cartão aumenta o valor da divida
-      final failurePaymentMethod = await incrementValuePaymentMethodUseCase(
-        paymentMethodId: expense.paymentMethodId,
-        value: expense.isMoney ? -expense.value : expense.value,
-      );
-      if (failurePaymentMethod != null) {
-        await _rollbackExpense(expense.id);
-        return Failure(
-          'Erro ao atualizar saldo do meio de pagamento: ${failurePaymentMethod.message}',
+      //2. se for dinheiro diminui o saldo na conta, se for cartão aumenta o valor devido
+      if (expense.accountId != null) {
+        final failureAccount = await incrementAccountValueUseCase(
+          expense.accountId!,
+          expense.isMoney ? -expense.value : expense.value,
         );
+        if (failureAccount != null) {
+          await _rollbackExpense(expense.id);
+          return Failure(
+            'Erro ao atualizar saldo da conta: ${failureAccount.message}',
+          );
+        }
       }
 
       return null; // Sucesso
