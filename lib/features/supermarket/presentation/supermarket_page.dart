@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../core/core.dart';
 import '../domain/entities/entities.dart';
@@ -235,6 +236,7 @@ class SupermarketPage extends StatelessWidget {
                   focusNode: valueFN,
                   hintText: 'Valor da produto',
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 ),
                 const SizedBox(height: 24),
                 Row(

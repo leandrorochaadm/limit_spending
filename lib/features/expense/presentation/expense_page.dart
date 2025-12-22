@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/core.dart';
-import '../../../core/widgets/snack_bar_custom.dart';
 import 'expense_controller.dart';
 import 'expense_state.dart';
 
@@ -91,15 +91,13 @@ class ExpensePage extends StatelessWidget {
       return const Center(child: Text('Nenhuma despesa encontrada'));
     }
 
-    if (state.status == ExpenseStatus.success ||
-        state.status == ExpenseStatus.loadingMore) {
+    if (state.status == ExpenseStatus.success || state.status == ExpenseStatus.loadingMore) {
       final expenses = state.expenses;
       return Padding(
         padding: const EdgeInsets.only(bottom: 100.0),
         child: NotificationListener<ScrollNotification>(
           onNotification: (ScrollNotification scrollInfo) {
-            if (scrollInfo.metrics.pixels >=
-                scrollInfo.metrics.maxScrollExtent - 200) {
+            if (scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent - 200) {
               expenseController.loadMore();
             }
             return false;
@@ -112,9 +110,7 @@ class ExpensePage extends StatelessWidget {
                 return Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Center(
-                    child: state.isLoadingMore
-                        ? const CircularProgressIndicator()
-                        : const SizedBox.shrink(),
+                    child: state.isLoadingMore ? const CircularProgressIndicator() : const SizedBox.shrink(),
                   ),
                 );
               }
@@ -235,8 +231,8 @@ class ExpensePage extends StatelessWidget {
                     controller: expenseController.valueEC,
                     focusNode: expenseController.valueFN,
                     hintText: 'Valor da despesa',
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     onChanged: (_) => setState(() {}),
                   ),
                   const SizedBox(height: 24),

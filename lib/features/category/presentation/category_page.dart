@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../core/core.dart';
 import '../category.dart';
@@ -76,8 +77,7 @@ class CategoryPage extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 100.0),
       child: NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollInfo) {
-          if (scrollInfo.metrics.pixels >=
-              scrollInfo.metrics.maxScrollExtent - 200) {
+          if (scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent - 200) {
             categoryController.loadMore();
           }
           return false;
@@ -90,112 +90,106 @@ class CategoryPage extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Center(
-                  child: state.isLoadingMore
-                      ? const CircularProgressIndicator()
-                      : const SizedBox.shrink(),
+                  child: state.isLoadingMore ? const CircularProgressIndicator() : const SizedBox.shrink(),
                 ),
               );
             }
 
             final category = categories[index];
             return Dismissible(
-            key: Key(category.id),
-            direction: DismissDirection.horizontal,
-            onUpdate: (details) {
-              if (!actionExecuted &&
-                  details.direction == DismissDirection.startToEnd &&
-                  details.progress > 0.5) {
-                actionExecuted = true;
-                categoryController.categorySelected = category;
-                modalCreateCategory(context);
-              }
-            },
-            confirmDismiss: (direction) async {
-              if (direction == DismissDirection.endToStart) {
-                return await showDialog<bool>(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: const Text(
-                        'Deseja realmente excluir esta categoria?',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      content: Text(
-                        '${category.name}\n\n'
-                        'Todas as despesas desta categoria também serão excluídas.',
-                        textAlign: TextAlign.justify,
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context, false),
-                          child: const Text('Não'),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.pop(context, true),
-                          child: const Text('Sim'),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              }
-              return false;
-            },
-            onDismissed: (direction) {
-              if (direction == DismissDirection.endToStart) {
-                categoryController.deleteCategory(category.id);
-              }
-            },
-            background: Container(
-              color: Theme.of(context).colorScheme.inversePrimary,
-              alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Icon(
-                Icons.edit,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ),
-            secondaryBackground: Container(
-              color: Theme.of(context).colorScheme.error,
-              alignment: Alignment.centerRight,
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Icon(
-                Icons.delete,
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
-            ),
-            child: Card(
-              child: ListTile(
-                title: Text(category.name),
-                subtitle: Text(
-                  'Disponível: ${category.balance.toCurrency()} \nConsumido nos $daysFilter dias: ${category.consumed.toCurrency()} \nLimite mensal: ${category.limitMonthly.toCurrency()}',
-                ),
-                trailing: paymentMethodId != null
-                    ? const Icon(Icons.arrow_forward_ios)
-                    : null,
-                onTap: paymentMethodId != null && isMoney != null
-                    ? () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return makeExpensePage(
-                                category: category,
-                                paymentMethodId: paymentMethodId!,
-                                isMoney: isMoney!,
-                                onGoBack: categoryController.load,
-                              );
-                            },
+              key: Key(category.id),
+              direction: DismissDirection.horizontal,
+              onUpdate: (details) {
+                if (!actionExecuted && details.direction == DismissDirection.startToEnd && details.progress > 0.5) {
+                  actionExecuted = true;
+                  categoryController.categorySelected = category;
+                  modalCreateCategory(context);
+                }
+              },
+              confirmDismiss: (direction) async {
+                if (direction == DismissDirection.endToStart) {
+                  return await showDialog<bool>(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text(
+                          'Deseja realmente excluir esta categoria?',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
                           ),
-                        );
-                      }
-                    : null,
+                        ),
+                        content: Text(
+                          '${category.name}\n\n'
+                          'Todas as despesas desta categoria também serão excluídas.',
+                          textAlign: TextAlign.justify,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, false),
+                            child: const Text('Não'),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, true),
+                            child: const Text('Sim'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
+                return false;
+              },
+              onDismissed: (direction) {
+                if (direction == DismissDirection.endToStart) {
+                  categoryController.deleteCategory(category.id);
+                }
+              },
+              background: Container(
+                color: Theme.of(context).colorScheme.inversePrimary,
+                alignment: Alignment.centerLeft,
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Icon(
+                  Icons.edit,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
-            ),
+              secondaryBackground: Container(
+                color: Theme.of(context).colorScheme.error,
+                alignment: Alignment.centerRight,
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Icon(
+                  Icons.delete,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+              ),
+              child: Card(
+                child: ListTile(
+                  title: Text(category.name),
+                  subtitle: Text(
+                    'Disponível: ${category.balance.toCurrency()} \nConsumido nos $daysFilter dias: ${category.consumed.toCurrency()} \nLimite mensal: ${category.limitMonthly.toCurrency()}',
+                  ),
+                  trailing: paymentMethodId != null ? const Icon(Icons.arrow_forward_ios) : null,
+                  onTap: paymentMethodId != null && isMoney != null
+                      ? () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return makeExpensePage(
+                                  category: category,
+                                  paymentMethodId: paymentMethodId!,
+                                  isMoney: isMoney!,
+                                  onGoBack: categoryController.load,
+                                );
+                              },
+                            ),
+                          );
+                        }
+                      : null,
+                ),
+              ),
             );
           },
         ),
@@ -232,8 +226,8 @@ class CategoryPage extends StatelessWidget {
                     controller: categoryController.limitEC,
                     focusNode: categoryController.limitFN,
                     hintText: 'Limite mensal',
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton(

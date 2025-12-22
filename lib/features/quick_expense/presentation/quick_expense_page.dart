@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../core/core.dart';
 import '../../account/domain/entities/account_entity.dart';
@@ -192,6 +193,7 @@ class _QuickExpensePageState extends State<QuickExpensePage> {
       controller: widget.controller.valueEC,
       hintText: 'Valor da despesa',
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
     );
   }
 

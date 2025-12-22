@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../core/core.dart';
 import '../domain/entities/account_entity.dart';
@@ -27,7 +28,6 @@ class AccountPage extends StatelessWidget {
       valueListenable: accountController.state,
       builder: (context, state, __) {
         return Scaffold(
-
           appBar: AppBar(
             title: const Text('Contas', textAlign: TextAlign.center),
             elevation: 7,
@@ -294,15 +294,16 @@ class AccountPage extends StatelessWidget {
                     focusNode: accountController.valueFN,
                     hintText: 'Valor',
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
-
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   ),
                   if (accountController.selectedType == AccountType.card) ...[
                     const SizedBox(height: 24),
-                    TextFieldCustodget(
+                    TextFieldCustomWidget(
                       controller: accountController.limitEC,
                       focusNode: accountController.limitFN,
                       hintText: 'Limite',
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     ),
                     const SizedBox(height: 24),
                     TextFieldCustomWidget(
@@ -310,12 +311,13 @@ class AccountPage extends StatelessWidget {
                       focusNode: accountController.dayCloseFN,
                       hintText: 'Dia de fechamento (1-31)',
                       keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     ),
                   ],
                   const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: () {
-                    accountController.submit();
+                      accountController.submit();
                       Navigator.of(contextModal).pop();
                     },
                     child: const Text('Salvar conta'),
