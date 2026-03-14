@@ -1,3 +1,4 @@
+export 'add_consumed_category_usecase.dart';
 export 'create_category_usecase.dart';
 export 'delete_category_usecase.dart';
 export 'get_categories_paginated_usecase.dart';

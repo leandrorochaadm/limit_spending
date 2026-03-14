@@ -44,6 +44,9 @@ CategoryPage makeCategoryPage({
       isMoney: isMoney,
     );
 
+AddConsumedCategoryUseCase makeAddConsumedCategoryUseCase() =>
+    AddConsumedCategoryUseCase(categoryRepositoryFactory());
+
 Future<void> makeUpdateCategoryConsumedUseCase(
   String categoryId,
   double consumed,

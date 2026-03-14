@@ -115,17 +115,27 @@ class _QuickExpensePageState extends State<QuickExpensePage> {
         const SizedBox(height: 8),
         DropdownButtonFormField<CategoryEntity>(
           value: state.selectedCategory,
+          isExpanded: true,
           decoration: const InputDecoration(
             filled: true,
             hintText: 'Selecione uma categoria',
             hintStyle: TextStyle(color: Colors.white),
             border: OutlineInputBorder(),
           ),
+          selectedItemBuilder: (context) {
+            return state.categories.map((category) {
+              return Text(
+                '${category.name} • ${category.consumed.toCurrency()} • ${category.balance.toCurrency()}',
+                style: const TextStyle(fontSize: 14, color: Colors.white),
+                overflow: TextOverflow.ellipsis,
+              );
+            }).toList();
+          },
           items: state.categories.map((category) {
             return DropdownMenuItem<CategoryEntity>(
               value: category,
               child: Text(
-                '${category.name} • Gasto: ${category.consumed.toCurrency()} • Disp: ${category.balance.toCurrency()}',
+                '${category.name}\nGasto: ${category.consumed.toCurrency()} • Disp: ${category.balance.toCurrency()}',
                 style: const TextStyle(fontSize: 14, color: Colors.white),
               ),
             );

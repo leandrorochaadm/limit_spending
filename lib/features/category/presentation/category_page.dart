@@ -35,7 +35,7 @@ class CategoryPage extends StatelessWidget {
             elevation: 7,
           ),
           floatingActionButton: Padding(
-            padding: const EdgeInsets.only(left: 32),
+            padding: const EdgeInsets.only(left: 32, top: 110),
             child: FloatingActionButton(
               onPressed: () {
                 categoryController.clearForm();
@@ -45,13 +45,15 @@ class CategoryPage extends StatelessWidget {
             ),
           ),
           bottomSheet: Padding(
-            padding: const EdgeInsets.only(bottom: 36.0, top: 24),
+            padding: const EdgeInsets.only(bottom: 36.0, top: 24, left: 24),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  'Limite: ${state.limitSum}\nDisponível: ${state.balanceSum}\nConsumido nos $daysFilter dias: ${state.consumedSum}',
-                  textAlign: TextAlign.center,
+                  'Limite: ${state.limitSum}\n'
+                      'Disponível: ${state.balanceSum}\n'
+                      'Consumido nos $daysFilter dias: ${state.consumedSum}',
+                  textAlign: TextAlign.left,
                 ),
               ],
             ),
@@ -74,7 +76,7 @@ class CategoryPage extends StatelessWidget {
     final categories = state.categories;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 100.0),
+      padding: const EdgeInsets.only(bottom: 100.0, left: 24, right: 24),
       child: NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollInfo) {
           if (scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent - 200) {

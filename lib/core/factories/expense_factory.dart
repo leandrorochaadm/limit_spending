@@ -39,6 +39,7 @@ CreateTransactionUseCase makeCreateTransactionUseCase() =>
       incrementAccountValueUseCase: makeIncrementAccountValueUseCase(),
       createExpenseUseCase: makeCreateExpenseUseCase(),
       deleteExpenseUseCase: makeDeleteExpenseUseCase(),
+      addConsumedCategoryUseCase: makeAddConsumedCategoryUseCase(),
     );
 
 ExpenseController expenseControllerFactory({
