@@ -74,7 +74,7 @@ class AccountPage extends StatelessWidget {
             ],
           ),
           floatingActionButton: Padding(
-            padding: const EdgeInsets.only(left: 32),
+            padding: const EdgeInsets.only(top: 110),
             child: FloatingActionButton(
               heroTag: 'quick_expense',
               onPressed: () {
@@ -89,14 +89,16 @@ class AccountPage extends StatelessWidget {
             ),
           ),
           bottomSheet: Padding(
-            padding: const EdgeInsets.only(bottom: 36.0, top: 24),
+            padding: const EdgeInsets.only(bottom: 36.0, top: 24, left: 24),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  'Dinheiro: ${state.moneySum}\nCartão: ${state.cardSum}\nEmpréstimo: ${state.loanSum}'
-                  '\nDinheiro-Cartão: ${state.totalSum}',
-                  textAlign: TextAlign.center,
+                  'Dinheiro: ${state.moneySum}\n'
+                  'Cartão: ${state.cardSum}\n'
+                  'Empréstimo: ${state.loanSum}\n'
+                  'Saldo: ${state.totalSum}',
+                  textAlign: TextAlign.left,
                 ),
               ],
             ),

@@ -96,7 +96,7 @@ class AccountController {
     final loanSum =
         allAccounts?.where((a) => a.type == AccountType.loan).fold<double>(0, (sum, a) => sum + a.value) ?? 0.0;
 
-    final totalSum = moneySum - cardSum;
+    final totalSum = moneySum - cardSum-loanSum;
 
     clearForm();
 
