@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(**/*.g.dart)",
+      "Read(**/*.freezed.dart)",
+      "Read(./build)",
+      "Read(./.dart_tool)",
+      "Read(./.git/objects)",
+      "Read(./android/build)",
+      "Read(./android/.gradle)",
+      "Read(./ios/Pods)",
+      "Read(./ios/build)",
+      "Read(./.fvm)"
+    ]
+  }
+}

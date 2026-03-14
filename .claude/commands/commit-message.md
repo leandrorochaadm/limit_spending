@@ -26,5 +26,5 @@ Exemplos:
 Passos:
 1. Execute `git status` e `git diff` para ver as mudanças
 2. Analise o contexto e o caminho dos arquivos alterados
-3. Gere UMA mensagem de commit curta (máximo 72 caracteres)
-4. Apresente a mensagem pronta para uso
+3. Gere TRÊS opções de mensagem de commit curtas (máximo 80 caracteres cada)
+4. Apresente as 3 opções numeradas e prontas para uso
